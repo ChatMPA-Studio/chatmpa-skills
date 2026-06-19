@@ -1,5 +1,11 @@
 ---
 name: ltem-mpa-effectiveness
+domain: [conservation-policy, fisheries-ecology]
+data-source: [LTEM]
+output-type: [analysis, report]
+tags: [mpa, cabo-pulmo, protection, predator-biomass]
+status: stable
+version: 0.2.0
 description: This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset. It compares fish biomass, diversity, and community structure between Cabo Pulmo National Park (strict protection since 1995) and sites with weak or no protection. Use this skill when evaluating MPA performance, analyzing protection effects, or demonstrating conservation outcomes. TRIGGER on any of these phrases or intents: "is the MPA working", "has protection made a difference", "compare Cabo Pulmo", "predator biomass recovery", "is protection effective", "MPA effectiveness", "did protection help", "compare protected vs unprotected", "top predator trends", "has Cabo Pulmo recovered", "protection impact on fish", "LTEM MPA analysis", "generate a report" combined with any mention of Cabo Pulmo or protection.
 ---
 
@@ -16,8 +22,10 @@ This skill guides MPA effectiveness assessment using the Baja California LTEM da
 
 ## Dataset Reference
 
-**File:** `/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv`
-**Metadata:** `/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1_metadata.json`
+**File:** `data/ltem_Ai2_v1.csv`
+**Metadata:** `data/ltem_Ai2_v1_metadata.json`
+
+> Paths shown are relative to your working directory; place your local copy of the LTEM dataset under `data/` (or adjust the paths) before running.
 
 ### Protection Status Categories
 | Status | Description |
@@ -130,7 +138,7 @@ import seaborn as sns
 from scipy import stats
 
 # Load LTEM data
-ltem = pd.read_csv('/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv')
+ltem = pd.read_csv('data/ltem_Ai2_v1.csv')
 
 # Standardize protection categories
 def categorize_protection(status):
@@ -321,7 +329,7 @@ def compare_trophic_structure(df):
 
     Successful MPAs typically show higher proportions of top predators.
     """
-    original_df = pd.read_csv('/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv')
+    original_df = pd.read_csv('data/ltem_Ai2_v1.csv')
     original_df['protection_level'] = original_df['protection_status'].apply(categorize_protection)
 
     # Define trophic groups
@@ -370,7 +378,7 @@ def compare_size_structure(df):
 
     Successful MPAs typically have more large fish.
     """
-    original_df = pd.read_csv('/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv')
+    original_df = pd.read_csv('data/ltem_Ai2_v1.csv')
     original_df['protection_level'] = original_df['protection_status'].apply(categorize_protection)
 
     # Define size classes

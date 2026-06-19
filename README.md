@@ -1,21 +1,34 @@
 # chatMPA Skills
 
-Claude Code skills for marine science workflows developed by the [chatMPA](https://github.com/chatmpa-studio-lab) team. These skills extend Claude Code with domain-specific analytical capabilities for oceanography, conservation biology, and fisheries science.
+A curated library of [Claude Code](https://docs.claude.com/en/docs/claude-code) skills for marine science, developed by the [chatMPA Studio](https://github.com/chatmpa-studio-lab) team.
+
+## What is chatMPA Studio?
+
+**chatMPA Studio** is a marine-science workbench that pairs Claude with domain expertise in oceanography, conservation biology, fisheries science, and marine policy. Its goal is to let scientists, managers, and decision-makers run rigorous analyses and produce decision-ready outputs through natural-language workflows.
+
+This repository is the Studio's **skills library** — a growing, versioned collection of reusable [Agent Skills](https://docs.claude.com/en/docs/claude-code/skills) that extend Claude Code with marine-science capabilities: LTEM fish-community analytics, MPA effectiveness assessment, species distribution modeling, sea-surface-temperature workflows, Marine Prosperity Index policy briefs, management-plan audits, and more. Think of it as a CRAN-style catalog: each skill is a self-contained, classified package you can install and invoke on demand.
 
 ## Available Skills
 
-| Skill | Description |
-|---|---|
-| [`ltem-biomass-productivity`](./ltem-biomass-productivity/) | Fish biomass, productivity, and environmental drivers from the Baja California LTEM dataset |
-| [`ltem-fish-community`](./ltem-fish-community/) | Fish community structure, diversity indices, and trophic metrics from LTEM surveys |
-| [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) | MPA effectiveness assessment centered on Cabo Pulmo National Park |
-| [`ltem-temporal-trends`](./ltem-temporal-trends/) | Long-term trend detection across 26 years of Baja California fish surveys (1998–2024) |
-| [`marine-prosperity-brief`](./marine-prosperity-brief/) | Marine Prosperity Index policy briefs for coastal municipalities |
-| [`marine-prosperity-publish`](./marine-prosperity-publish/) | Publishing and dissemination workflows for Marine Prosperity outputs |
-| [`marine-species-analysis`](./marine-species-analysis/) | Species distribution modeling and OBIS biodiversity data workflows |
-| [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) | General MPA effectiveness assessment framework |
-| [`reef-ecology-report`](./reef-ecology-report/) | Coral reef monitoring data analysis and report generation |
-| [`sea-surface-temperature`](./sea-surface-temperature/) | SST data retrieval and analysis via ERDDAP |
+<!-- BEGIN SKILLS TABLE -->
+| Skill | Version | Status | Domain | Summary |
+|---|---|---|---|---|
+| [`ltem-biomass-productivity`](./ltem-biomass-productivity/) | 0.2.0 | ✅ stable | fisheries-ecology | This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset. |
+| [`ltem-fish-community`](./ltem-fish-community/) | 0.2.0 | ✅ stable | fisheries-ecology, biodiversity | This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset. |
+| [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) | 0.2.0 | ✅ stable | conservation-policy, fisheries-ecology | This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset. |
+| [`ltem-temporal-trends`](./ltem-temporal-trends/) | 0.2.0 | ✅ stable | fisheries-ecology | This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024). |
+| [`management-plan-review`](./management-plan-review/) | 0.2.0 | ✅ stable | conservation-policy, science-communication | Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations. |
+| [`management-plan-version-comparator`](./management-plan-version-comparator/) | 0.2.0 | ✅ stable | conservation-policy | Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens). |
+| [`marine-prosperity-brief`](./marine-prosperity-brief/) | 0.2.0 | ✅ stable | conservation-policy, socioeconomics | This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities. |
+| [`marine-prosperity-publish`](./marine-prosperity-publish/) | 0.2.0 | ✅ stable | conservation-policy, science-communication | This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck). |
+| [`marine-species-analysis`](./marine-species-analysis/) | 0.2.0 | ✅ stable | biodiversity, biogeography | This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps. |
+| [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) | 0.2.0 | ✅ stable | conservation-policy | This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes. |
+| [`reef-ecology-report`](./reef-ecology-report/) | 0.2.0 | ✅ stable | reef-ecology, biodiversity | This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys. |
+| [`sea-surface-temperature`](./sea-surface-temperature/) | 0.2.0 | ✅ stable | oceanography, climate | This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns. |
+| [`skill-author`](./skill-author/) | 0.1.0 | 🧪 experimental | meta | Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules. |
+<!-- END SKILLS TABLE -->
+
+See **[`INDEX.md`](./INDEX.md)** for the full catalog grouped into task views (by domain, data source, and output type), and **[`catalog.json`](./catalog.json)** for the machine-readable manifest. Both are generated automatically — see [Catalog & taxonomy](#catalog--taxonomy).
 
 ## Installation
 
@@ -47,21 +60,49 @@ git checkout main
 cd .claude/skills && git pull
 ```
 
-## Skill Structure
+## Skill structure
 
 Each skill follows the Claude Code skill format:
 
 ```
 <skill-name>/
-├── SKILL.md          # Skill definition, triggers, and workflow instructions
+├── SKILL.md          # Skill definition, triggers, taxonomy, and workflow
 ├── references/       # Domain reference documents (methodology, guides, context)
-└── scripts/          # Helper scripts invoked by the skill
+├── scripts/          # Helper scripts invoked by the skill
+└── assets/           # Templates, logos, fixtures (optional)
 ```
 
-## Contributing
+Only `SKILL.md` is required. Its YAML frontmatter carries the skill `name`, a `description` (with trigger phrases), and the taxonomy fields `domain`, `data-source`, `output-type`, and `tags`.
 
-Skills are developed by the chatMPA team. To propose a new skill or update, open an issue or pull request.
+## Catalog & taxonomy
 
-## Related Repositories
+Every skill is classified along three axes so the library stays searchable as it grows:
+
+- **`domain`** — research field (e.g. `fisheries-ecology`, `oceanography`, `conservation-policy`).
+- **`data-source`** — primary data consumed (e.g. `LTEM`, `OBIS`, `ERDDAP`, `PDF-documents`).
+- **`output-type`** — what the skill produces (`analysis`, `model`, `report`, `audit`, `publishing`).
+
+These fields drive the catalog. **You never edit the catalog by hand:** the skills table above, [`INDEX.md`](./INDEX.md), and [`catalog.json`](./catalog.json) are regenerated by [`tools/build_index.py`](./tools/build_index.py), which a GitHub Action runs and commits on every push to `main`. Edit a skill's `SKILL.md` frontmatter and the catalog follows.
+
+The controlled vocabularies for each axis are defined in **[`CONTRIBUTING.md`](./CONTRIBUTING.md)**.
+
+## Creating a skill
+
+1. Copy [`TEMPLATE/SKILL.md`](./TEMPLATE/SKILL.md) to `<your-skill-name>/SKILL.md`.
+2. Fill in the required frontmatter (`name`, `description`, `domain`, `data-source`, `output-type`, `tags`) and the canonical body sections (Purpose → When to Use → context section → Workflow → References → Success Criteria).
+3. Add any `references/`, `scripts/`, or `assets/` your skill needs.
+4. Validate and preview the catalog locally:
+   ```bash
+   python3 tools/build_index.py
+   ```
+5. Commit only your skill files (not the generated catalog) and open a pull request.
+
+The full canonical format, required components, and contribution checklist live in **[`CONTRIBUTING.md`](./CONTRIBUTING.md)**.
+
+## Quality & governance
+
+Every skill carries a `status` (`experimental` → `stable` → `deprecated`) and passes layered checks before it's trusted: automated structural/security lint and collision detection (`tools/build_index.py`, blocking in CI), then human peer review against a rubric. New skills land as `experimental`; promotion to `stable` requires passing review. See **[`QUALITY.md`](./QUALITY.md)** for the gate model, the peer-review rubric, and the lifecycle policy.
+
+## Related repositories
 
 - [chatmpa-studio](https://github.com/chatmpa-studio-lab/chatmpa-studio) — chatMPA Studio IDE

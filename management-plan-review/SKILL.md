@@ -1,5 +1,11 @@
 ---
 name: management-plan-review
+domain: [conservation-policy, science-communication]
+data-source: [PDF-documents]
+output-type: [report, audit]
+tags: [management-plan, evidence-review, recommendations, mpa, apa]
+status: stable
+version: 0.2.0
 description: Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
 ---
 
@@ -62,13 +68,15 @@ When a recommendation includes numerical figures or targets, mark them with one 
 {
   "plan_pdf": "path/to/management_plan_draft.pdf",
   "evidencia_pdfs": ["path/to/monitoring_report.pdf", "path/to/reef_paper.pdf"],
-  "normas_pdfs": ["path/to/NOM-059.pdf"]
+  "normas_pdfs": ["path/to/NOM-059.pdf"],
+  "output_language": "es"
 }
 ```
 
 - `plan_pdf` (required): management plan under review — official plan in `pdfs_raw/` or draft in any folder. Absolute path to the PDF.
 - `evidencia_pdfs` (≥1): supporting scientific documents. Direct paths, do not pass through `list_amps()`. PDFs only.
 - `normas_pdfs` (optional): applicable official regulations (NOM-059, NOM-022, etc.).
+- `output_language` (optional, default `es`): language of the generated report — `es` (Spanish) or `en` (English). The skill always reasons and processes evidence in English; only the final deliverable and its controlled-vocabulary labels switch language. See the bilingual label sets in `references/vocabulary_types_guide.md`.
 
 ## Protocol — follow all 8 steps in order, skip none
 
@@ -275,7 +283,7 @@ Then present in the chat:
 - Total entries generated and breakdown by Type and by Confidence.
 - Path to the `.docx`.
 
-⚠️ All reports are generated in **Spanish**. Documents in English are processed internally and their findings are reported in Spanish.
+⚠️ The report is generated in the language given by `output_language` (default `es` — **Spanish**). Source documents in any language are processed internally in English; only the final `.docx` deliverable and its controlled-vocabulary labels (Theme, Type, Confidence, numerical labels) are emitted in `output_language`. Use the bilingual label sets in `references/vocabulary_types_guide.md` — do not invent translations.
 
 ---
 

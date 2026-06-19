@@ -1,0 +1,4 @@
+{
+  "_comment": "Pre-existing lint errors accepted as known debt. New errors not listed here still fail the build. Regenerate with: python3 tools/build_index.py --update-baseline",
+  "accepted_errors": []
+}

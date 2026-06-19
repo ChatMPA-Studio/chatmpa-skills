@@ -1,5 +1,11 @@
 ---
 name: sea-surface-temperature
+domain: [oceanography, climate]
+data-source: [ERDDAP]
+output-type: [analysis]
+tags: [sst, thermal-stress, dhw, anomaly, remote-sensing]
+status: stable
+version: 0.2.0
 description: This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns. It provides workflows for accessing remote sensing data, calculating thermal stress metrics (DHW, hotspots), and generating climate-relevant visualizations. Use this skill when the user asks about SST, ocean temperature, thermal stress, ERDDAP data, or satellite oceanography.
 ---
 

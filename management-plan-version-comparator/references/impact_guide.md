@@ -75,3 +75,45 @@ If confusing or contradictory text is deleted and replaced with something cleare
 | Zone or subzone that disappears without replacement | `Weakens` (→ `Inconsistency`) |
 | New section with substantive content | `Strengthens` |
 | Section with substantive content deleted | `Weakens` |
+
+---
+
+## Bilingual label sets (`output_language`)
+
+The skill reasons in English, but the final report is emitted in `output_language` (default `es`). Use **exactly** these label pairs — do not invent translations. The classification rules above are language-independent; only the surface string changes.
+
+### Impact
+
+| English (`en`) | Spanish (`es`) | Color |
+|---|---|---|
+| Strengthens | Fortalece | Green |
+| Neutralizes | Neutraliza | Blue |
+| Weakens | Debilita | Red |
+
+### Change category
+
+| English (`en`) | Spanish (`es`) |
+|---|---|
+| Added | Añadido |
+| Deleted | Eliminado |
+| Modified | Modificado |
+| Inconsistency | Inconsistencia |
+
+### `Modified` subtype
+
+| English (`en`) | Spanish (`es`) |
+|---|---|
+| Modified (Figure) | Modificado (Cifra) |
+| Modified (Wording) | Modificado (Redacción) |
+| Modified (Goal or commitment) | Modificado (Meta o compromiso) |
+| Modified (Zone or subzone) | Modificado (Zona o subzona) |
+| Modified (Protocol or method) | Modificado (Protocolo o método) |
+
+### Alignment
+
+| English (`en`) | Spanish (`es`) |
+|---|---|
+| Confirmed | Confirmada |
+| Uncertain | Incierta |
+
+When `output_language` is `en`, also emit the column headers and the `Comparison`-cell prose in English; when `es`, in Spanish.

@@ -1,5 +1,11 @@
 ---
 name: ltem-biomass-productivity
+domain: [fisheries-ecology]
+data-source: [LTEM]
+output-type: [analysis]
+tags: [biomass, productivity, turnover, environmental-drivers, sst, chlorophyll]
+status: stable
+version: 0.2.0
 description: This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset. It provides workflows for calculating biomass metrics, analyzing productivity patterns, examining SST and chlorophyll relationships, and identifying environmental drivers of fish community structure. Use this skill for production ecology questions, environmental correlation analysis, or climate-fish relationships.
 ---
 
@@ -17,8 +23,10 @@ This skill guides the analysis of fish production ecology and environmental rela
 
 ## Dataset Reference
 
-**File:** `/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv`
-**Metadata:** `/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1_metadata.json`
+**File:** `data/ltem_Ai2_v1.csv`
+**Metadata:** `data/ltem_Ai2_v1_metadata.json`
+
+> Paths shown are relative to your working directory; place your local copy of the LTEM dataset under `data/` (or adjust the paths) before running.
 
 ### Biomass & Productivity Variables
 | Column | Description | Units |
@@ -155,7 +163,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 
 # Load LTEM data
-ltem = pd.read_csv('/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv')
+ltem = pd.read_csv('data/ltem_Ai2_v1.csv')
 
 # Basic biomass statistics
 print("Biomass Statistics:")
@@ -266,7 +274,7 @@ def trophic_biomass_analysis(df):
     """
     Analyze biomass across trophic levels.
     """
-    original_df = pd.read_csv('/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv')
+    original_df = pd.read_csv('data/ltem_Ai2_v1.csv')
 
     # Define trophic groups
     def trophic_group(tl):

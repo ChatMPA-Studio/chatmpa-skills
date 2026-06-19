@@ -1,5 +1,11 @@
 ---
 name: marine-prosperity-brief
+domain: [conservation-policy, socioeconomics]
+data-source: [MPpI]
+output-type: [report]
+tags: [policy-brief, prosperity-index, mppi, docx, scenarios]
+status: stable
+version: 0.2.0
 description: This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities. It runs the analytical pipeline (axis normalization → 30 km buffer extraction → metric aggregation → policy-scenario simulation), assembles a structured markdown brief, produces a two-panel location map with cartopy, and converts everything into a chatMPA-branded DOCX. Use this skill when the user asks to "create a policy brief", "generate an MPI brief", "build a marine prosperity report", "add a municipality to the briefs", or mentions targeted_municipalities.csv. TRIGGER on phrases like "policy brief for <place>", "MPpI brief", "marine prosperity report", "Pp for <community>", "Balance × Level brief", or any request that combines a coastal municipality name with a request to produce a report or assessment.
 ---
 
@@ -131,9 +137,11 @@ Output: `policy_briefs/policy_brief_<slug>.md` per municipality.
 ### 3. Generate the two-panel location map (Python + cartopy)
 
 ```bash
-PYTHONPATH=/Users/fabiofavoretto/Projects/chatmpa-studio/python \
+PYTHONPATH=${CHATMPA_STUDIO}/python \
   python3 policy_briefs/generate_maps.py
 ```
+
+Set `CHATMPA_STUDIO` to your local checkout of the [`chatmpa-studio`](https://github.com/chatmpa-studio-lab/chatmpa-studio) repo (the `python/` subdir holds the `chatmpa` package used by these scripts).
 
 Each map has:
 - **Panel A — Regional context:** Gulf of California extent `[-118, -105, 21, 33]` by default (or custom `regional_extent` for Pacific-coast communities like Bahía de Banderas). All targeted municipalities plotted as gray dots; target shown as a coral star with white halo.
@@ -165,7 +173,7 @@ The map uses `cartopy.feature` Natural Earth at 10m. Brand colors come from `cha
 ### 4. Build the chatMPA-branded DOCX
 
 ```bash
-PYTHONPATH=/Users/fabiofavoretto/Projects/chatmpa-studio/python \
+PYTHONPATH=${CHATMPA_STUDIO}/python \
   python3 policy_briefs/generate_docx.py
 ```
 
@@ -189,7 +197,7 @@ To add a new community:
 To rebuild only one DOCX without touching the consolidated report:
 
 ```python
-PYTHONPATH=/Users/fabiofavoretto/Projects/chatmpa-studio/python python3 -c "
+PYTHONPATH=${CHATMPA_STUDIO}/python python3 -c "
 import sys, os
 sys.path.insert(0, 'policy_briefs'); os.chdir('policy_briefs')
 from generate_docx import build_docx

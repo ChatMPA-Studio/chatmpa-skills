@@ -1,0 +1,58 @@
+name: Build skills catalog
+
+# Regenerates catalog.json, INDEX.md, and the README skills table from each
+# skill's SKILL.md frontmatter. On pull requests it validates only; on push to
+# main it regenerates and commits any changes back.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*/SKILL.md"
+      - "tools/**"
+      - "README.md"
+      - ".github/workflows/build-index.yml"
+  pull_request:
+    paths:
+      - "*/SKILL.md"
+      - "tools/**"
+      - "README.md"
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    # PRs: fail if frontmatter is invalid or the committed catalog is stale.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate skill frontmatter
+        run: python3 tools/build_index.py --validate
+
+  build:
+    # Pushes to main: regenerate and commit the catalog if anything changed.
+    if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Regenerate catalog
+        run: python3 tools/build_index.py
+      - name: Commit changes if any
+        run: |
+          if [ -n "$(git status --porcelain catalog.json INDEX.md README.md)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add catalog.json INDEX.md README.md
+            git commit -m "chore: regenerate skills catalog [skip ci]"
+            git push
+          else
+            echo "Catalog already up to date."
+          fi

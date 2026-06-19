@@ -1,0 +1,52 @@
+# Changelog
+
+All notable changes to the chatMPA Skills library. The format follows
+[Keep a Changelog](https://keepachangelog.com/), and the library uses
+[semantic versioning](https://semver.org/). Individual skills also carry their own
+`version` in `SKILL.md` frontmatter (see [`QUALITY.md`](./QUALITY.md) → Versioning).
+
+## [Unreleased]
+
+## [0.2.0] — 2026-06-18
+
+The standardization, quality, and governance release. All 12 marine-science skills set to
+`version: 0.2.0`, `status: stable`.
+
+### Added
+- **Taxonomy** on every skill: `domain`, `data-source`, `output-type`, `tags` frontmatter,
+  with controlled vocabularies defined in `CONTRIBUTING.md`.
+- **Auto-generated catalog**: `tools/build_index.py` produces `catalog.json`, `INDEX.md`
+  (CRAN-style task views), and the README skills table; a GitHub Action regenerates and
+  commits it on push to `main`.
+- **Quality gates**: tiered linter (blocking errors + advisory warnings), description
+  **collision detection**, secret/script security checks, and a **ratcheting baseline**
+  (`tools/lint_baseline.json`) so new defects fail while known debt is tracked.
+- **Lifecycle**: `status` field (`experimental` → `stable` → `deprecated`).
+- **Per-skill versioning**: required semver `version` field, surfaced in the catalog.
+- **Governance**: `CONTRIBUTING.md`, `QUALITY.md` (gate model + peer-review rubric),
+  `.github/CODEOWNERS`, `TEMPLATE/SKILL.md`, and `tools/review_skill.py`.
+- **`skill-author`** meta-skill that scaffolds and validates new skills.
+- **18 reference documents** authored across 8 skills (production ecology, diversity
+  indices, MPA metrics & statistics, time-series/change-point/regime-shift methods, SDM
+  methods, WDPA fields, reef visualization/report templates, DHW thermal stress, cartopy
+  mapping), plus real `validate_data.sh` and `calculate_dhw.sh` scripts.
+
+### Changed
+- Standardized the two management-plan skills to English and renamed their folders
+  (`management-plan-review`, `management-plan-version-comparator`); added a configurable
+  `output_language` input (default Spanish) with bilingual label sets.
+- Replaced hardcoded personal data paths with relative paths / a `${CHATMPA_STUDIO}` env var.
+- Expanded `README.md` (what chatMPA Studio is, taxonomy, contribution guidance).
+
+### Fixed
+- Resolved 24 broken `references/` and `scripts/` pointers (files that were referenced but
+  never authored); the lint baseline is now empty.
+
+## [0.1.0] — 2026-06-03
+
+### Added
+- Initial library of 10 marine-science skills, later joined by the two management-plan skills.
+
+[Unreleased]: https://github.com/chatmpa-studio-lab/chatmpa-skills/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/chatmpa-studio-lab/chatmpa-skills/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/chatmpa-studio-lab/chatmpa-skills/releases/tag/v0.1.0
