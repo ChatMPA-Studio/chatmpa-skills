@@ -29,11 +29,15 @@ This repository is the Studio's **skills library** — a growing, versioned coll
 <!-- END SKILLS TABLE -->
 
 Browse the catalog three ways, all generated from each skill's frontmatter:
-- **[`index.html`](./index.html)** — a self-contained interactive catalog (live search, filter chips, sortable). Open it directly in a browser; no server required.
+- **Interactive catalog** ([`index.html`](./index.html)) — live search, filter chips, and sortable columns. Once GitHub Pages is enabled it is served live (see below); you can also open the file directly in a browser with no server. **Note:** viewing `index.html` on github.com shows its *source* — GitHub never runs repo HTML; it must be served by Pages or opened locally.
 - **[`INDEX.md`](./INDEX.md)** — the full catalog grouped into task views (by domain, data source, output type).
 - **[`catalog.json`](./catalog.json)** — the machine-readable manifest.
 
 All three are generated automatically — see [Catalog & taxonomy](#catalog--taxonomy).
+
+### Live catalog (GitHub Pages)
+
+The interactive catalog auto-publishes to GitHub Pages on every push to `main` via the *Build skills catalog* workflow. **One-time setup:** in **Settings → Pages**, set **Source: GitHub Actions** (a private repo needs a plan that allows private Pages). The live URL then appears in Settings → Pages and the workflow's `deploy` job — typically `https://chatmpa-studio-lab.github.io/chatmpa-skills/`.
 
 ## Installation
 
