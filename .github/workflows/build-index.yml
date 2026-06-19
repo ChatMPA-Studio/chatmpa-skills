@@ -1,8 +1,8 @@
 name: Build skills catalog
 
-# Regenerates catalog.json, INDEX.md, and the README skills table from each
-# skill's SKILL.md frontmatter. On pull requests it validates only; on push to
-# main it regenerates and commits any changes back.
+# On pull requests: validate frontmatter only.
+# On push to main: regenerate catalog.json / INDEX.md / index.html / the README
+# table, commit any changes, then publish the interactive catalog to GitHub Pages.
 
 on:
   push:
@@ -17,13 +17,20 @@ on:
       - "*/SKILL.md"
       - "tools/**"
       - "README.md"
+  workflow_dispatch:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   validate:
-    # PRs: fail if frontmatter is invalid or the committed catalog is stale.
+    # PRs: fail if frontmatter is invalid or quality checks don't pass.
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +43,7 @@ jobs:
 
   build:
     # Pushes to main: regenerate and commit the catalog if anything changed.
-    if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+    if: github.event_name != 'pull_request' && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,3 +63,25 @@ jobs:
           else
             echo "Catalog already up to date."
           fi
+
+  deploy:
+    # Publish the interactive catalog (index.html) to GitHub Pages.
+    # Requires Pages enabled once: Settings → Pages → Source: GitHub Actions.
+    if: github.event_name != 'pull_request' && github.actor != 'github-actions[bot]'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main          # pick up the freshly-regenerated catalog commit
+      - name: Stage site (catalog + skills, excluding git internals)
+        run: |
+          mkdir _site
+          rsync -a --exclude='.git' --exclude='_site' ./ _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+      - id: deploy
+        uses: actions/deploy-pages@v4
