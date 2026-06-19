@@ -63,3 +63,50 @@ A proposal the reviewer considers valuable but **not supported by any of the pro
 | The recommendation comes from expert knowledge, not from the provided documents | `Uncertain` → force `New idea` |
 
 **Note on `Medium` confidence:** It is not a "filler" level. Use it when the evidence documents the problem but does not propose the specific solution. Example: the evidence reports severe bleaching (verifiable data → `High` for the diagnosis), but the proposed recovery target is calculated by interpolation (→ `Medium` or `[derived]` for the numerical target).
+
+---
+
+## Bilingual label sets (`output_language`)
+
+The skill reasons in English, but the final report is emitted in `output_language` (default `es`). Use **exactly** these label pairs — do not invent translations. The semantics are identical in both languages; only the surface string changes.
+
+### Theme
+
+| English (`en`) | Spanish (`es`) |
+|---|---|
+| Reef ecological diagnosis | Diagnóstico ecológico arrecifal |
+| Climate change | Cambio climático |
+| Coral restoration | Restauración coralina |
+| Ecological monitoring | Monitoreo ecológico |
+| Invasive species | Especies invasoras |
+| Tourism and public use | Turismo y uso público |
+| Governance and funding | Gobernanza y financiamiento |
+| Indicators and evaluation | Indicadores y evaluación |
+
+### Type
+
+| English (`en`) | Spanish (`es`) |
+|---|---|
+| Information gap | Vacío de información |
+| Outdated data | Datos desactualizados |
+| Urgent activity | Actividad urgente |
+| Recommendation | Recomendación |
+| New idea | Idea nueva |
+
+### Confidence
+
+| English (`en`) | Spanish (`es`) |
+|---|---|
+| High | Alta |
+| Medium | Media |
+| Uncertain | Incierta |
+
+### Numerical-value labels
+
+| English (`en`) | Spanish (`es`) |
+|---|---|
+| `[extracted]` | `[extraído]` |
+| `[derived]` | `[derivado]` |
+| `[conservation standard]` | `[estándar de conservación]` |
+
+When `output_language` is `en`, also emit the column headers and the diagnostic prose in English; when `es`, in Spanish. The controlled-vocabulary **semantics and classification rules in this guide are language-independent**.

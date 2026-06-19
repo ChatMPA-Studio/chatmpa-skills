@@ -1,5 +1,11 @@
 ---
 name: marine-species-analysis
+domain: [biodiversity, biogeography]
+data-source: [OBIS]
+output-type: [analysis, model]
+tags: [sdm, occurrence, habitat-suitability, maxent, obis]
+status: stable
+version: 0.2.0
 description: This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps. It provides workflows for downloading occurrence data, preparing environmental predictors, fitting MaxEnt or other SDM algorithms, and visualizing predicted habitat suitability. Use this skill when the user asks about species distributions, biodiversity data, OBIS queries, or habitat modeling.
 ---
 
@@ -420,12 +426,55 @@ Downloads occurrence data from OBIS API.
 ./scripts/download_obis.sh --species "Chelonia mydas" --region caribbean
 ```
 
-### `scripts/prepare_predictors.sh`
-Downloads and prepares environmental predictor layers.
+### Preparing Predictor Layers (inline)
+
+There is no helper script for predictors — prepare them inline. Download marine layers
+from Bio-ORACLE or MARSPEC, then crop and align every layer to the same study extent,
+resolution, and CRS before modeling. See `references/predictor_selection.md` for variable
+choice and collinearity screening.
+
+**Option A — gdalwarp** (fast, for GeoTIFF/raster files). Crop and resample each layer to
+a common grid (extent `-100 10 -60 35`, 0.1° cells):
 
 ```bash
-./scripts/prepare_predictors.sh --extent -100,-60,10,35 --resolution 0.1
+# Repeat per layer (sst.tif, salinity.tif, bathymetry.tif, chlorophyll.tif ...)
+for layer in sst salinity bathymetry chlorophyll; do
+  gdalwarp -overwrite -t_srs EPSG:4326 \
+    -te -100 10 -60 35 -tr 0.1 0.1 -r bilinear \
+    "raw/${layer}.tif" "predictors/${layer}.tif"
+done
 ```
+
+**Option B — Python (rasterio + xarray/rioxarray)** to crop, regrid, and stack into one
+aligned dataset:
+
+```python
+import glob, os
+import rioxarray  # registers .rio accessor
+import xarray as xr
+
+extent = dict(minx=-100, miny=10, maxx=-60, maxy=35)  # [lon_min, lat_min, lon_max, lat_max]
+
+layers = {}
+ref = None
+for path in sorted(glob.glob("raw/*.tif")):
+    name = os.path.splitext(os.path.basename(path))[0]
+    da = rioxarray.open_rasterio(path, masked=True).squeeze("band", drop=True)
+    da = da.rio.clip_box(**extent)                # crop to study extent
+    if ref is None:
+        ref = da                                  # first layer defines target grid
+    else:
+        da = da.rio.reproject_match(ref)          # align CRS/resolution/extent
+    layers[name] = da
+
+predictors = xr.Dataset(layers)                   # all variables on one aligned grid
+predictors = predictors.rename({"x": "longitude", "y": "latitude"})
+predictors.to_netcdf("predictors/env_stack.nc")
+```
+
+Bio-ORACLE layers can also be downloaded in R via the `sdmpredictors` package; MARSPEC
+ships standard rasters. Always confirm all layers share an identical grid before extracting
+values at occurrence points.
 
 ## References
 

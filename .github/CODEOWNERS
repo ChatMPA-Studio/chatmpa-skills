@@ -1,0 +1,15 @@
+# Code owners for chatMPA Skills.
+# Every PR requires review from a maintainer before merge (enforced via branch
+# protection — see QUALITY.md → "Branch protection").
+#
+# Replace the placeholder team/handles below with your real GitHub team or users.
+
+# Default owner for everything in the repo.
+*                         @chatmpa-studio-lab/maintainers
+
+# Quality infrastructure — changes here should get extra scrutiny.
+/tools/                   @chatmpa-studio-lab/maintainers
+/.github/                 @chatmpa-studio-lab/maintainers
+/CONTRIBUTING.md          @chatmpa-studio-lab/maintainers
+/QUALITY.md               @chatmpa-studio-lab/maintainers
+/lint_baseline.json       @chatmpa-studio-lab/maintainers

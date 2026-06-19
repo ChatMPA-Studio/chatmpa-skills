@@ -1,5 +1,11 @@
 ---
 name: ltem-temporal-trends
+domain: [fisheries-ecology]
+data-source: [LTEM]
+output-type: [analysis]
+tags: [time-series, trend-detection, regime-shift, change-point]
+status: stable
+version: 0.2.0
 description: This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024). It provides workflows for time series analysis, trend detection, seasonal patterns, and change point detection. Use this skill when examining long-term changes in fish communities, detecting recovery patterns, or identifying regime shifts.
 ---
 
@@ -17,8 +23,10 @@ This skill guides temporal analysis of fish populations using the Baja Californi
 
 ## Dataset Reference
 
-**File:** `/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv`
-**Metadata:** `/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1_metadata.json`
+**File:** `data/ltem_Ai2_v1.csv`
+**Metadata:** `data/ltem_Ai2_v1_metadata.json`
+
+> Paths shown are relative to your working directory; place your local copy of the LTEM dataset under `data/` (or adjust the paths) before running.
 
 ### Temporal Variables
 | Column | Description |
@@ -121,7 +129,7 @@ from scipy import stats
 from scipy.signal import savgol_filter
 
 # Load LTEM data
-ltem = pd.read_csv('/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv')
+ltem = pd.read_csv('data/ltem_Ai2_v1.csv')
 
 # Create date column
 ltem['date'] = pd.to_datetime(ltem[['year', 'month', 'day']])

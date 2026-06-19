@@ -1,5 +1,11 @@
 ---
 name: mpa-effectiveness-assessment
+domain: [conservation-policy]
+data-source: [generic]
+output-type: [analysis, report]
+tags: [mpa, biodiversity-comparison, conservation-outcomes]
+status: stable
+version: 0.2.0
 description: This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes. It provides workflows for loading MPA boundary data, calculating biodiversity metrics, performing statistical comparisons, and generating assessment reports.
 ---
 
@@ -352,20 +358,60 @@ def distance_to_mpa(point, mpa_boundary):
     return point.distance(mpa_boundary)
 ```
 
-## Scripts Reference
+## Data Access Commands
 
-### `scripts/download_wdpa.sh`
-Downloads WDPA marine data for a region.
+These are inline, ready-to-run commands. No separate scripts are required.
+
+### Download WDPA boundaries (Protected Planet)
+
+The World Database on Protected Areas is distributed through Protected Planet
+(https://www.protectedplanet.net). Download a country or global package
+(shapefile / file-geodatabase / GeoJSON) from the site, or use the
+Protected Planet API to fetch a specific protected area by WDPA ID.
 
 ```bash
-./scripts/download_wdpa.sh --region "Caribbean"
+# Country-level download page (browse and download the WDPA package):
+#   https://www.protectedplanet.net/country/<ISO3>     e.g. .../country/MEX
+
+# Protected Planet API: fetch a protected area record by WDPA ID (needs a free token)
+curl "https://api.protectedplanet.net/v3/protected_areas/<WDPAID>?token=YOUR_TOKEN"
 ```
 
-### `scripts/query_obis.sh`
-Queries OBIS for occurrence data in the study area.
+Then load and filter the downloaded polygons in Python:
+
+```python
+import geopandas as gpd
+wdpa = gpd.read_file("WDPA_polygons.shp")          # or .gdb / .geojson
+marine = wdpa[wdpa["MARINE"].isin(["1", "2"])]      # coastal + marine PAs
+```
+
+See `references/wdpa_fields.md` for the attribute schema.
+
+### Query OBIS occurrences (REST API)
+
+OBIS exposes a public REST API at https://api.obis.org. Query occurrences by
+scientific name, a WKT `geometry` (bounding box or polygon), and a date range.
+Results are JSON.
 
 ```bash
-./scripts/query_obis.sh --bbox "-90,-60,10,30" --year "2010,2024"
+# Bounding box as WKT POLYGON (lon lat order): bbox -90,10 to -60,30
+curl "https://api.obis.org/v3/occurrence?scientificname=Epinephelus%20striatus&geometry=POLYGON((-90%2010,-60%2010,-60%2030,-90%2030,-90%2010))&startdate=2010-01-01&enddate=2024-12-31" \
+  -o occurrences.json
+```
+
+Or query directly from Python with the same parameters:
+
+```python
+import requests, pandas as pd
+params = {
+    "scientificname": "Epinephelus striatus",
+    "geometry": "POLYGON((-90 10,-60 10,-60 30,-90 30,-90 10))",
+    "startdate": "2010-01-01",
+    "enddate": "2024-12-31",
+}
+r = requests.get("https://api.obis.org/v3/occurrence", params=params, timeout=120)
+records = r.json()["results"]
+df = pd.DataFrame(records)   # has decimalLongitude / decimalLatitude / scientificName
 ```
 
 ## References

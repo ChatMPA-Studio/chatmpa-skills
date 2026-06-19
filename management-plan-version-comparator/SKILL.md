@@ -1,5 +1,11 @@
 ---
 name: management-plan-version-comparator
+domain: [conservation-policy]
+data-source: [PDF-documents]
+output-type: [audit]
+tags: [management-plan, version-diff, change-tracking, mpa]
+status: stable
+version: 0.2.0
 description: Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).
 ---
 
@@ -66,13 +72,15 @@ Unless `comparacion_completa: true` is enabled, the skill compares only the plan
 {
   "version_previa": "path/to/approved_plan.pdf",
   "version_nueva": "path/to/draft_revision.pdf",
-  "comparacion_completa": false
+  "comparacion_completa": false,
+  "output_language": "es"
 }
 ```
 
 - `version_previa` (required): approved or previous version. Raw PDF or pre-extracted/structured text.
 - `version_nueva` (required): draft under review. Raw PDF or pre-extracted/structured text.
 - `comparacion_completa` (optional, default `false`): if `true`, compares all document sections, not just the thematic axes.
+- `output_language` (optional, default `es`): language of the generated report — `es` (Spanish) or `en` (English). The skill always reasons and compares in English; only the final deliverable and its controlled-vocabulary labels switch language. See the bilingual label sets in `references/impact_guide.md`.
 
 ## Outputs
 
@@ -194,7 +202,7 @@ Then present in the chat:
 - Number of sections with uncertain alignment pending human review.
 - Path to the `.docx`.
 
-⚠️ All reports are generated in **Spanish**.
+⚠️ The report is generated in the language given by `output_language` (default `es` — **Spanish**). Both source versions are processed internally in English; only the final `.docx` deliverable and its controlled-vocabulary labels (change category, Impact, Alignment) are emitted in `output_language`. Use the bilingual label sets in `references/impact_guide.md` — do not invent translations.
 
 ---
 

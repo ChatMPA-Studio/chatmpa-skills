@@ -1,5 +1,11 @@
 ---
 name: reef-ecology-report
+domain: [reef-ecology, biodiversity]
+data-source: [field-survey]
+output-type: [report]
+tags: [coral-cover, bleaching, monitoring, reef-health]
+status: stable
+version: 0.2.0
 description: This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys. It provides workflows for loading reef monitoring data, calculating key ecological metrics (coral coverage, species diversity, bleaching indices), creating visualizations, and generating comprehensive reports. Use this skill when the user asks to analyze reef data, create ecology reports, or work with coral monitoring datasets.
 ---
 

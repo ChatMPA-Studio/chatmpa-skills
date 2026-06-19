@@ -1,5 +1,11 @@
 ---
 name: ltem-fish-community
+domain: [fisheries-ecology, biodiversity]
+data-source: [LTEM]
+output-type: [analysis, report]
+tags: [diversity, trophic, size-structure, community, shannon]
+status: stable
+version: 0.2.0
 description: This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset. It calculates diversity indices, species composition, size structure, and trophic metrics. Use this skill when analyzing fish assemblages, comparing communities across sites or regions, or generating biodiversity reports from the LTEM database.
 ---
 
@@ -17,8 +23,10 @@ This skill guides the analysis of fish community structure using the Baja Califo
 
 ## Dataset Reference
 
-**File:** `/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv`
-**Metadata:** `/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1_metadata.json`
+**File:** `data/ltem_Ai2_v1.csv`
+**Metadata:** `data/ltem_Ai2_v1_metadata.json`
+
+> Paths shown are relative to your working directory; place your local copy of the LTEM dataset under `data/` (or adjust the paths) before running.
 
 ### Key Columns for Community Analysis
 | Column | Description |
@@ -128,7 +136,7 @@ import seaborn as sns
 from scipy import stats
 
 # Load LTEM data
-ltem = pd.read_csv('/Users/fabiofavoretto/Projects/test/ltem_Ai2_v1.csv')
+ltem = pd.read_csv('data/ltem_Ai2_v1.csv')
 
 print(f"Total records: {len(ltem):,}")
 print(f"Years: {ltem['year'].min()}-{ltem['year'].max()}")
@@ -634,7 +642,7 @@ quality = data_quality_check(ltem)
 - **`references/report_template.py`** - CBMC-format report generator module with `LTEMReportGenerator` class
 - **`references/diversity_indices.md`** - Detailed explanation of diversity metrics
 - **`references/ltem_methodology.md`** - LTEM survey methodology
-- **`references/baja_species_list.md`** - Complete species list with traits
+- The authoritative species list and trait values come from the dataset's own metadata file (`ltem_Ai2_v1_metadata.json`); do not maintain a separate species list here.
 
 ## Success Criteria
 
