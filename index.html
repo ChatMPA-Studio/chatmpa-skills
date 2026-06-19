@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>chatMPA Skills — Catalog</title>
+<style>
+  :root{
+    --bg:#0f2233; --panel:#13293d; --line:#244563; --ink:#e8f1f8; --muted:#9bb6cc;
+    --accent:#2e8bc0; --chip:#1c3a55; --chipOn:#2e8bc0; --ocean:#0a3d62;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink)}
+  header{background:linear-gradient(135deg,#0a3d62,#13293d);padding:24px 28px;border-bottom:1px solid var(--line)}
+  h1{margin:0;font-size:22px;letter-spacing:.2px}
+  .sub{color:var(--muted);margin-top:4px;font-size:13px}
+  main{max-width:1100px;margin:0 auto;padding:20px 28px 60px}
+  .toolbar{display:flex;gap:12px;align-items:center;margin:18px 0 8px;flex-wrap:wrap}
+  #q{flex:1;min-width:220px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);font-size:15px}
+  #q::placeholder{color:var(--muted)}
+  .count{color:var(--muted);font-size:13px;white-space:nowrap}
+  button.clear{background:var(--chip);border:1px solid var(--line);color:var(--ink);
+    padding:9px 12px;border-radius:9px;cursor:pointer;font-size:13px}
+  button.clear:hover{border-color:var(--accent)}
+  .facets{display:flex;flex-direction:column;gap:8px;margin:10px 0 16px}
+  .facet{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .facet .lbl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px;min-width:92px}
+  .chip{background:var(--chip);border:1px solid var(--line);color:var(--ink);border-radius:999px;
+    padding:4px 11px;font-size:12.5px;cursor:pointer;user-select:none}
+  .chip:hover{border-color:var(--accent)}
+  .chip.on{background:var(--chipOn);border-color:var(--chipOn);color:#fff}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);cursor:pointer;white-space:nowrap}
+  th.sortable:hover{color:var(--ink)}
+  th .arrow{opacity:.5;font-size:10px}
+  td.name a{color:#7fc7ef;text-decoration:none;font-weight:600}
+  td.name a:hover{text-decoration:underline}
+  .desc{color:var(--muted);font-size:13px;margin-top:3px;max-width:560px}
+  .tags{margin-top:5px;display:flex;gap:5px;flex-wrap:wrap}
+  .tag{font-size:11px;color:#86a6c2;background:#16304757;border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+  .mini{font-size:11.5px;color:var(--muted)}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;white-space:nowrap;border:1px solid}
+  .b-stable{background:#143a2a;border-color:#1f6b46;color:#7fe0ac}
+  .b-experimental{background:#3a3414;border-color:#7a6e22;color:#e9d77f}
+  .b-deprecated{background:#3a1f14;border-color:#7a3b22;color:#e9a87f}
+  .ver{font-variant-numeric:tabular-nums;color:#bcd4e6}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+  footer{color:var(--muted);font-size:12px;margin-top:24px;text-align:center}
+  a.foot{color:#7fc7ef}
+</style>
+</head>
+<body>
+<header>
+  <h1>chatMPA Skills</h1>
+  <div class="sub">Interactive catalog · <span id="total">13</span> skills · auto-generated from <code>catalog.json</code> — do not edit by hand</div>
+</header>
+<main>
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search name, description, tags…" autocomplete="off">
+    <span class="count"><span id="shown">0</span> shown</span>
+    <button class="clear" id="clear">Clear filters</button>
+  </div>
+  <div class="facets" id="facets"></div>
+  <table>
+    <thead><tr>
+      <th class="sortable" data-col="name">Skill <span class="arrow"></span></th>
+      <th class="sortable" data-col="version">Version <span class="arrow"></span></th>
+      <th class="sortable" data-col="status">Status <span class="arrow"></span></th>
+      <th>Domain · Source · Output</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div class="empty" id="empty" hidden>No skills match these filters.</div>
+  <footer>chatMPA Studio · see <a class="foot" href="./INDEX.md">INDEX.md</a> · <a class="foot" href="./CONTRIBUTING.md">CONTRIBUTING.md</a> · <a class="foot" href="./QUALITY.md">QUALITY.md</a></footer>
+</main>
+<script>
+const SKILLS = [{"name": "ltem-biomass-productivity", "description": "This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset. It provides workflows for calculating biomass metrics, analyzing productivity patterns, examining SST and chlorophyll relationships, and identifying environmental drivers of fish community structure. Use this skill for production ecology questions, environmental correlation analysis, or climate-fish relationships.", "domain": ["fisheries-ecology"], "data-source": ["LTEM"], "output-type": ["analysis"], "tags": ["biomass", "productivity", "turnover", "environmental-drivers", "sst", "chlorophyll"], "status": "stable", "version": "0.2.0", "path": "ltem-biomass-productivity"}, {"name": "ltem-fish-community", "description": "This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset. It calculates diversity indices, species composition, size structure, and trophic metrics. Use this skill when analyzing fish assemblages, comparing communities across sites or regions, or generating biodiversity reports from the LTEM database.", "domain": ["fisheries-ecology", "biodiversity"], "data-source": ["LTEM"], "output-type": ["analysis", "report"], "tags": ["diversity", "trophic", "size-structure", "community", "shannon"], "status": "stable", "version": "0.2.0", "path": "ltem-fish-community"}, {"name": "ltem-mpa-effectiveness", "description": "This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset. It compares fish biomass, diversity, and community structure between Cabo Pulmo National Park (strict protection since 1995) and sites with weak or no protection. Use this skill when evaluating MPA performance, analyzing protection effects, or demonstrating conservation outcomes. TRIGGER on any of these phrases or intents: \"is the MPA working\", \"has protection made a difference\", \"compare Cabo Pulmo\", \"predator biomass recovery\", \"is protection effective\", \"MPA effectiveness\", \"did protection help\", \"compare protected vs unprotected\", \"top predator trends\", \"has Cabo Pulmo recovered\", \"protection impact on fish\", \"LTEM MPA analysis\", \"generate a report\" combined with any mention of Cabo Pulmo or protection.", "domain": ["conservation-policy", "fisheries-ecology"], "data-source": ["LTEM"], "output-type": ["analysis", "report"], "tags": ["mpa", "cabo-pulmo", "protection", "predator-biomass"], "status": "stable", "version": "0.2.0", "path": "ltem-mpa-effectiveness"}, {"name": "ltem-temporal-trends", "description": "This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024). It provides workflows for time series analysis, trend detection, seasonal patterns, and change point detection. Use this skill when examining long-term changes in fish communities, detecting recovery patterns, or identifying regime shifts.", "domain": ["fisheries-ecology"], "data-source": ["LTEM"], "output-type": ["analysis"], "tags": ["time-series", "trend-detection", "regime-shift", "change-point"], "status": "stable", "version": "0.2.0", "path": "ltem-temporal-trends"}, {"name": "management-plan-review", "description": "Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.", "domain": ["conservation-policy", "science-communication"], "data-source": ["PDF-documents"], "output-type": ["report", "audit"], "tags": ["management-plan", "evidence-review", "recommendations", "mpa", "apa"], "status": "stable", "version": "0.2.0", "path": "management-plan-review"}, {"name": "management-plan-version-comparator", "description": "Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).", "domain": ["conservation-policy"], "data-source": ["PDF-documents"], "output-type": ["audit"], "tags": ["management-plan", "version-diff", "change-tracking", "mpa"], "status": "stable", "version": "0.2.0", "path": "management-plan-version-comparator"}, {"name": "marine-prosperity-brief", "description": "This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities. It runs the analytical pipeline (axis normalization → 30 km buffer extraction → metric aggregation → policy-scenario simulation), assembles a structured markdown brief, produces a two-panel location map with cartopy, and converts everything into a chatMPA-branded DOCX. Use this skill when the user asks to \"create a policy brief\", \"generate an MPI brief\", \"build a marine prosperity report\", \"add a municipality to the briefs\", or mentions targeted_municipalities.csv. TRIGGER on phrases like \"policy brief for \u003cplace>\", \"MPpI brief\", \"marine prosperity report\", \"Pp for \u003ccommunity>\", \"Balance × Level brief\", or any request that combines a coastal municipality name with a request to produce a report or assessment.", "domain": ["conservation-policy", "socioeconomics"], "data-source": ["MPpI"], "output-type": ["report"], "tags": ["policy-brief", "prosperity-index", "mppi", "docx", "scenarios"], "status": "stable", "version": "0.2.0", "path": "marine-prosperity-brief"}, {"name": "marine-prosperity-publish", "description": "This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck). It handles authentication, notebook creation, source ingestion (markdown or DOCX content), and Studio polling. Use this skill when the user asks to \"upload the brief to NotebookLM\", \"generate an infographic\", \"publish the policy brief\", \"create an audio overview\", or anything that turns an existing MPpI brief into NotebookLM-hosted content. TRIGGER on phrases like \"send to NotebookLM\", \"make an infographic of the brief\", \"audio overview for \u003ccommunity>\", \"share the brief as a notebook\", or any request that combines an existing policy brief with NotebookLM, infographic, podcast, mind map, or slide deck.", "domain": ["conservation-policy", "science-communication"], "data-source": ["NotebookLM"], "output-type": ["publishing"], "tags": ["notebooklm", "infographic", "audio-overview", "dissemination"], "status": "stable", "version": "0.2.0", "path": "marine-prosperity-publish"}, {"name": "marine-species-analysis", "description": "This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps. It provides workflows for downloading occurrence data, preparing environmental predictors, fitting MaxEnt or other SDM algorithms, and visualizing predicted habitat suitability. Use this skill when the user asks about species distributions, biodiversity data, OBIS queries, or habitat modeling.", "domain": ["biodiversity", "biogeography"], "data-source": ["OBIS"], "output-type": ["analysis", "model"], "tags": ["sdm", "occurrence", "habitat-suitability", "maxent", "obis"], "status": "stable", "version": "0.2.0", "path": "marine-species-analysis"}, {"name": "mpa-effectiveness-assessment", "description": "This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes. It provides workflows for loading MPA boundary data, calculating biodiversity metrics, performing statistical comparisons, and generating assessment reports.", "domain": ["conservation-policy"], "data-source": ["generic"], "output-type": ["analysis", "report"], "tags": ["mpa", "biodiversity-comparison", "conservation-outcomes"], "status": "stable", "version": "0.2.0", "path": "mpa-effectiveness-assessment"}, {"name": "reef-ecology-report", "description": "This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys. It provides workflows for loading reef monitoring data, calculating key ecological metrics (coral coverage, species diversity, bleaching indices), creating visualizations, and generating comprehensive reports. Use this skill when the user asks to analyze reef data, create ecology reports, or work with coral monitoring datasets.", "domain": ["reef-ecology", "biodiversity"], "data-source": ["field-survey"], "output-type": ["report"], "tags": ["coral-cover", "bleaching", "monitoring", "reef-health"], "status": "stable", "version": "0.2.0", "path": "reef-ecology-report"}, {"name": "sea-surface-temperature", "description": "This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns. It provides workflows for accessing remote sensing data, calculating thermal stress metrics (DHW, hotspots), and generating climate-relevant visualizations. Use this skill when the user asks about SST, ocean temperature, thermal stress, ERDDAP data, or satellite oceanography.", "domain": ["oceanography", "climate"], "data-source": ["ERDDAP"], "output-type": ["analysis"], "tags": ["sst", "thermal-stress", "dhw", "anomaly", "remote-sensing"], "status": "stable", "version": "0.2.0", "path": "sea-surface-temperature"}, {"name": "skill-author", "description": "Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules. Use when the user wants to create, add, author, or scaffold a new skill for this repository, or asks how to contribute a skill. Do NOT use to run an existing analysis skill, or to edit the scientific content of a specific skill — only to create or revise a skill's structure.", "domain": ["meta"], "data-source": ["generic"], "output-type": ["tooling"], "tags": ["scaffold", "authoring", "governance", "lint", "template", "versioning"], "status": "experimental", "version": "0.1.0", "path": "skill-author", "author": "chatmpa-studio"}];
+const VOCAB = {"domain": ["fisheries-ecology", "reef-ecology", "biodiversity", "biogeography", "oceanography", "climate", "conservation-policy", "socioeconomics", "science-communication", "meta"], "data-source": ["LTEM", "OBIS", "ERDDAP", "field-survey", "PDF-documents", "MPpI", "NotebookLM", "generic"], "output-type": ["analysis", "model", "report", "audit", "publishing", "tooling"]};
+const STATUS_ORDER = ["experimental","stable","deprecated"];
+const FACETS = [
+  {key:"domain", label:"Domain"},
+  {key:"data-source", label:"Data source"},
+  {key:"output-type", label:"Output"},
+  {key:"status", label:"Status"},
+];
+const sel = {domain:new Set(), "data-source":new Set(), "output-type":new Set(), status:new Set()};
+let q = "", sortCol = "name", sortDir = "asc";
+
+function asList(v){ return Array.isArray(v) ? v : [v]; }
+function semver(v){ const p=(v||"0.0.0").split(".").map(Number); return (p[0]||0)*1e6+(p[1]||0)*1e3+(p[2]||0); }
+function facetValues(key){
+  const present = new Set();
+  SKILLS.forEach(s => asList(s[key]).forEach(v => present.add(v)));
+  const order = VOCAB[key] || (key==="status" ? STATUS_ORDER : null);
+  return order ? order.filter(v=>present.has(v)) : [...present].sort();
+}
+function matches(s){
+  if(q){
+    const hay = (s.name+" "+s.description+" "+(s.tags||[]).join(" ")).toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  for(const key of Object.keys(sel)){
+    if(sel[key].size===0) continue;
+    if(!asList(s[key]).some(v=>sel[key].has(v))) return false;
+  }
+  return true;
+}
+function cmp(a,b){
+  let r=0;
+  if(sortCol==="version") r = semver(a.version)-semver(b.version);
+  else if(sortCol==="status") r = STATUS_ORDER.indexOf(a.status)-STATUS_ORDER.indexOf(b.status);
+  else r = a.name.localeCompare(b.name);
+  if(r===0) r = a.name.localeCompare(b.name);
+  return sortDir==="asc" ? r : -r;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function buildFacets(){
+  const host = document.getElementById("facets");
+  host.innerHTML = "";
+  FACETS.forEach(f=>{
+    const vals = facetValues(f.key);
+    if(!vals.length) return;
+    const row = document.createElement("div"); row.className="facet";
+    row.innerHTML = `<span class="lbl">${f.label}</span>`;
+    vals.forEach(v=>{
+      const c = document.createElement("span");
+      c.className = "chip"+(sel[f.key].has(v)?" on":"");
+      c.textContent = v;
+      c.onclick = ()=>{ sel[f.key].has(v)?sel[f.key].delete(v):sel[f.key].add(v); buildFacets(); render(); };
+      row.appendChild(c);
+    });
+    host.appendChild(row);
+  });
+}
+function badge(st){ return `<span class="badge b-${esc(st)}">${esc(st)}</span>`; }
+function render(){
+  const list = SKILLS.filter(matches).sort(cmp);
+  const tb = document.getElementById("rows");
+  tb.innerHTML = list.map(s=>`
+    <tr>
+      <td class="name"><a href="./${esc(s.path)}/SKILL.md">${esc(s.name)}</a>
+        <div class="desc">${esc(s.description)}</div>
+        <div class="tags">${(s.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div></td>
+      <td class="ver">${esc(s.version||"")}</td>
+      <td>${badge(s.status)}</td>
+      <td class="mini">${asList(s.domain).join(", ")}<br>${asList(s["data-source"]).join(", ")} · ${asList(s["output-type"]).join(", ")}</td>
+    </tr>`).join("");
+  document.getElementById("shown").textContent = list.length;
+  document.getElementById("empty").hidden = list.length>0;
+  document.querySelectorAll("th.sortable").forEach(th=>{
+    const a = th.querySelector(".arrow");
+    a.textContent = th.dataset.col===sortCol ? (sortDir==="asc"?"▲":"▼") : "";
+  });
+}
+document.getElementById("q").addEventListener("input", e=>{ q=e.target.value.trim().toLowerCase(); render(); });
+document.getElementById("clear").addEventListener("click", ()=>{
+  q=""; document.getElementById("q").value="";
+  Object.values(sel).forEach(s=>s.clear()); buildFacets(); render();
+});
+document.querySelectorAll("th.sortable").forEach(th=>{
+  th.addEventListener("click", ()=>{
+    const c=th.dataset.col;
+    if(sortCol===c) sortDir = sortDir==="asc"?"desc":"asc"; else { sortCol=c; sortDir="asc"; }
+    render();
+  });
+});
+buildFacets(); render();
+</script>
+</body>
+</html>

@@ -28,7 +28,12 @@ This repository is the Studio's **skills library** — a growing, versioned coll
 | [`skill-author`](./skill-author/) | 0.1.0 | 🧪 experimental | meta | Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules. |
 <!-- END SKILLS TABLE -->
 
-See **[`INDEX.md`](./INDEX.md)** for the full catalog grouped into task views (by domain, data source, and output type), and **[`catalog.json`](./catalog.json)** for the machine-readable manifest. Both are generated automatically — see [Catalog & taxonomy](#catalog--taxonomy).
+Browse the catalog three ways, all generated from each skill's frontmatter:
+- **[`index.html`](./index.html)** — a self-contained interactive catalog (live search, filter chips, sortable). Open it directly in a browser; no server required.
+- **[`INDEX.md`](./INDEX.md)** — the full catalog grouped into task views (by domain, data source, output type).
+- **[`catalog.json`](./catalog.json)** — the machine-readable manifest.
+
+All three are generated automatically — see [Catalog & taxonomy](#catalog--taxonomy).
 
 ## Installation
 
