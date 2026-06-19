@@ -403,6 +403,195 @@ def render_index_md(skills: list[dict]) -> str:
     return "\n".join(out)
 
 
+HTML_TEMPLATE = r"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>chatMPA Skills — Catalog</title>
+<style>
+  :root{
+    --bg:#0f2233; --panel:#13293d; --line:#244563; --ink:#e8f1f8; --muted:#9bb6cc;
+    --accent:#2e8bc0; --chip:#1c3a55; --chipOn:#2e8bc0; --ocean:#0a3d62;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink)}
+  header{background:linear-gradient(135deg,#0a3d62,#13293d);padding:24px 28px;border-bottom:1px solid var(--line)}
+  h1{margin:0;font-size:22px;letter-spacing:.2px}
+  .sub{color:var(--muted);margin-top:4px;font-size:13px}
+  main{max-width:1100px;margin:0 auto;padding:20px 28px 60px}
+  .toolbar{display:flex;gap:12px;align-items:center;margin:18px 0 8px;flex-wrap:wrap}
+  #q{flex:1;min-width:220px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);font-size:15px}
+  #q::placeholder{color:var(--muted)}
+  .count{color:var(--muted);font-size:13px;white-space:nowrap}
+  button.clear{background:var(--chip);border:1px solid var(--line);color:var(--ink);
+    padding:9px 12px;border-radius:9px;cursor:pointer;font-size:13px}
+  button.clear:hover{border-color:var(--accent)}
+  .facets{display:flex;flex-direction:column;gap:8px;margin:10px 0 16px}
+  .facet{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .facet .lbl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px;min-width:92px}
+  .chip{background:var(--chip);border:1px solid var(--line);color:var(--ink);border-radius:999px;
+    padding:4px 11px;font-size:12.5px;cursor:pointer;user-select:none}
+  .chip:hover{border-color:var(--accent)}
+  .chip.on{background:var(--chipOn);border-color:var(--chipOn);color:#fff}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);cursor:pointer;white-space:nowrap}
+  th.sortable:hover{color:var(--ink)}
+  th .arrow{opacity:.5;font-size:10px}
+  td.name a{color:#7fc7ef;text-decoration:none;font-weight:600}
+  td.name a:hover{text-decoration:underline}
+  .desc{color:var(--muted);font-size:13px;margin-top:3px;max-width:560px}
+  .tags{margin-top:5px;display:flex;gap:5px;flex-wrap:wrap}
+  .tag{font-size:11px;color:#86a6c2;background:#16304757;border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+  .mini{font-size:11.5px;color:var(--muted)}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;white-space:nowrap;border:1px solid}
+  .b-stable{background:#143a2a;border-color:#1f6b46;color:#7fe0ac}
+  .b-experimental{background:#3a3414;border-color:#7a6e22;color:#e9d77f}
+  .b-deprecated{background:#3a1f14;border-color:#7a3b22;color:#e9a87f}
+  .ver{font-variant-numeric:tabular-nums;color:#bcd4e6}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+  footer{color:var(--muted);font-size:12px;margin-top:24px;text-align:center}
+  a.foot{color:#7fc7ef}
+</style>
+</head>
+<body>
+<header>
+  <h1>chatMPA Skills</h1>
+  <div class="sub">Interactive catalog · <span id="total">__COUNT__</span> skills · auto-generated from <code>catalog.json</code> — do not edit by hand</div>
+</header>
+<main>
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search name, description, tags…" autocomplete="off">
+    <span class="count"><span id="shown">0</span> shown</span>
+    <button class="clear" id="clear">Clear filters</button>
+  </div>
+  <div class="facets" id="facets"></div>
+  <table>
+    <thead><tr>
+      <th class="sortable" data-col="name">Skill <span class="arrow"></span></th>
+      <th class="sortable" data-col="version">Version <span class="arrow"></span></th>
+      <th class="sortable" data-col="status">Status <span class="arrow"></span></th>
+      <th>Domain · Source · Output</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div class="empty" id="empty" hidden>No skills match these filters.</div>
+  <footer>chatMPA Studio · see <a class="foot" href="./INDEX.md">INDEX.md</a> · <a class="foot" href="./CONTRIBUTING.md">CONTRIBUTING.md</a> · <a class="foot" href="./QUALITY.md">QUALITY.md</a></footer>
+</main>
+<script>
+const SKILLS = __SKILLS_JSON__;
+const VOCAB = __VOCAB_JSON__;
+const STATUS_ORDER = ["experimental","stable","deprecated"];
+const FACETS = [
+  {key:"domain", label:"Domain"},
+  {key:"data-source", label:"Data source"},
+  {key:"output-type", label:"Output"},
+  {key:"status", label:"Status"},
+];
+const sel = {domain:new Set(), "data-source":new Set(), "output-type":new Set(), status:new Set()};
+let q = "", sortCol = "name", sortDir = "asc";
+
+function asList(v){ return Array.isArray(v) ? v : [v]; }
+function semver(v){ const p=(v||"0.0.0").split(".").map(Number); return (p[0]||0)*1e6+(p[1]||0)*1e3+(p[2]||0); }
+function facetValues(key){
+  const present = new Set();
+  SKILLS.forEach(s => asList(s[key]).forEach(v => present.add(v)));
+  const order = VOCAB[key] || (key==="status" ? STATUS_ORDER : null);
+  return order ? order.filter(v=>present.has(v)) : [...present].sort();
+}
+function matches(s){
+  if(q){
+    const hay = (s.name+" "+s.description+" "+(s.tags||[]).join(" ")).toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  for(const key of Object.keys(sel)){
+    if(sel[key].size===0) continue;
+    if(!asList(s[key]).some(v=>sel[key].has(v))) return false;
+  }
+  return true;
+}
+function cmp(a,b){
+  let r=0;
+  if(sortCol==="version") r = semver(a.version)-semver(b.version);
+  else if(sortCol==="status") r = STATUS_ORDER.indexOf(a.status)-STATUS_ORDER.indexOf(b.status);
+  else r = a.name.localeCompare(b.name);
+  if(r===0) r = a.name.localeCompare(b.name);
+  return sortDir==="asc" ? r : -r;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function buildFacets(){
+  const host = document.getElementById("facets");
+  host.innerHTML = "";
+  FACETS.forEach(f=>{
+    const vals = facetValues(f.key);
+    if(!vals.length) return;
+    const row = document.createElement("div"); row.className="facet";
+    row.innerHTML = `<span class="lbl">${f.label}</span>`;
+    vals.forEach(v=>{
+      const c = document.createElement("span");
+      c.className = "chip"+(sel[f.key].has(v)?" on":"");
+      c.textContent = v;
+      c.onclick = ()=>{ sel[f.key].has(v)?sel[f.key].delete(v):sel[f.key].add(v); buildFacets(); render(); };
+      row.appendChild(c);
+    });
+    host.appendChild(row);
+  });
+}
+function badge(st){ return `<span class="badge b-${esc(st)}">${esc(st)}</span>`; }
+function render(){
+  const list = SKILLS.filter(matches).sort(cmp);
+  const tb = document.getElementById("rows");
+  tb.innerHTML = list.map(s=>`
+    <tr>
+      <td class="name"><a href="./${esc(s.path)}/SKILL.md">${esc(s.name)}</a>
+        <div class="desc">${esc(s.description)}</div>
+        <div class="tags">${(s.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div></td>
+      <td class="ver">${esc(s.version||"")}</td>
+      <td>${badge(s.status)}</td>
+      <td class="mini">${asList(s.domain).join(", ")}<br>${asList(s["data-source"]).join(", ")} · ${asList(s["output-type"]).join(", ")}</td>
+    </tr>`).join("");
+  document.getElementById("shown").textContent = list.length;
+  document.getElementById("empty").hidden = list.length>0;
+  document.querySelectorAll("th.sortable").forEach(th=>{
+    const a = th.querySelector(".arrow");
+    a.textContent = th.dataset.col===sortCol ? (sortDir==="asc"?"▲":"▼") : "";
+  });
+}
+document.getElementById("q").addEventListener("input", e=>{ q=e.target.value.trim().toLowerCase(); render(); });
+document.getElementById("clear").addEventListener("click", ()=>{
+  q=""; document.getElementById("q").value="";
+  Object.values(sel).forEach(s=>s.clear()); buildFacets(); render();
+});
+document.querySelectorAll("th.sortable").forEach(th=>{
+  th.addEventListener("click", ()=>{
+    const c=th.dataset.col;
+    if(sortCol===c) sortDir = sortDir==="asc"?"desc":"asc"; else { sortCol=c; sortDir="asc"; }
+    render();
+  });
+});
+buildFacets(); render();
+</script>
+</body>
+</html>
+"""
+
+
+def render_index_html(skills: list[dict]) -> str:
+    data = [public_record(s) for s in sorted(skills, key=lambda s: s["name"])]
+
+    def inline(obj):
+        # Escape "<" so an embedded "</script>" can never break out of the tag.
+        return json.dumps(obj, ensure_ascii=False).replace("<", "\\u003c")
+
+    return (HTML_TEMPLATE
+            .replace("__SKILLS_JSON__", inline(data))
+            .replace("__VOCAB_JSON__", inline(VOCAB))
+            .replace("__COUNT__", str(len(data))))
+
+
 def render_readme(current: str, table: str) -> str | None:
     if TABLE_BEGIN not in current or TABLE_END not in current:
         return None
@@ -463,6 +652,7 @@ def main() -> int:
     outputs = {
         ROOT / "catalog.json": render_catalog_json(skills),
         ROOT / "INDEX.md": render_index_md(skills),
+        ROOT / "index.html": render_index_html(skills),
     }
     readme_path = ROOT / "README.md"
     readme_status = "no markers"
