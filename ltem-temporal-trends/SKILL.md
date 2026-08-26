@@ -4,6 +4,7 @@ domain: [fisheries-ecology]
 data-source: [LTEM]
 output-type: [analysis]
 tags: [time-series, trend-detection, regime-shift, change-point]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024). It provides workflows for time series analysis, trend detection, seasonal patterns, and change point detection. Use this skill when examining long-term changes in fish communities, detecting recovery patterns, or identifying regime shifts.
@@ -136,7 +137,8 @@ ltem['date'] = pd.to_datetime(ltem[['year', 'month', 'day']])
 
 print(f"Time range: {ltem['date'].min().date()} to {ltem['date'].max().date()}")
 print(f"Years covered: {ltem['year'].nunique()}")
-print(f"Surveys per year:\n{ltem.groupby('year')['reef'].nunique()}")
+print(f"Surveys per year:
+{ltem.groupby('year')['reef'].nunique()}")
 ```
 
 ### 2. Aggregate Annual Time Series
@@ -240,7 +242,8 @@ def analyze_trend(time_series, value_col, time_col='year'):
 
     sen_slope = sens_slope(y, x)
 
-    print(f"\nTrend Analysis for {value_col}:")
+    print(f"
+Trend Analysis for {value_col}:")
     print(f"  Linear regression: slope={slope:.4f}/year, R²={r_value**2:.3f}, p={p_value:.4f}")
     print(f"  Mann-Kendall: S={s}, Z={z:.2f}, p={p_mk:.4f}")
     print(f"  Sen's slope: {sen_slope:.4f}/year")
@@ -293,7 +296,8 @@ def compare_regional_trends(df):
         })
 
     results_df = pd.DataFrame(trend_results)
-    print("\nRegional Trend Comparison:")
+    print("
+Regional Trend Comparison:")
     print(results_df.sort_values('slope', ascending=False))
 
     return results_df
@@ -331,7 +335,8 @@ def detect_change_points(time_series, value_col, method='pettitt'):
         # P-value approximation
         p_value = 2 * np.exp(-6 * K**2 / (n**3 + n**2))
 
-        print(f"\nPettitt Test for {value_col}:")
+        print(f"
+Pettitt Test for {value_col}:")
         print(f"  Change point detected: {change_year}")
         print(f"  Test statistic K: {K:.0f}")
         print(f"  P-value: {p_value:.4f}")
@@ -366,7 +371,8 @@ def detect_change_points(time_series, value_col, method='pettitt'):
         t_change = np.argmax(np.abs(cusum))
         change_year = years[t_change]
 
-        print(f"\nCUSUM Analysis for {value_col}:")
+        print(f"
+CUSUM Analysis for {value_col}:")
         print(f"  Change point: {change_year}")
         print(f"  CUSUM range: {cusum_range:.2f}")
         print(f"  95% CI threshold: {ci_95:.2f}")
@@ -398,12 +404,14 @@ def analyze_seasonal_patterns(df):
                        'species_richness', 'n_observations']
     monthly = monthly.reset_index()
 
-    print("\nSeasonal Patterns (by Month):")
+    print("
+Seasonal Patterns (by Month):")
     print(monthly)
 
     # Peak month
     peak_biomass = monthly.loc[monthly['biomass_mean'].idxmax(), 'month']
-    print(f"\nPeak biomass month: {peak_biomass}")
+    print(f"
+Peak biomass month: {peak_biomass}")
 
     return monthly
 
@@ -439,7 +447,8 @@ def moving_window_analysis(time_series, value_col, window=5):
     return ts
 
 smoothed_ts = moving_window_analysis(annual_ts, 'biomass_per_reef', window=5)
-print("\nMoving Window Analysis:")
+print("
+Moving Window Analysis:")
 print(smoothed_ts[['year', 'biomass_per_reef', 'ma', 'pct_change', 'trend_direction']].tail(10))
 ```
 
