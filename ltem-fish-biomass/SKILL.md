@@ -60,10 +60,10 @@ acquire:
     required: false
     provider:
       server: ltem
-      # functional_group_biomass no existe aún en ltem-db-mcp.
-      # Sustituto disponible: trophic_biomass(region) en tools/biomass.py.
-      # Pendiente acordar con ingeniería cuál usar y si acepta los mismos filtros.
       tool: functional_group_biomass
+      params:
+        region: region
+        year:   year
     columns:
       - functional_group
       - value
