@@ -1,0 +1,19 @@
+{
+  "id": "cabo_pulmo_ppr_lutjanus_argentiventris",
+  "status": "PENDING",
+  "description": "PPR for Lutjanus argentiventris at Cabo Pulmo (state: BAJA CALIFORNIA SUR, office: CABO SAN LUCAS), full available time series. Must be verified against a direct calculation in R by Edu/Fabio before use.",
+  "amp_name": "Cabo Pulmo",
+  "state_filter": "BAJA CALIFORNIA SUR",
+  "office_filter": "CABO SAN LUCAS",
+  "species": "Lutjanus argentiventris",
+  "ww_to_carbon": 9,
+  "te": 0.1,
+  "years": null,
+  "expected_ppr_kg_c_by_year": null,
+  "tolerance_kg_c": 0.01,
+  "tl_source": null,
+  "trophic_level_used": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until human-verified values are provided."
+}
