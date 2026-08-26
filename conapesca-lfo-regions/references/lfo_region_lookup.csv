@@ -1,0 +1,82 @@
+"nombre_oficina_canonico","region_id","region_name","lat","lon"
+"BAHIA KINO",1,"Golfo de California Norte",28.822778,-111.940833
+"CD. OBREGON",1,"Golfo de California Norte",27.489167,-109.935
+"GOLFO DE SANTA CLARA",1,"Golfo de California Norte",31.686667,-114.499722
+"GUAYMAS",1,"Golfo de California Norte",27.918333,-110.898889
+"HERMOSILLO",1,"Golfo de California Norte",28.639722,-111.526389
+"MEXICALI",1,"Golfo de California Norte",32.663333,-115.467778
+"PUERTO PENASCO",1,"Golfo de California Norte",31.316667,-113.536944
+"SAN FELIPE",1,"Golfo de California Norte",31.0275,-114.835278
+"BAHIA ASUNCION",2,"Pacifico Baja Norte",27.140278,-114.295833
+"BAHIA DE LOS ANGELES",2,"Pacifico Baja Norte",27.917176,-114.549973
+"BAHIA TORTUGAS",2,"Pacifico Baja Norte",27.691667,-114.895833
+"ENSENADA",2,"Pacifico Baja Norte",31.857778,-116.605833
+"GUERRERO NEGRO",2,"Pacifico Baja Norte",27.958889,-114.056111
+"ISLA CEDROS",2,"Pacifico Baja Norte",28.095556,-115.192778
+"NOGALES",2,"Pacifico Baja Norte",31.318611,-110.945833
+"PUERTO LIBERTAD",2,"Pacifico Baja Norte",29.904167,-112.683056
+"PUNTA ABREOJOS",2,"Pacifico Baja Norte",26.714444,-113.573889
+"SAN QUINTIN",2,"Pacifico Baja Norte",30.443333,-115.991111
+"SANTA ROSALIA",2,"Pacifico Baja Norte",27.338889,-112.266944
+"TIJUANA",2,"Pacifico Baja Norte",32.534722,-117.043611
+"VILLA DE JESUS MARIA",2,"Pacifico Baja Norte",28.281389,-114.001111
+"CABO SAN LUCAS",3,"Golfo de California Sur y BCS",22.889722,-109.915556
+"CD. CONSTITUCION",3,"Golfo de California Sur y BCS",25.032222,-111.670278
+"CULIACAN",3,"Golfo de California Sur y BCS",24.791944,-107.398056
+"EL ROSARIO",3,"Golfo de California Sur y BCS",26.170833,-107.867778
+"GUASAVE",3,"Golfo de California Sur y BCS",25.573333,-108.470278
+"HUATABAMPO",3,"Golfo de California Sur y BCS",26.8275,-109.642222
+"LA PAZ",3,"Golfo de California Sur y BCS",24.142222,-110.310833
+"LA REFORMA",3,"Golfo de California Sur y BCS",25.081111,-108.055556
+"LORETO",3,"Golfo de California Sur y BCS",26.012778,-111.343333
+"LOS MOCHIS",3,"Golfo de California Sur y BCS",25.793611,-108.996944
+"NAVOLATO",3,"Golfo de California Sur y BCS",24.765556,-107.703056
+"PTO. ADOLFO LOPEZ MATEOS",3,"Golfo de California Sur y BCS",25.196389,-112.111389
+"SAN CARLOS",3,"Golfo de California Sur y BCS",24.788056,-112.105278
+"TOPOLOBAMPO",3,"Golfo de California Sur y BCS",25.629722,-109.055833
+"BARRA DE NAVIDAD",4,"Pacifico Nayarit-Guerrero",19.208056,-104.680556
+"CRUZ DE HUANACAXTLE",4,"Pacifico Nayarit-Guerrero",20.749167,-105.382222
+"EL RANCHITO (COAHUAYANA)",4,"Pacifico Nayarit-Guerrero",18.687488,-103.664074
+"ESCUINAPA",4,"Pacifico Nayarit-Guerrero",22.833333,-105.778056
+"LAZARO CARDENAS",4,"Pacifico Nayarit-Guerrero",17.959875,-102.173618
+"MANZANILLO",4,"Pacifico Nayarit-Guerrero",19.050539,-104.317132
+"MAZATLAN",4,"Pacifico Nayarit-Guerrero",23.241389,-106.409722
+"PENITA DE JALTEMBA",4,"Pacifico Nayarit-Guerrero",21.038611,-105.249167
+"PUERTO VALLARTA",4,"Pacifico Nayarit-Guerrero",20.613611,-105.227222
+"ROSA MORADA",4,"Pacifico Nayarit-Guerrero",22.122222,-105.203889
+"SAN BLAS",4,"Pacifico Nayarit-Guerrero",21.750278,-105.178333
+"SANTIAGO IXCUINTLA",4,"Pacifico Nayarit-Guerrero",21.811389,-105.206667
+"TECOMAN",4,"Pacifico Nayarit-Guerrero",18.912939,-103.872116
+"TECUALA",4,"Pacifico Nayarit-Guerrero",22.397222,-105.457222
+"TUXPAN",4,"Pacifico Nayarit-Guerrero",21.943611,-105.299444
+"ZIHUATANEJO",4,"Pacifico Nayarit-Guerrero",17.644351,-101.550381
+"CHAPALA",5,"Lagos y rios interiores",20.293333,-103.189722
+"CUITZEO",5,"Lagos y rios interiores",19.969174,-101.139975
+"EL FUERTE",5,"Lagos y rios interiores",26.416389,-108.617778
+"GUADALAJARA",5,"Lagos y rios interiores",20.676389,-103.342222
+"OCOTLAN",5,"Lagos y rios interiores",20.351389,-102.768056
+"PATZCUARO",5,"Lagos y rios interiores",19.516411,-101.609707
+"SAHUAYO (COJUMATLAN)",5,"Lagos y rios interiores",20.117702,-102.851356
+"TEMAZCAL",5,"Lagos y rios interiores",18.23723,-96.404575
+"ZITACUARO",5,"Lagos y rios interiores",19.435872,-100.355484
+"ACAPULCO",6,"Pacifico Central",16.863794,-99.881614
+"CD. ALTAMIRANO",6,"Pacifico Central",18.358892,-100.669463
+"COLIMA",6,"Pacifico Central",19.243311,-103.724753
+"NUEVA ITALIA",6,"Pacifico Central",19.032436,-102.088555
+"OAXACA",6,"Pacifico Central",17.059417,-96.721622
+"PLAYAS DE CATAZAJA",6,"Pacifico Central",16.767796,-93.166485
+"RAUDALES MALPASO",6,"Pacifico Central",17.189973,-93.603965
+"TECPAN DE GALEANA",6,"Pacifico Central",17.21954,-100.629705
+"TEPIC",6,"Pacifico Central",21.516389,-104.894167
+"TUXTLA GUTIERREZ",6,"Pacifico Central",16.747862,-93.112589
+"ACAPETAHUA",7,"Pacifico Sur (Oaxaca-Chiapas)",15.27953,-92.690643
+"ARRIAGA",7,"Pacifico Sur (Oaxaca-Chiapas)",16.235001,-93.895556
+"JUCHITAN",7,"Pacifico Sur (Oaxaca-Chiapas)",16.43291,-95.018051
+"MARQUELIA  CRUZ GRANDE",7,"Pacifico Sur (Oaxaca-Chiapas)",16.581536,-98.8114
+"PIJIJIAPAN",7,"Pacifico Sur (Oaxaca-Chiapas)",15.685171,-93.212254
+"PINOTEPA NACIONAL",7,"Pacifico Sur (Oaxaca-Chiapas)",16.337992,-98.050125
+"PUERTO ANGEL",7,"Pacifico Sur (Oaxaca-Chiapas)",15.666667,-96.490556
+"PUERTO ESCONDIDO",7,"Pacifico Sur (Oaxaca-Chiapas)",15.865535,-97.069447
+"PUERTO MADERO",7,"Pacifico Sur (Oaxaca-Chiapas)",14.92055,-92.374741
+"SALINA CRUZ",7,"Pacifico Sur (Oaxaca-Chiapas)",16.180932,-95.193726
+"TONALA",7,"Pacifico Sur (Oaxaca-Chiapas)",16.084117,-93.755515
