@@ -1,0 +1,25 @@
+{
+  "skill_name": "conapesca-lfo-ca",
+  "skill_version": "0.1.0",
+  "status": "PENDING",
+  "description": "Reference case: CA ordination of NW Mexico LFOs (2001–2010, tax_resolution='nombre_especie'). Expected to reproduce spatial structure comparable to Erisman et al. (2011) — MLG > 3 SD, k_optimal_kl near 8, CA axis 2 correlating positively with latitude and negatively with longitude.",
+  "reference_case": {
+    "year_min": 2001,
+    "year_max": 2010,
+    "tax_resolution": "nombre_especie",
+    "expected_mlg": null,
+    "expected_k_optimal_kl": null,
+    "expected_ca2_vs_lat_r": null,
+    "expected_ca2_vs_lon_r": null,
+    "tolerance": null,
+    "verified_by": null,
+    "verified_date": null,
+    "comparison_note": "Erisman et al. (2011) used 2001-2005 data, regional common names, CANOCO v4.5. Direct numerical comparison may not be possible, but spatial gradient pattern should be qualitatively consistent."
+  },
+  "pending_params": {
+    "year_min": "Verify with Edu/Fabio — 2001 may need adjustment based on data availability",
+    "year_max": "Verify with Edu/Fabio — 2010 chosen to avoid documented depletion effects",
+    "temporal_resolution": "Verify with Edu/Fabio — mean annual vs period totals"
+  },
+  "note": "Do not fill expected values with skill output. Only mark VERIFIED after human review against an independent analysis in R."
+}
