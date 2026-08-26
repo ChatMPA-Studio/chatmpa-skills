@@ -4,6 +4,7 @@ domain: [fisheries-ecology]
 data-source: [LTEM]
 output-type: [analysis]
 tags: [biomass, productivity, turnover, environmental-drivers, sst, chlorophyll]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset. It provides workflows for calculating biomass metrics, analyzing productivity patterns, examining SST and chlorophyll relationships, and identifying environmental drivers of fish community structure. Use this skill for production ecology questions, environmental correlation analysis, or climate-fish relationships.
@@ -168,11 +169,13 @@ ltem = pd.read_csv('data/ltem_Ai2_v1.csv')
 # Basic biomass statistics
 print("Biomass Statistics:")
 print(ltem['biomass'].describe())
-print(f"\nTotal biomass in dataset: {ltem['biomass'].sum():.2f} ton/ha")
+print(f"
+Total biomass in dataset: {ltem['biomass'].sum():.2f} ton/ha")
 print(f"Mean biomass per observation: {ltem['biomass'].mean():.4f} ton/ha")
 
 # Environmental range
-print(f"\nSST range: {ltem['mean_sst'].min():.1f} - {ltem['mean_sst'].max():.1f} °C")
+print(f"
+SST range: {ltem['mean_sst'].min():.1f} - {ltem['mean_sst'].max():.1f} °C")
 print(f"Chl-a range: {ltem['mean_chl'].min():.2f} - {ltem['mean_chl'].max():.2f} mg/m³")
 ```
 
@@ -217,7 +220,8 @@ def aggregate_biomass(df):
     return survey_data
 
 surveys = aggregate_biomass(ltem)
-print(f"\nTotal surveys: {len(surveys)}")
+print(f"
+Total surveys: {len(surveys)}")
 print(f"Mean survey biomass: {surveys['total_biomass'].mean():.2f} ton/ha")
 ```
 
@@ -246,14 +250,16 @@ def analyze_biomass_patterns(df):
         'total_prod': 'mean'
     }).round(2)
 
-    print("\nBiomass by Depth:")
+    print("
+Biomass by Depth:")
     print(depth_biomass)
 
     # Statistical test: Region effect
     groups = [group['total_biomass'].values
               for name, group in df.groupby('region')]
     stat, p_value = stats.kruskal(*groups)
-    print(f"\nKruskal-Wallis (Region effect): H={stat:.2f}, p={p_value:.4e}")
+    print(f"
+Kruskal-Wallis (Region effect): H={stat:.2f}, p={p_value:.4e}")
 
     # Depth effect
     shallow = df[df['depth'] == 'Shallow']['total_biomass']
@@ -306,7 +312,8 @@ def trophic_biomass_analysis(df):
     print(trophic_data.sort_values('total_biomass', ascending=False).round(2))
 
     # Trophic efficiency
-    print(f"\nMean Turnover by Trophic Group:")
+    print(f"
+Mean Turnover by Trophic Group:")
     print(original_df.groupby('trophic_group')['turnover'].mean().round(3))
 
     return trophic_data
@@ -396,7 +403,8 @@ def analyze_sst_biomass(df):
     model.fit(X, y)
     r_squared = model.score(X, y)
 
-    print(f"\nLinear Model: Biomass = {model.coef_[0]:.3f} * SST + {model.intercept_:.3f}")
+    print(f"
+Linear Model: Biomass = {model.coef_[0]:.3f} * SST + {model.intercept_:.3f}")
     print(f"R² = {r_squared:.3f}")
 
     # Check for non-linear relationship
@@ -412,7 +420,8 @@ def analyze_sst_biomass(df):
         ss_tot = np.sum((clean_df['total_biomass'] - clean_df['total_biomass'].mean())**2)
         r2_quad = 1 - (ss_res / ss_tot)
 
-        print(f"\nQuadratic Model: R² = {r2_quad:.3f}")
+        print(f"
+Quadratic Model: R² = {r2_quad:.3f}")
         if r2_quad > r_squared:
             print("  Non-linear relationship detected - quadratic fits better")
             optimal_sst = -popt[1] / (2 * popt[0])
@@ -452,14 +461,16 @@ def analyze_chl_productivity(df):
 
     # Correlation
     rho, p = stats.spearmanr(clean_df['mean_chl'], clean_df['total_prod'])
-    print(f"\nChl-a vs Productivity: Spearman ρ = {rho:.3f}, p = {p:.4f}")
+    print(f"
+Chl-a vs Productivity: Spearman ρ = {rho:.3f}, p = {p:.4f}")
 
     # Log-log relationship (common in productivity studies)
     log_chl = np.log10(clean_df['mean_chl'] + 0.01)
     log_prod = np.log10(clean_df['total_prod'] + 0.01)
 
     slope, intercept, r, p, se = stats.linregress(log_chl, log_prod)
-    print(f"\nLog-Log Model: log(Prod) = {slope:.3f} * log(Chl) + {intercept:.3f}")
+    print(f"
+Log-Log Model: log(Prod) = {slope:.3f} * log(Chl) + {intercept:.3f}")
     print(f"R² = {r**2:.3f}")
 
     return chl_prod
@@ -494,7 +505,8 @@ def latitudinal_analysis(df):
     rho_bio, p_bio = stats.spearmanr(df['latitude'], df['total_biomass'])
     rho_rich, p_rich = stats.spearmanr(df['latitude'], df['species_richness'])
 
-    print(f"\nLatitude correlations:")
+    print(f"
+Latitude correlations:")
     print(f"  Biomass: ρ = {rho_bio:.3f}, p = {p_bio:.4f}")
     print(f"  Richness: ρ = {rho_rich:.3f}, p = {p_rich:.4f}")
 
