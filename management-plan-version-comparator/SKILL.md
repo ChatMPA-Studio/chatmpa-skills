@@ -4,6 +4,7 @@ domain: [conservation-policy]
 data-source: [PDF-documents]
 output-type: [audit]
 tags: [management-plan, version-diff, change-tracking, mpa]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).
