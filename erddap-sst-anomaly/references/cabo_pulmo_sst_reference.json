@@ -1,0 +1,13 @@
+{
+  "id": "cabo_pulmo_sst_2023_local",
+  "status": "PENDING",
+  "description": "Mean annual SST anomaly for Cabo Pulmo (local scale) for a year to be defined. Must be verified against direct OISST query or published records by Edu/Fabio before use.",
+  "amp_name": "Cabo Pulmo",
+  "scale": "local",
+  "year": null,
+  "expected_anomalia_media": null,
+  "tolerance_c": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until human-verified value is provided."
+}
