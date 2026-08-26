@@ -1,0 +1,16 @@
+{
+  "skill_name": "conapesca-lfo-regions",
+  "skill_version": "0.1.0",
+  "status": "PENDING",
+  "description": "Reference case: k-means clustering of NW Mexico LFOs on CA scores from conapesca-lfo-ca (2001–2010, nombre_especie). Expected to produce k regions consistent with Erisman et al. (2011) when k=8, with industrial ports (Ensenada, Mazatlán, Guaymas) separated from regional clusters.",
+  "reference_case": {
+    "k": null,
+    "expected_lookup": null,
+    "expected_wk_final": null,
+    "tolerance": "exact match (deterministic with seed 42)",
+    "verified_by": null,
+    "verified_date": null,
+    "comparison_note": "Erisman et al. (2011) used Statistica v4.5 k-means on CANOCO CA scores; direct numerical comparison not possible. Verify qualitative consistency: industrial ports cluster separately, 5 geographic regions emerge."
+  },
+  "note": "Do not fill expected_lookup with skill output. Only mark VERIFIED after human review against an independent k-means run on the same CA scores."
+}
