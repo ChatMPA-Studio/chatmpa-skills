@@ -1,0 +1,11 @@
+{
+  "status": "PENDING",
+  "note": "Reference value to be verified by Edu/Fabio against direct MODIS query or published NPP estimates for Cabo Pulmo.",
+  "skill": "erddap-pp",
+  "site": "Cabo Pulmo",
+  "scale": "local",
+  "year": null,
+  "pp_geomean_mgcm2d": null,
+  "anomalia_log10": null,
+  "tolerance_log10": null
+}
