@@ -4,6 +4,10 @@
     {
       "name": "ltem-biomass-productivity",
       "description": "This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset. It provides workflows for calculating biomass metrics, analyzing productivity patterns, examining SST and chlorophyll relationships, and identifying environmental drivers of fish community structure. Use this skill for production ecology questions, environmental correlation analysis, or climate-fish relationships.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "ltem-biomass-productivity",
       "domain": [
         "fisheries-ecology"
       ],
@@ -22,12 +26,15 @@
         "chlorophyll"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "ltem-biomass-productivity"
+      "version": "0.2.0"
     },
     {
       "name": "ltem-fish-community",
       "description": "This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset. It calculates diversity indices, species composition, size structure, and trophic metrics. Use this skill when analyzing fish assemblages, comparing communities across sites or regions, or generating biodiversity reports from the LTEM database.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "ltem-fish-community",
       "domain": [
         "fisheries-ecology",
         "biodiversity"
@@ -47,12 +54,15 @@
         "shannon"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "ltem-fish-community"
+      "version": "0.2.0"
     },
     {
       "name": "ltem-mpa-effectiveness",
       "description": "This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset. It compares fish biomass, diversity, and community structure between Cabo Pulmo National Park (strict protection since 1995) and sites with weak or no protection. Use this skill when evaluating MPA performance, analyzing protection effects, or demonstrating conservation outcomes. TRIGGER on any of these phrases or intents: \"is the MPA working\", \"has protection made a difference\", \"compare Cabo Pulmo\", \"predator biomass recovery\", \"is protection effective\", \"MPA effectiveness\", \"did protection help\", \"compare protected vs unprotected\", \"top predator trends\", \"has Cabo Pulmo recovered\", \"protection impact on fish\", \"LTEM MPA analysis\", \"generate a report\" combined with any mention of Cabo Pulmo or protection.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "ltem-mpa-effectiveness",
       "domain": [
         "conservation-policy",
         "fisheries-ecology"
@@ -71,12 +81,15 @@
         "predator-biomass"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "ltem-mpa-effectiveness"
+      "version": "0.2.0"
     },
     {
       "name": "ltem-temporal-trends",
       "description": "This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024). It provides workflows for time series analysis, trend detection, seasonal patterns, and change point detection. Use this skill when examining long-term changes in fish communities, detecting recovery patterns, or identifying regime shifts.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "ltem-temporal-trends",
       "domain": [
         "fisheries-ecology"
       ],
@@ -93,12 +106,15 @@
         "change-point"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "ltem-temporal-trends"
+      "version": "0.2.0"
     },
     {
       "name": "management-plan-review",
       "description": "Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "management-plan-review",
       "domain": [
         "conservation-policy",
         "science-communication"
@@ -118,12 +134,15 @@
         "apa"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "management-plan-review"
+      "version": "0.2.0"
     },
     {
       "name": "management-plan-version-comparator",
       "description": "Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "management-plan-version-comparator",
       "domain": [
         "conservation-policy"
       ],
@@ -140,12 +159,15 @@
         "mpa"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "management-plan-version-comparator"
+      "version": "0.2.0"
     },
     {
       "name": "marine-prosperity-brief",
       "description": "This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities. It runs the analytical pipeline (axis normalization → 30 km buffer extraction → metric aggregation → policy-scenario simulation), assembles a structured markdown brief, produces a two-panel location map with cartopy, and converts everything into a chatMPA-branded DOCX. Use this skill when the user asks to \"create a policy brief\", \"generate an MPI brief\", \"build a marine prosperity report\", \"add a municipality to the briefs\", or mentions targeted_municipalities.csv. TRIGGER on phrases like \"policy brief for <place>\", \"MPpI brief\", \"marine prosperity report\", \"Pp for <community>\", \"Balance × Level brief\", or any request that combines a coastal municipality name with a request to produce a report or assessment.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "marine-prosperity-brief",
       "domain": [
         "conservation-policy",
         "socioeconomics"
@@ -164,12 +186,15 @@
         "scenarios"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "marine-prosperity-brief"
+      "version": "0.2.0"
     },
     {
       "name": "marine-prosperity-publish",
       "description": "This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck). It handles authentication, notebook creation, source ingestion (markdown or DOCX content), and Studio polling. Use this skill when the user asks to \"upload the brief to NotebookLM\", \"generate an infographic\", \"publish the policy brief\", \"create an audio overview\", or anything that turns an existing MPpI brief into NotebookLM-hosted content. TRIGGER on phrases like \"send to NotebookLM\", \"make an infographic of the brief\", \"audio overview for <community>\", \"share the brief as a notebook\", or any request that combines an existing policy brief with NotebookLM, infographic, podcast, mind map, or slide deck.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "marine-prosperity-publish",
       "domain": [
         "conservation-policy",
         "science-communication"
@@ -187,12 +212,15 @@
         "dissemination"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "marine-prosperity-publish"
+      "version": "0.2.0"
     },
     {
       "name": "marine-species-analysis",
       "description": "This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps. It provides workflows for downloading occurrence data, preparing environmental predictors, fitting MaxEnt or other SDM algorithms, and visualizing predicted habitat suitability. Use this skill when the user asks about species distributions, biodiversity data, OBIS queries, or habitat modeling.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "marine-species-analysis",
       "domain": [
         "biodiversity",
         "biogeography"
@@ -212,12 +240,15 @@
         "obis"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "marine-species-analysis"
+      "version": "0.2.0"
     },
     {
       "name": "mpa-effectiveness-assessment",
       "description": "This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes. It provides workflows for loading MPA boundary data, calculating biodiversity metrics, performing statistical comparisons, and generating assessment reports.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "mpa-effectiveness-assessment",
       "domain": [
         "conservation-policy"
       ],
@@ -234,12 +265,15 @@
         "conservation-outcomes"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "mpa-effectiveness-assessment"
+      "version": "0.2.0"
     },
     {
       "name": "reef-ecology-report",
       "description": "This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys. It provides workflows for loading reef monitoring data, calculating key ecological metrics (coral coverage, species diversity, bleaching indices), creating visualizations, and generating comprehensive reports. Use this skill when the user asks to analyze reef data, create ecology reports, or work with coral monitoring datasets.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "reef-ecology-report",
       "domain": [
         "reef-ecology",
         "biodiversity"
@@ -257,12 +291,15 @@
         "reef-health"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "reef-ecology-report"
+      "version": "0.2.0"
     },
     {
       "name": "sea-surface-temperature",
       "description": "This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns. It provides workflows for accessing remote sensing data, calculating thermal stress metrics (DHW, hotspots), and generating climate-relevant visualizations. Use this skill when the user asks about SST, ocean temperature, thermal stress, ERDDAP data, or satellite oceanography.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "sea-surface-temperature",
       "domain": [
         "oceanography",
         "climate"
@@ -281,12 +318,15 @@
         "remote-sensing"
       ],
       "status": "stable",
-      "version": "0.2.0",
-      "path": "sea-surface-temperature"
+      "version": "0.2.0"
     },
     {
       "name": "skill-author",
       "description": "Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules. Use when the user wants to create, add, author, or scaffold a new skill for this repository, or asks how to contribute a skill. Do NOT use to run an existing analysis skill, or to edit the scientific content of a specific skill — only to create or revise a skill's structure.",
+      "skill_type": "dispatch",
+      "peer_reviewed": false,
+      "production_status": "in-production",
+      "path": "skill-author",
       "domain": [
         "meta"
       ],
@@ -306,7 +346,6 @@
       ],
       "status": "experimental",
       "version": "0.1.0",
-      "path": "skill-author",
       "author": "chatmpa-studio"
     }
   ]
