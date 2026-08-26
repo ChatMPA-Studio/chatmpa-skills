@@ -1,0 +1,13 @@
+{
+  "status": "PENDING",
+  "note": "Reference value to be verified by Edu/Fabio against a direct calculation in R.",
+  "skill": "ppr-ratio",
+  "site": "Cabo Pulmo",
+  "species": ["Lutjanus argentiventris"],
+  "amp_area_km2": null,
+  "year": null,
+  "ppr_pct": null,
+  "pp_total_kg_c": null,
+  "ppr_total_kg_c": null,
+  "tolerance_pct_points": 0.1
+}
