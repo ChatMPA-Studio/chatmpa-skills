@@ -4,6 +4,7 @@ domain: [conservation-policy]
 data-source: [generic]
 output-type: [analysis, report]
 tags: [mpa, biodiversity-comparison, conservation-outcomes]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes. It provides workflows for loading MPA boundary data, calculating biodiversity metrics, performing statistical comparisons, and generating assessment reports.
@@ -142,7 +143,8 @@ def calculate_biodiversity_metrics(df, group_col='protected'):
 
 # Calculate metrics
 metrics_df = calculate_biodiversity_metrics(inside_mpa, 'protected')
-print("\nBiodiversity Metrics by Protection Status:")
+print("
+Biodiversity Metrics by Protection Status:")
 print(metrics_df)
 ```
 
@@ -162,7 +164,8 @@ outside_richness = richness_by_site(outside_records)
 
 # Mann-Whitney U test (non-parametric)
 stat, p_value = stats.mannwhitneyu(inside_richness, outside_richness, alternative='greater')
-print(f"\nMann-Whitney U Test (Inside > Outside):")
+print(f"
+Mann-Whitney U Test (Inside > Outside):")
 print(f"  Statistic: {stat:.2f}")
 print(f"  P-value: {p_value:.4f}")
 print(f"  Significant (p < 0.05): {p_value < 0.05}")
