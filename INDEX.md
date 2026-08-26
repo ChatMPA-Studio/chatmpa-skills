@@ -11,146 +11,146 @@
 
 ### `fisheries-ecology`
 
-- [`ltem-biomass-productivity`](./ltem-biomass-productivity/) — This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset.
-- [`ltem-fish-community`](./ltem-fish-community/) — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
-- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
-- [`ltem-temporal-trends`](./ltem-temporal-trends/) — This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024).
+- [`ltem-biomass-productivity`](./ltem-biomass-productivity/) ✓ — This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset.
+- [`ltem-fish-community`](./ltem-fish-community/) ✓ — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
+- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) ✓ — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
+- [`ltem-temporal-trends`](./ltem-temporal-trends/) ✓ — This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024).
 
 ### `reef-ecology`
 
-- [`reef-ecology-report`](./reef-ecology-report/) — This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys.
+- [`reef-ecology-report`](./reef-ecology-report/) ✓ — This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys.
 
 ### `biodiversity`
 
-- [`ltem-fish-community`](./ltem-fish-community/) — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
-- [`marine-species-analysis`](./marine-species-analysis/) — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
-- [`reef-ecology-report`](./reef-ecology-report/) — This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys.
+- [`ltem-fish-community`](./ltem-fish-community/) ✓ — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
+- [`marine-species-analysis`](./marine-species-analysis/) ✓ — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
+- [`reef-ecology-report`](./reef-ecology-report/) ✓ — This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys.
 
 ### `biogeography`
 
-- [`marine-species-analysis`](./marine-species-analysis/) — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
+- [`marine-species-analysis`](./marine-species-analysis/) ✓ — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
 
 ### `oceanography`
 
-- [`sea-surface-temperature`](./sea-surface-temperature/) — This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns.
+- [`sea-surface-temperature`](./sea-surface-temperature/) ✓ — This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns.
 
 ### `climate`
 
-- [`sea-surface-temperature`](./sea-surface-temperature/) — This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns.
+- [`sea-surface-temperature`](./sea-surface-temperature/) ✓ — This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns.
 
 ### `conservation-policy`
 
-- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
-- [`management-plan-review`](./management-plan-review/) — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
-- [`management-plan-version-comparator`](./management-plan-version-comparator/) — Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).
-- [`marine-prosperity-brief`](./marine-prosperity-brief/) — This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities.
-- [`marine-prosperity-publish`](./marine-prosperity-publish/) — This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck).
-- [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) — This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes.
+- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) ✓ — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
+- [`management-plan-review`](./management-plan-review/) ✓ — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
+- [`management-plan-version-comparator`](./management-plan-version-comparator/) ✓ — Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).
+- [`marine-prosperity-brief`](./marine-prosperity-brief/) ✓ — This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities.
+- [`marine-prosperity-publish`](./marine-prosperity-publish/) ✓ — This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck).
+- [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) ✓ — This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes.
 
 ### `socioeconomics`
 
-- [`marine-prosperity-brief`](./marine-prosperity-brief/) — This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities.
+- [`marine-prosperity-brief`](./marine-prosperity-brief/) ✓ — This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities.
 
 ### `science-communication`
 
-- [`management-plan-review`](./management-plan-review/) — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
-- [`marine-prosperity-publish`](./marine-prosperity-publish/) — This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck).
+- [`management-plan-review`](./management-plan-review/) ✓ — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
+- [`marine-prosperity-publish`](./marine-prosperity-publish/) ✓ — This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck).
 
 ### `meta`
 
-- [`skill-author`](./skill-author/) — _experimental_ — Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules.
+- [`skill-author`](./skill-author/) — _experimental_ ✓ — Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules.
 
 ## By data source
 
 ### `LTEM`
 
-- [`ltem-biomass-productivity`](./ltem-biomass-productivity/) — This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset.
-- [`ltem-fish-community`](./ltem-fish-community/) — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
-- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
-- [`ltem-temporal-trends`](./ltem-temporal-trends/) — This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024).
+- [`ltem-biomass-productivity`](./ltem-biomass-productivity/) ✓ — This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset.
+- [`ltem-fish-community`](./ltem-fish-community/) ✓ — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
+- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) ✓ — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
+- [`ltem-temporal-trends`](./ltem-temporal-trends/) ✓ — This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024).
 
 ### `OBIS`
 
-- [`marine-species-analysis`](./marine-species-analysis/) — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
+- [`marine-species-analysis`](./marine-species-analysis/) ✓ — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
 
 ### `ERDDAP`
 
-- [`sea-surface-temperature`](./sea-surface-temperature/) — This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns.
+- [`sea-surface-temperature`](./sea-surface-temperature/) ✓ — This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns.
 
 ### `field-survey`
 
-- [`reef-ecology-report`](./reef-ecology-report/) — This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys.
+- [`reef-ecology-report`](./reef-ecology-report/) ✓ — This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys.
 
 ### `PDF-documents`
 
-- [`management-plan-review`](./management-plan-review/) — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
-- [`management-plan-version-comparator`](./management-plan-version-comparator/) — Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).
+- [`management-plan-review`](./management-plan-review/) ✓ — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
+- [`management-plan-version-comparator`](./management-plan-version-comparator/) ✓ — Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).
 
 ### `MPpI`
 
-- [`marine-prosperity-brief`](./marine-prosperity-brief/) — This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities.
+- [`marine-prosperity-brief`](./marine-prosperity-brief/) ✓ — This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities.
 
 ### `NotebookLM`
 
-- [`marine-prosperity-publish`](./marine-prosperity-publish/) — This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck).
+- [`marine-prosperity-publish`](./marine-prosperity-publish/) ✓ — This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck).
 
 ### `generic`
 
-- [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) — This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes.
-- [`skill-author`](./skill-author/) — _experimental_ — Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules.
+- [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) ✓ — This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes.
+- [`skill-author`](./skill-author/) — _experimental_ ✓ — Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules.
 
 ## By output type
 
 ### `analysis`
 
-- [`ltem-biomass-productivity`](./ltem-biomass-productivity/) — This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset.
-- [`ltem-fish-community`](./ltem-fish-community/) — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
-- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
-- [`ltem-temporal-trends`](./ltem-temporal-trends/) — This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024).
-- [`marine-species-analysis`](./marine-species-analysis/) — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
-- [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) — This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes.
-- [`sea-surface-temperature`](./sea-surface-temperature/) — This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns.
+- [`ltem-biomass-productivity`](./ltem-biomass-productivity/) ✓ — This skill analyzes fish biomass, productivity, turnover rates, and environmental drivers using the Baja California LTEM dataset.
+- [`ltem-fish-community`](./ltem-fish-community/) ✓ — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
+- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) ✓ — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
+- [`ltem-temporal-trends`](./ltem-temporal-trends/) ✓ — This skill analyzes temporal trends in fish populations using the 26-year Baja California LTEM dataset (1998-2024).
+- [`marine-species-analysis`](./marine-species-analysis/) ✓ — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
+- [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) ✓ — This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes.
+- [`sea-surface-temperature`](./sea-surface-temperature/) ✓ — This skill should be used when analyzing sea surface temperature (SST) data, downloading oceanographic data from ERDDAP servers, creating temperature anomaly maps, or studying ocean warming patterns.
 
 ### `model`
 
-- [`marine-species-analysis`](./marine-species-analysis/) — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
+- [`marine-species-analysis`](./marine-species-analysis/) ✓ — This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps.
 
 ### `report`
 
-- [`ltem-fish-community`](./ltem-fish-community/) — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
-- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
-- [`management-plan-review`](./management-plan-review/) — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
-- [`marine-prosperity-brief`](./marine-prosperity-brief/) — This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities.
-- [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) — This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes.
-- [`reef-ecology-report`](./reef-ecology-report/) — This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys.
+- [`ltem-fish-community`](./ltem-fish-community/) ✓ — This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset.
+- [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) ✓ — This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset.
+- [`management-plan-review`](./management-plan-review/) ✓ — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
+- [`marine-prosperity-brief`](./marine-prosperity-brief/) ✓ — This skill generates Marine Prosperity Index (MPpI) policy briefs for coastal municipalities.
+- [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) ✓ — This skill should be used when assessing Marine Protected Area (MPA) effectiveness, comparing biodiversity inside vs outside MPAs, analyzing temporal trends in MPA performance, or evaluating conservation outcomes.
+- [`reef-ecology-report`](./reef-ecology-report/) ✓ — This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys.
 
 ### `audit`
 
-- [`management-plan-review`](./management-plan-review/) — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
-- [`management-plan-version-comparator`](./management-plan-version-comparator/) — Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).
+- [`management-plan-review`](./management-plan-review/) ✓ — Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
+- [`management-plan-version-comparator`](./management-plan-version-comparator/) ✓ — Compares two versions of an MPA management plan by key thematic sections and generates a .docx table with columns #, Section, Theme, Comparison, and Impact (Strengthens / Neutralizes / Weakens).
 
 ### `publishing`
 
-- [`marine-prosperity-publish`](./marine-prosperity-publish/) — This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck).
+- [`marine-prosperity-publish`](./marine-prosperity-publish/) ✓ — This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck).
 
 ### `tooling`
 
-- [`skill-author`](./skill-author/) — _experimental_ — Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules.
+- [`skill-author`](./skill-author/) — _experimental_ ✓ — Scaffolds, writes, and validates a new chatMPA Studio skill end-to-end, enforcing the library's canonical format, taxonomy, quality gates, and no-fabrication rules.
 
 ## Dispatch skills (A–Z)
 
 | Skill | Version | Status | Peer rev. | Domain | Data source | Output | Tags |
 |---|---|---|---|---|---|---|---|
-| [`ltem-biomass-productivity`](./ltem-biomass-productivity/) | 0.2.0 | ✅ stable |  | fisheries-ecology | LTEM | analysis | biomass, productivity, turnover, environmental-drivers, sst, chlorophyll |
-| [`ltem-fish-community`](./ltem-fish-community/) | 0.2.0 | ✅ stable |  | fisheries-ecology, biodiversity | LTEM | analysis, report | diversity, trophic, size-structure, community, shannon |
-| [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) | 0.2.0 | ✅ stable |  | conservation-policy, fisheries-ecology | LTEM | analysis, report | mpa, cabo-pulmo, protection, predator-biomass |
-| [`ltem-temporal-trends`](./ltem-temporal-trends/) | 0.2.0 | ✅ stable |  | fisheries-ecology | LTEM | analysis | time-series, trend-detection, regime-shift, change-point |
-| [`management-plan-review`](./management-plan-review/) | 0.2.0 | ✅ stable |  | conservation-policy, science-communication | PDF-documents | report, audit | management-plan, evidence-review, recommendations, mpa, apa |
-| [`management-plan-version-comparator`](./management-plan-version-comparator/) | 0.2.0 | ✅ stable |  | conservation-policy | PDF-documents | audit | management-plan, version-diff, change-tracking, mpa |
-| [`marine-prosperity-brief`](./marine-prosperity-brief/) | 0.2.0 | ✅ stable |  | conservation-policy, socioeconomics | MPpI | report | policy-brief, prosperity-index, mppi, docx, scenarios |
-| [`marine-prosperity-publish`](./marine-prosperity-publish/) | 0.2.0 | ✅ stable |  | conservation-policy, science-communication | NotebookLM | publishing | notebooklm, infographic, audio-overview, dissemination |
-| [`marine-species-analysis`](./marine-species-analysis/) | 0.2.0 | ✅ stable |  | biodiversity, biogeography | OBIS | analysis, model | sdm, occurrence, habitat-suitability, maxent, obis |
-| [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) | 0.2.0 | ✅ stable |  | conservation-policy | generic | analysis, report | mpa, biodiversity-comparison, conservation-outcomes |
-| [`reef-ecology-report`](./reef-ecology-report/) | 0.2.0 | ✅ stable |  | reef-ecology, biodiversity | field-survey | report | coral-cover, bleaching, monitoring, reef-health |
-| [`sea-surface-temperature`](./sea-surface-temperature/) | 0.2.0 | ✅ stable |  | oceanography, climate | ERDDAP | analysis | sst, thermal-stress, dhw, anomaly, remote-sensing |
-| [`skill-author`](./skill-author/) | 0.1.0 | 🧪 experimental |  | meta | generic | tooling | scaffold, authoring, governance, lint, template, versioning |
+| [`ltem-biomass-productivity`](./ltem-biomass-productivity/) | 0.2.0 | ✅ stable | ✓ | fisheries-ecology | LTEM | analysis | biomass, productivity, turnover, environmental-drivers, sst, chlorophyll |
+| [`ltem-fish-community`](./ltem-fish-community/) | 0.2.0 | ✅ stable | ✓ | fisheries-ecology, biodiversity | LTEM | analysis, report | diversity, trophic, size-structure, community, shannon |
+| [`ltem-mpa-effectiveness`](./ltem-mpa-effectiveness/) | 0.2.0 | ✅ stable | ✓ | conservation-policy, fisheries-ecology | LTEM | analysis, report | mpa, cabo-pulmo, protection, predator-biomass |
+| [`ltem-temporal-trends`](./ltem-temporal-trends/) | 0.2.0 | ✅ stable | ✓ | fisheries-ecology | LTEM | analysis | time-series, trend-detection, regime-shift, change-point |
+| [`management-plan-review`](./management-plan-review/) | 0.2.0 | ✅ stable | ✓ | conservation-policy, science-communication | PDF-documents | report, audit | management-plan, evidence-review, recommendations, mpa, apa |
+| [`management-plan-version-comparator`](./management-plan-version-comparator/) | 0.2.0 | ✅ stable | ✓ | conservation-policy | PDF-documents | audit | management-plan, version-diff, change-tracking, mpa |
+| [`marine-prosperity-brief`](./marine-prosperity-brief/) | 0.2.0 | ✅ stable | ✓ | conservation-policy, socioeconomics | MPpI | report | policy-brief, prosperity-index, mppi, docx, scenarios |
+| [`marine-prosperity-publish`](./marine-prosperity-publish/) | 0.2.0 | ✅ stable | ✓ | conservation-policy, science-communication | NotebookLM | publishing | notebooklm, infographic, audio-overview, dissemination |
+| [`marine-species-analysis`](./marine-species-analysis/) | 0.2.0 | ✅ stable | ✓ | biodiversity, biogeography | OBIS | analysis, model | sdm, occurrence, habitat-suitability, maxent, obis |
+| [`mpa-effectiveness-assessment`](./mpa-effectiveness-assessment/) | 0.2.0 | ✅ stable | ✓ | conservation-policy | generic | analysis, report | mpa, biodiversity-comparison, conservation-outcomes |
+| [`reef-ecology-report`](./reef-ecology-report/) | 0.2.0 | ✅ stable | ✓ | reef-ecology, biodiversity | field-survey | report | coral-cover, bleaching, monitoring, reef-health |
+| [`sea-surface-temperature`](./sea-surface-temperature/) | 0.2.0 | ✅ stable | ✓ | oceanography, climate | ERDDAP | analysis | sst, thermal-stress, dhw, anomaly, remote-sensing |
+| [`skill-author`](./skill-author/) | 0.1.0 | 🧪 experimental | ✓ | meta | generic | tooling | scaffold, authoring, governance, lint, template, versioning |
