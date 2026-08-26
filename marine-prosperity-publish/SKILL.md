@@ -4,6 +4,7 @@ domain: [conservation-policy, science-communication]
 data-source: [NotebookLM]
 output-type: [publishing]
 tags: [notebooklm, infographic, audio-overview, dissemination]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: This skill publishes Marine Prosperity Index policy briefs to NotebookLM and produces Studio artifacts (infographic, audio overview, mind map, slide deck). It handles authentication, notebook creation, source ingestion (markdown or DOCX content), and Studio polling. Use this skill when the user asks to "upload the brief to NotebookLM", "generate an infographic", "publish the policy brief", "create an audio overview", or anything that turns an existing MPpI brief into NotebookLM-hosted content. TRIGGER on phrases like "send to NotebookLM", "make an infographic of the brief", "audio overview for <community>", "share the brief as a notebook", or any request that combines an existing policy brief with NotebookLM, infographic, podcast, mind map, or slide deck.
