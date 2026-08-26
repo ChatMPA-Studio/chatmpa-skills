@@ -1,0 +1,75 @@
+{
+  "targets": {
+    "chatmpa-data-hub": {
+      "repo": "ChatMPA-Studio/chatmpa-data-hub",
+      "prefix": "skills"
+    },
+    "chatmpa-mvp": {
+      "repo": "ChatMPA-Studio/chatmpa-mvp",
+      "prefix": ""
+    },
+    "PrototipoNewChatMPA": {
+      "repo": "Businessseed/PrototipoNewChatMPA",
+      "prefix": "science/skills"
+    }
+  },
+  "skill_categories": {
+    "per-database": [
+      "conapesca-catch-composition",
+      "conapesca-cpue",
+      "conapesca-landings-timeseries",
+      "conapesca-lfo-ca",
+      "conapesca-lfo-regions",
+      "conapesca-national-ranking",
+      "conapesca-pfe",
+      "conapesca-ppr",
+      "conapesca-tmca",
+      "erddap-chlorophyll",
+      "erddap-pp",
+      "erddap-sst-anomaly",
+      "ltem-fish-biomass",
+      "ltem-invertebrate-abundance",
+      "ltem-nrsi-index"
+    ],
+    "interdatabase": [
+      "eda-multivariate",
+      "model-diagnostics",
+      "ppr-ratio",
+      "reef-drivers-lm"
+    ]
+  },
+  "skill_status": {
+    "conapesca-catch-composition":        {"production_status": "prototype"},
+    "conapesca-cpue":                     {"production_status": "prototype"},
+    "conapesca-landings-timeseries":      {"production_status": "prototype"},
+    "conapesca-lfo-ca":                   {"production_status": "prototype"},
+    "conapesca-lfo-regions":              {"production_status": "prototype"},
+    "conapesca-national-ranking":         {"production_status": "prototype"},
+    "conapesca-pfe":                      {"production_status": "prototype"},
+    "conapesca-ppr":                      {"production_status": "prototype"},
+    "conapesca-tmca":                     {"production_status": "prototype"},
+    "erddap-chlorophyll":                 {"production_status": "prototype"},
+    "erddap-pp":                          {"production_status": "prototype"},
+    "erddap-sst-anomaly":                 {"production_status": "prototype"},
+    "ltem-fish-biomass":                  {"production_status": "prototype"},
+    "ltem-invertebrate-abundance":        {"production_status": "prototype"},
+    "ltem-nrsi-index":                    {"production_status": "prototype"},
+    "eda-multivariate":                   {"production_status": "prototype"},
+    "model-diagnostics":                  {"production_status": "prototype"},
+    "ppr-ratio":                          {"production_status": "prototype"},
+    "reef-drivers-lm":                    {"production_status": "prototype"},
+    "ltem-fish-community":                {"production_status": "in-production"},
+    "ltem-mpa-effectiveness":             {"production_status": "in-production"},
+    "ltem-temporal-trends":               {"production_status": "in-production"},
+    "ltem-biomass-productivity":          {"production_status": "in-production"},
+    "marine-prosperity-brief":            {"production_status": "in-production"},
+    "marine-prosperity-publish":          {"production_status": "in-production"},
+    "marine-species-analysis":            {"production_status": "in-production"},
+    "mpa-effectiveness-assessment":       {"production_status": "in-production"},
+    "reef-ecology-report":                {"production_status": "in-production"},
+    "sea-surface-temperature":            {"production_status": "in-production"},
+    "management-plan-review":             {"production_status": "in-production"},
+    "management-plan-version-comparator": {"production_status": "in-production"},
+    "skill-author":                       {"production_status": "in-production"}
+  }
+}
