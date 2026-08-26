@@ -4,6 +4,7 @@ domain: [biodiversity, biogeography]
 data-source: [OBIS]
 output-type: [analysis, model]
 tags: [sdm, occurrence, habitat-suitability, maxent, obis]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: This skill should be used when analyzing marine species distributions, accessing OBIS (Ocean Biodiversity Information System) data, building species distribution models (SDMs), or creating marine biodiversity maps. It provides workflows for downloading occurrence data, preparing environmental predictors, fitting MaxEnt or other SDM algorithms, and visualizing predicted habitat suitability. Use this skill when the user asks about species distributions, biodiversity data, OBIS queries, or habitat modeling.
@@ -278,7 +279,8 @@ def build_sdm(data, env_vars, presence_col='presence'):
 # Example usage
 env_vars = ['sst', 'salinity', 'depth', 'chlorophyll']
 model, importance, auc = build_sdm(all_points, env_vars)
-print("\nVariable Importance:")
+print("
+Variable Importance:")
 print(importance)
 ```
 
