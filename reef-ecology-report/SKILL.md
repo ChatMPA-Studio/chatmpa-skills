@@ -4,6 +4,7 @@ domain: [reef-ecology, biodiversity]
 data-source: [field-survey]
 output-type: [report]
 tags: [coral-cover, bleaching, monitoring, reef-health]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: This skill should be used when creating reef ecology reports, analyzing coral reef data, or documenting marine ecosystem surveys. It provides workflows for loading reef monitoring data, calculating key ecological metrics (coral coverage, species diversity, bleaching indices), creating visualizations, and generating comprehensive reports. Use this skill when the user asks to analyze reef data, create ecology reports, or work with coral monitoring datasets.
@@ -157,14 +158,28 @@ summary = {
 
 # Export to markdown report
 with open('reef_ecology_report.md', 'w') as f:
-    f.write('# Reef Ecology Survey Report\n\n')
-    f.write('## Survey Summary\n\n')
+    f.write('# Reef Ecology Survey Report
+
+')
+    f.write('## Survey Summary
+
+')
     for key, value in summary.items():
-        f.write(f'- **{key}:** {value}\n')
-    f.write('\n## Visualizations\n\n')
-    f.write('![Coral Coverage](coral_coverage.png)\n\n')
-    f.write('![Coverage Trend](coverage_trend.png)\n\n')
-    f.write('![Species Composition](species_composition.png)\n\n')
+        f.write(f'- **{key}:** {value}
+')
+    f.write('
+## Visualizations
+
+')
+    f.write('![Coral Coverage](coral_coverage.png)
+
+')
+    f.write('![Coverage Trend](coverage_trend.png)
+
+')
+    f.write('![Species Composition](species_composition.png)
+
+')
 
 print("Report generated: reef_ecology_report.md")
 ```
