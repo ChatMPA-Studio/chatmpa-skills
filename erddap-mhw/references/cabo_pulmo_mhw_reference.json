@@ -1,0 +1,13 @@
+{
+  "skill": "erddap-mhw",
+  "site": "Cabo Pulmo",
+  "status": "PENDING",
+  "note": "Reference values not yet verified. Expected: elevated kpi_mhw_days_per_yr during 2015-2016 El Nino. Do NOT use until verified by Edu/Fabio.",
+  "fields": {
+    "kpi_mhw_days_per_yr": null,
+    "n_events_per_yr": null,
+    "tolerance_days": null,
+    "baseline_period": "1982-2011",
+    "threshold_pctile": 90
+  }
+}
