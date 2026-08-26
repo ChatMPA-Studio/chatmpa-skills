@@ -4,6 +4,7 @@ domain: [conservation-policy, fisheries-ecology]
 data-source: [LTEM]
 output-type: [analysis, report]
 tags: [mpa, cabo-pulmo, protection, predator-biomass]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: This skill assesses Marine Protected Area effectiveness using the Baja California LTEM dataset. It compares fish biomass, diversity, and community structure between Cabo Pulmo National Park (strict protection since 1995) and sites with weak or no protection. Use this skill when evaluating MPA performance, analyzing protection effects, or demonstrating conservation outcomes. TRIGGER on any of these phrases or intents: "is the MPA working", "has protection made a difference", "compare Cabo Pulmo", "predator biomass recovery", "is protection effective", "MPA effectiveness", "did protection help", "compare protected vs unprotected", "top predator trends", "has Cabo Pulmo recovered", "protection impact on fish", "LTEM MPA analysis", "generate a report" combined with any mention of Cabo Pulmo or protection.
@@ -158,7 +159,8 @@ ltem['protection_level'] = ltem['protection_status'].apply(categorize_protection
 # Summary by protection level
 print("Records by Protection Level:")
 print(ltem.groupby('protection_level').size())
-print("\nReefs by Protection Level:")
+print("
+Reefs by Protection Level:")
 print(ltem.groupby('protection_level')['reef'].nunique())
 ```
 
@@ -198,7 +200,8 @@ def aggregate_for_mpa_analysis(df):
     return survey_data
 
 surveys = aggregate_for_mpa_analysis(ltem)
-print(f"\nTotal surveys: {len(surveys)}")
+print(f"
+Total surveys: {len(surveys)}")
 print(surveys.groupby('protection_level').size())
 ```
 
@@ -222,11 +225,13 @@ def compare_biomass(df):
     groups = [group['total_biomass'].values
               for name, group in df.groupby('protection_level')]
     stat, p_value = stats.kruskal(*groups)
-    print(f"\nKruskal-Wallis Test: H={stat:.2f}, p={p_value:.4e}")
+    print(f"
+Kruskal-Wallis Test: H={stat:.2f}, p={p_value:.4e}")
 
     # Pairwise comparisons (Mann-Whitney U)
     protection_levels = df['protection_level'].unique()
-    print("\nPairwise Comparisons (Mann-Whitney U):")
+    print("
+Pairwise Comparisons (Mann-Whitney U):")
     for i, level1 in enumerate(protection_levels):
         for level2 in protection_levels[i+1:]:
             g1 = df[df['protection_level'] == level1]['total_biomass']
@@ -312,7 +317,8 @@ def compare_all_metrics(df):
                                            comparison['Unprotected']) /
                                           comparison['Unprotected'] * 100).round(1)
 
-    print("\nMean Values by Protection Level:")
+    print("
+Mean Values by Protection Level:")
     print(comparison)
 
     return comparison
@@ -355,12 +361,14 @@ def compare_trophic_structure(df):
                                           columns='protection_level',
                                           values='proportion')
 
-    print("\nTrophic Structure (% Biomass) by Protection Level:")
+    print("
+Trophic Structure (% Biomass) by Protection Level:")
     print(trophic_pivot)
 
     # Top predator ratio (key MPA indicator)
     tp_ratio = trophic_biomass[trophic_biomass['trophic_group'] == 'Top Predators']
-    print("\nTop Predator Biomass Proportion:")
+    print("
+Top Predator Biomass Proportion:")
     for _, row in tp_ratio.iterrows():
         print(f"  {row['protection_level']}: {row['proportion']:.1f}%")
 
@@ -399,7 +407,8 @@ def compare_size_structure(df):
     size_pivot = size_abundance.pivot(index='size_class', columns='protection_level',
                                        values='proportion')
 
-    print("\nSize Structure (% Abundance) by Protection Level:")
+    print("
+Size Structure (% Abundance) by Protection Level:")
     print(size_pivot)
 
     # Large fish proportion (>40cm) - key MPA indicator
@@ -407,7 +416,8 @@ def compare_size_structure(df):
     all_fish = original_df.groupby('protection_level')['quantity'].sum()
     large_proportion = (large_fish / all_fish * 100).round(1)
 
-    print("\nLarge Fish (>40cm) Proportion:")
+    print("
+Large Fish (>40cm) Proportion:")
     print(large_proportion)
 
     return size_pivot
@@ -687,7 +697,8 @@ def baci_analysis(df, mpa_establishment_year=1995, before_years=range(1998, 2002
     recent_diff = groups['Recent_MPA'].mean() - groups['Recent_Control'].mean()
     baci_effect = recent_diff - early_diff
 
-    print(f"\nBACI Interaction Effect: {baci_effect:.2f} ton/ha")
+    print(f"
+BACI Interaction Effect: {baci_effect:.2f} ton/ha")
     print(f"  Early MPA-Control difference: {early_diff:.2f}")
     print(f"  Recent MPA-Control difference: {recent_diff:.2f}")
 
