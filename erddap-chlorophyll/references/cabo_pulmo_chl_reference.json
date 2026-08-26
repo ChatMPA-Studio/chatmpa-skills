@@ -1,0 +1,15 @@
+{
+  "id": "cabo_pulmo_chl_local",
+  "status": "PENDING",
+  "description": "Annual geometric mean chlorophyll-a for Cabo Pulmo (local scale) for a year to be defined. Must be verified against direct MODIS query or published productivity estimates by Edu/Fabio before use.",
+  "amp_name": "Cabo Pulmo",
+  "scale": "local",
+  "year": null,
+  "expected_chl_geomean_mgm3": null,
+  "expected_anomalia_log10": null,
+  "tolerance_log10": null,
+  "baseline_period": "2003-2020",
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until human-verified value is provided."
+}
