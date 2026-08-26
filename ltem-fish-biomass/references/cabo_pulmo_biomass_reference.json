@@ -1,0 +1,16 @@
+{
+  "id": "cabo_pulmo_fish_biomass",
+  "status": "PENDING",
+  "description": "Mean fish biomass (g/m²) for Cabo Pulmo, 2023. Must be verified by Edu/Fabio before use as reference.",
+  "region": "Cabo Pulmo",
+  "year": 2023,
+  "provisional_biomass_g_m2": 11.03,
+  "provisional_sd_g_m2": 13.34,
+  "provisional_n_reefs": 10,
+  "provisional_source": "ltem_report/reports/cabo_pulmo_biodiversidad/cabo_pulmo_resumen_anual.csv",
+  "expected_biomass_g_m2": null,
+  "tolerance": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until human-verified value is provided. Provisional value from cabo_pulmo_resumen_anual.csv (2023 row). Recent trend context: biomass ranged 3.3–19.1 g/m² from 1999–2023 across Cabo Pulmo reefs."
+}
