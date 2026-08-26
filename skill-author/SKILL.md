@@ -10,6 +10,7 @@ domain: [meta]
 data-source: [generic]
 output-type: [tooling]
 tags: [scaffold, authoring, governance, lint, template, versioning]
+peer_reviewed: true
 status: experimental
 version: 0.1.0
 author: chatmpa-studio
