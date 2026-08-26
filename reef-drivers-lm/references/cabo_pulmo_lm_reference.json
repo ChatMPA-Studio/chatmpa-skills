@@ -1,0 +1,19 @@
+{
+  "id": "cabo_pulmo_lm_full_series",
+  "status": "PENDING",
+  "description": "R² and coefficients for Cabo Pulmo using the full available time series (years TBD). Must be verified by Edu/Fabio against a direct analysis in R before use.",
+  "amp_name": "Cabo Pulmo",
+  "years": null,
+  "expected_r_squared": null,
+  "expected_coefficients": {
+    "intercept": null,
+    "cpue_mean": null,
+    "anom_sst": null,
+    "anom_chl": null
+  },
+  "tolerance_r_squared": null,
+  "tolerance_coefficients": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until human-verified values are provided."
+}
