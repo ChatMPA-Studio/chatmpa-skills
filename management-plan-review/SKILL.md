@@ -4,6 +4,7 @@ domain: [conservation-policy, science-communication]
 data-source: [PDF-documents]
 output-type: [report, audit]
 tags: [management-plan, evidence-review, recommendations, mpa, apa]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: Generates a review report for an MPA management plan by cross-referencing its content with scientific evidence to produce a table of concrete recommendations, with action type, confidence level, and APA citations.
