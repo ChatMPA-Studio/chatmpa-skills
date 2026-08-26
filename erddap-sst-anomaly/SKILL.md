@@ -35,6 +35,10 @@ acquire:
     type: sf
 # Sin `output.table`: run_skill() devuelve un solo data.frame con ambas escalas.
 # Skill determinista — media aritmética anual, sin bootstrap.
+# PENDING (issue #8): kpi_mhw_days_per_yr no está implementado.
+# El dashboard Card 4 / Chart Marine Heatwaves lo requiere.
+# Método: heatwaveR::ts2clm() + detect_event() sobre la serie diaria.
+# Decisión pendiente: extender esta skill o crear erddap-mhw separada.
 comparable_value: [sst_media, anomalia_media]
 reference: references/cabo_pulmo_sst_reference.json
 validation:
