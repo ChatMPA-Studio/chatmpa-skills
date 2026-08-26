@@ -1,0 +1,16 @@
+{
+  "id": "cabo_pulmo_nrsi",
+  "status": "PENDING",
+  "description": "Mean NRSI for Cabo Pulmo reef(s) for a year to be defined. Must be verified against direct LTEM analysis by Edu/Fabio before use.",
+  "reef": "Cabo Pulmo",
+  "year": null,
+  "expected_nrsi": null,
+  "expected_ci_lo_95": null,
+  "expected_ci_hi_95": null,
+  "tolerance": null,
+  "seed": 42,
+  "n_boot": 100,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until human-verified value is provided. Cabo Pulmo typically shows positive NRSI (apex-predator recovery)."
+}
