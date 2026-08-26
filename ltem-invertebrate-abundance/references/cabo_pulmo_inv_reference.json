@@ -1,0 +1,19 @@
+{
+  "id": "cabo_pulmo_invertebrate_abundance",
+  "status": "PENDING",
+  "description": "Mean abundance per transect for each focal taxon at Cabo Pulmo. Must be verified by Edu/Fabio before use as reference.",
+  "region": "Cabo Pulmo",
+  "year": null,
+  "focal_taxa": ["Echinoidea", "Asteroidea", "Holaxonia", "Scleractinia"],
+  "expected_abundance_per_transect": {
+    "Echinoidea": null,
+    "Asteroidea": null,
+    "Holaxonia": null,
+    "Scleractinia": null
+  },
+  "tolerance": null,
+  "provisional_source": "ltem_report/artifacts/figure9_echi-ast_bars_CaboPulmo.png and figure10_holax-scle_bars_CaboPulmo.png — extract numeric values from figures or from cabo_pulmo_resumen_anual.csv when invertebrate columns are available.",
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until human-verified values are provided. Visual context: Echinoidea and Asteroidea trends available in figure9; Holaxonia (gorgonians, warm) and Scleractinia (hard corals, cold) in figure10 for Cabo Pulmo region."
+}
