@@ -5,9 +5,20 @@ Scans every top-level ``<skill>/SKILL.md``, validates it against the canonical
 format and quality gates (see ``CONTRIBUTING.md`` and ``QUALITY.md``), and
 regenerates:
 
-  * ``catalog.json`` — machine-readable manifest (one record per skill)
-  * ``INDEX.md``     — human catalog with CRAN-style task views
+  * ``catalog.json``  — machine-readable manifest (one record per skill)
+  * ``catalog.xlsx``  — Excel workbook (3 sheets) — requires openpyxl
+  * ``INDEX.md``      — human catalog with CRAN-style task views
   * the skills table in ``README.md`` (between the BEGIN/END SKILLS TABLE markers)
+
+Two SKILL.md schemas coexist:
+  * *Dispatch skills* (Claude Code): ``domain``, ``data-source``, ``output-type``,
+    ``tags``, ``status``, ``version`` — full vocabulary + quality-gate checks apply.
+  * *Service-contract skills* (orchestrator): ``inputs``, ``acquire``, ``provider``,
+    ``output`` — detected by the presence of an ``acquire:`` key. Lighter validation.
+
+Additional catalog fields (not in SKILL.md itself):
+  * ``peer_reviewed``     — read from SKILL.md frontmatter (true/false, default false)
+  * ``production_status`` — read from ``tools/ship_config.json`` per skill
 
 Validation has two tiers:
   * ERRORS   — block the build (missing/invalid metadata, broken refs, secrets,
@@ -23,7 +34,7 @@ Usage::
     python3 tools/build_index.py --validate  # validate only (no writes) — for PR checks
     python3 tools/build_index.py --strict     # treat warnings as errors
 
-Standard library only — no third-party dependencies.
+Standard library only (openpyxl optional for Excel export).
 """
 from __future__ import annotations
 
@@ -35,11 +46,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 BASELINE_PATH = ROOT / "tools" / "lint_baseline.json"
+SHIP_CONFIG_PATH = ROOT / "tools" / "ship_config.json"
 
-NON_SKILL_DIRS = {"TEMPLATE"}
+NON_SKILL_DIRS = {"TEMPLATE", "tools", ".github"}
 
 REQUIRED_FIELDS = ("name", "description", "domain", "data-source", "output-type",
                    "tags", "status", "version")
+SC_REQUIRED_FIELDS = ("acquire",)  # minimal required for service-contract skills
 LIST_FIELDS = ("domain", "data-source", "output-type", "tags")
 
 # Controlled vocabularies — keep in sync with CONTRIBUTING.md §4.
@@ -94,6 +107,18 @@ TABLE_END = "<!-- END SKILLS TABLE -->"
 
 
 # --------------------------------------------------------------------------- #
+# Ship config (production_status per skill)
+# --------------------------------------------------------------------------- #
+def load_ship_config() -> dict:
+    if not SHIP_CONFIG_PATH.exists():
+        return {}
+    try:
+        return json.loads(SHIP_CONFIG_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+# --------------------------------------------------------------------------- #
 # Frontmatter parsing
 # --------------------------------------------------------------------------- #
 def split_frontmatter(text: str) -> tuple[dict, str]:
@@ -144,28 +169,52 @@ def h2_headings(body: str) -> list[str]:
 # --------------------------------------------------------------------------- #
 def load_skills() -> tuple[list[dict], list[str]]:
     skills, load_errors = [], []
+    ship_cfg = load_ship_config()
+    skill_status_map = ship_cfg.get("skill_status", {})
+
     for skill_md in sorted(ROOT.glob("*/SKILL.md")):
         folder = skill_md.parent.name
         if folder in NON_SKILL_DIRS:
             continue
+        raw_text = skill_md.read_text(encoding="utf-8")
         try:
-            fm, body = split_frontmatter(skill_md.read_text(encoding="utf-8"))
+            fm, body = split_frontmatter(raw_text)
         except ValueError as exc:
             load_errors.append(f"{folder}/SKILL.md: {exc}")
             continue
+
+        # Detect skill type by presence of 'acquire' key
+        is_sc = "acquire" in fm or bool(re.search(r"^acquire:", raw_text, re.MULTILINE))
+        skill_type = "service-contract" if is_sc else "dispatch"
+
         rec = {
             "name": fm.get("name", folder),
             "description": fm.get("description", ""),
-            "domain": fm.get("domain", []),
-            "data-source": fm.get("data-source", []),
-            "output-type": fm.get("output-type", []),
-            "tags": fm.get("tags", []),
-            "status": fm.get("status", ""),
-            "version": fm.get("version", ""),
+            "skill_type": skill_type,
+            "peer_reviewed": fm.get("peer_reviewed", False),
+            "production_status": skill_status_map.get(folder, {}).get("production_status", ""),
             "path": folder,
         }
-        if fm.get("author"):
-            rec["author"] = fm["author"]
+
+        if skill_type == "dispatch":
+            rec.update({
+                "domain": fm.get("domain", []),
+                "data-source": fm.get("data-source", []),
+                "output-type": fm.get("output-type", []),
+                "tags": fm.get("tags", []),
+                "status": fm.get("status", ""),
+                "version": fm.get("version", ""),
+            })
+            if fm.get("author"):
+                rec["author"] = fm["author"]
+        else:
+            # Service-contract: store version if present, minimal dispatch fields
+            rec.update({
+                "version": fm.get("version", ""),
+                "domain": fm.get("domain", []),
+                "tags": fm.get("tags", []),
+            })
+
         rec["_fm"] = fm
         rec["_body"] = body
         rec["_dir"] = skill_md.parent
@@ -223,52 +272,64 @@ def validate(skills: list[dict]) -> tuple[list[str], list[str]]:
     for s in skills:
         sid = f"{s['path']}/SKILL.md"
         fm = s["_fm"]
+        is_sc = s.get("skill_type") == "service-contract"
 
-        for field in REQUIRED_FIELDS:
-            if not fm.get(field):
-                errors.append(f"{sid}: missing required frontmatter field '{field}'")
+        if is_sc:
+            # Service-contract: lighter validation
+            for field in SC_REQUIRED_FIELDS:
+                if not fm.get(field):
+                    errors.append(f"{sid}: missing required field '{field}' (service-contract skill)")
+            if fm.get("name") and fm["name"] != s["path"]:
+                errors.append(f"{sid}: name '{fm['name']}' does not match folder '{s['path']}'")
+            if fm.get("name") and not NAME_RE.match(fm.get("name", "")):
+                errors.append(f"{sid}: name '{fm['name']}' is not kebab-case")
+        else:
+            # Dispatch skill: full validation
+            for field in REQUIRED_FIELDS:
+                if not fm.get(field):
+                    errors.append(f"{sid}: missing required frontmatter field '{field}'")
 
-        if fm.get("name") and fm["name"] != s["path"]:
-            errors.append(f"{sid}: name '{fm['name']}' does not match folder '{s['path']}'")
-        if fm.get("name") and not NAME_RE.match(fm["name"]):
-            errors.append(f"{sid}: name '{fm['name']}' is not kebab-case")
+            if fm.get("name") and fm["name"] != s["path"]:
+                errors.append(f"{sid}: name '{fm['name']}' does not match folder '{s['path']}'")
+            if fm.get("name") and not NAME_RE.match(fm.get("name", "")):
+                errors.append(f"{sid}: name '{fm['name']}' is not kebab-case")
 
-        for field, allowed in VOCAB.items():
-            for value in fm.get(field, []):
-                if value not in allowed:
-                    errors.append(f"{sid}: invalid {field} value '{value}' "
-                                  f"(allowed: {', '.join(allowed)})")
-        if s["status"] and s["status"] not in STATUS_VALUES:
-            errors.append(f"{sid}: invalid status '{s['status']}' "
-                          f"(allowed: {', '.join(STATUS_VALUES)})")
-        if s["version"] and not SEMVER_RE.match(str(s["version"])):
-            errors.append(f"{sid}: version '{s['version']}' is not semver (MAJOR.MINOR.PATCH)")
+            for field, allowed in VOCAB.items():
+                for value in fm.get(field, []):
+                    if value not in allowed:
+                        errors.append(f"{sid}: invalid {field} value '{value}' "
+                                      f"(allowed: {', '.join(allowed)})")
+            if s.get("status") and s["status"] not in STATUS_VALUES:
+                errors.append(f"{sid}: invalid status '{s['status']}' "
+                              f"(allowed: {', '.join(STATUS_VALUES)})")
+            if s.get("version") and not SEMVER_RE.match(str(s["version"])):
+                errors.append(f"{sid}: version '{s['version']}' is not semver (MAJOR.MINOR.PATCH)")
 
-        desc = s["description"]
-        if desc and len(desc) < DESC_MIN_CHARS:
-            errors.append(f"{sid}: description too short ({len(desc)} chars; "
-                          f"min {DESC_MIN_CHARS}) — looks like a placeholder")
-        if len(desc) > DESC_MAX_CHARS:
-            warnings.append(f"{sid}: description is long ({len(desc)} chars; "
-                            f"keep under {DESC_MAX_CHARS} for sharp skill selection)")
+            desc = s["description"]
+            if desc and len(desc) < DESC_MIN_CHARS:
+                errors.append(f"{sid}: description too short ({len(desc)} chars; "
+                              f"min {DESC_MIN_CHARS}) — looks like a placeholder")
+            if len(desc) > DESC_MAX_CHARS:
+                warnings.append(f"{sid}: description is long ({len(desc)} chars; "
+                                f"keep under {DESC_MAX_CHARS} for sharp skill selection)")
 
-        for t in s["tags"]:
-            if t != t.lower():
-                warnings.append(f"{sid}: tag '{t}' should be lowercase")
+            for t in s.get("tags", []):
+                if t != t.lower():
+                    warnings.append(f"{sid}: tag '{t}' should be lowercase")
 
-        # Body sections.
-        heads = h2_headings(s["_body"])
-        if not any(h == "Purpose" for h in heads):
-            errors.append(f"{sid}: missing required '## Purpose' section")
-        if not any(h.startswith(("Workflow", "Core Workflow", "Protocol")) for h in heads):
-            errors.append(f"{sid}: missing a '## Workflow' / '## Core Workflow' / '## Protocol' section")
-        for rec_head, label in (("When to Use", "## When to Use This Skill"),
-                                ("References", "## References"),
-                                ("Success Criteria", "## Success Criteria")):
-            if not any(h.startswith(rec_head) for h in heads):
-                warnings.append(f"{sid}: missing recommended section '{label}'")
+            # Body sections (dispatch skills only).
+            heads = h2_headings(s["_body"])
+            if not any(h == "Purpose" for h in heads):
+                errors.append(f"{sid}: missing required '## Purpose' section")
+            if not any(h.startswith(("Workflow", "Core Workflow", "Protocol")) for h in heads):
+                errors.append(f"{sid}: missing a '## Workflow' / '## Core Workflow' / '## Protocol' section")
+            for rec_head, label in (("When to Use", "## When to Use This Skill"),
+                                    ("References", "## References"),
+                                    ("Success Criteria", "## Success Criteria")):
+                if not any(h.startswith(rec_head) for h in heads):
+                    warnings.append(f"{sid}: missing recommended section '{label}'")
 
-        # Referenced files must exist.
+        # Referenced files must exist (both skill types).
         for m in REF_RE.finditer(s["_body"]):
             rel = m.group(0)
             if any(c in rel for c in "<>{}*"):
@@ -314,9 +375,10 @@ def validate(skills: list[dict]) -> tuple[list[str], list[str]]:
         else:
             seen[name] = s["path"]
 
-    grams = {s["path"]: trigrams(s["description"]) for s in skills}
-    for i, a in enumerate(skills):
-        for b in skills[i + 1:]:
+    dispatch_skills = [s for s in skills if s.get("skill_type") != "service-contract"]
+    grams = {s["path"]: trigrams(s["description"]) for s in dispatch_skills}
+    for i, a in enumerate(dispatch_skills):
+        for b in dispatch_skills[i + 1:]:
             sim = jaccard(grams[a["path"]], grams[b["path"]])
             if sim >= COLLISION_ERROR:
                 errors.append(f"descriptions of '{a['name']}' and '{b['name']}' are "
@@ -347,17 +409,81 @@ def render_catalog_json(skills: list[dict]) -> str:
     return json.dumps({"count": len(ordered), "skills": ordered}, indent=2, ensure_ascii=False) + "\n"
 
 
+def render_catalog_xlsx(skills: list[dict]) -> None:
+    """Write catalog.xlsx with three sheets. Silently skipped if openpyxl is absent."""
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment
+    except ImportError:
+        print("  note: openpyxl not installed — skipping catalog.xlsx "
+              "(pip install openpyxl to enable)")
+        return
+
+    wb = openpyxl.Workbook()
+
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill("solid", fgColor="0A3D62")
+
+    def _sheet(wb, title: str, data: list[dict], cols: list[tuple]) -> None:
+        ws = wb.active if title == "All skills" else wb.create_sheet(title)
+        ws.title = title
+        headers = [c[0] for c in cols]
+        ws.append(headers)
+        for cell in ws[1]:
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+        for row in data:
+            ws.append([row.get(c[1], "") for c in cols])
+        for col_cells in ws.columns:
+            length = max(len(str(c.value or "")) for c in col_cells) + 4
+            ws.column_dimensions[col_cells[0].column_letter].width = min(length, 60)
+
+    COLS_ALL = [
+        ("Name", "name"), ("Type", "skill_type"), ("Version", "version"),
+        ("Status", "status"), ("Production", "production_status"),
+        ("Peer reviewed", "peer_reviewed"), ("Domain", "domain"),
+        ("Data source", "data-source"), ("Output type", "output-type"),
+        ("Description", "description"),
+    ]
+
+    def prep(s: dict) -> dict:
+        r = public_record(s)
+        for k in ("domain", "data-source", "output-type", "tags"):
+            if isinstance(r.get(k), list):
+                r[k] = ", ".join(r[k])
+        return r
+
+    all_data = [prep(s) for s in sorted(skills, key=lambda s: s["name"])]
+    pending_review = [r for r in all_data if not r.get("peer_reviewed")]
+    in_production = [r for r in all_data if r.get("production_status") == "in-production"]
+
+    wb.active.title = "All skills"
+    _sheet(wb, "All skills", all_data, COLS_ALL)
+    _sheet(wb, "Pending peer review", pending_review, COLS_ALL)
+    _sheet(wb, "In production", in_production, COLS_ALL)
+
+    out = ROOT / "catalog.xlsx"
+    wb.save(out)
+    print(f"  catalog.xlsx: {len(all_data)} skills / {len(pending_review)} pending review "
+          f"/ {len(in_production)} in-production")
+
+
 def render_table_rows(skills: list[dict]) -> str:
+    dispatch = [s for s in skills if s.get("skill_type") != "service-contract"]
     rows = ["| Skill | Version | Status | Domain | Summary |", "|---|---|---|---|---|"]
-    for s in sorted(skills, key=lambda s: s["name"]):
+    for s in sorted(dispatch, key=lambda s: s["name"]):
         rows.append(
             f"| [`{s['name']}`](./{s['path']}/) | {s['version']} "
             f"| {STATUS_BADGE.get(s['status'], s['status'])} "
-            f"| {', '.join(s['domain'])} | {first_sentence(s['description'])} |")
+            f"| {', '.join(s.get('domain', []))} | {first_sentence(s['description'])} |")
     return "\n".join(rows)
 
 
 def render_index_md(skills: list[dict]) -> str:
+    dispatch = [s for s in skills if s.get("skill_type") != "service-contract"]
+    sc = [s for s in skills if s.get("skill_type") == "service-contract"]
+
     out = [
         "# chatMPA Skills — Catalog",
         "",
@@ -365,41 +491,64 @@ def render_index_md(skills: list[dict]) -> str:
         "> Regenerated on every push to `main`. To change an entry, edit that skill's "
         "`SKILL.md` frontmatter.",
         "",
-        f"**{len(skills)} skills.** Classified along three axes — *domain* (research field), "
-        "*data source*, and *output type*. A skill may appear under more than one heading.",
+        f"**{len(skills)} skills** — {len(dispatch)} dispatch (Claude Code) · "
+        f"{len(sc)} service-contract (orchestrator).",
         "",
     ]
 
-    counts = {v: sum(1 for s in skills if s["status"] == v) for v in STATUS_VALUES}
-    out.append("**Lifecycle:** " + " · ".join(
-        f"{STATUS_BADGE[v]} {counts[v]}" for v in STATUS_VALUES) + ".")
-    out.append("")
-
-    for axis in ("domain", "data-source", "output-type"):
-        out.append(f"## {AXIS_TITLES[axis]}")
+    if dispatch:
+        counts = {v: sum(1 for s in dispatch if s.get("status") == v) for v in STATUS_VALUES}
+        out.append("**Dispatch lifecycle:** " + " · ".join(
+            f"{STATUS_BADGE[v]} {counts[v]}" for v in STATUS_VALUES) + ".")
         out.append("")
-        for value in VOCAB[axis]:
-            members = sorted([s for s in skills if value in s[axis]], key=lambda s: s["name"])
-            if not members:
-                continue
-            out.append(f"### `{value}`")
-            out.append("")
-            for s in members:
-                badge = "" if s["status"] == "stable" else f" — _{s['status']}_"
-                out.append(f"- [`{s['name']}`](./{s['path']}/){badge} — {first_sentence(s['description'])}")
-            out.append("")
 
-    out.append("## All skills (A–Z)")
-    out.append("")
-    out.append("| Skill | Version | Status | Domain | Data source | Output | Tags |")
-    out.append("|---|---|---|---|---|---|---|")
-    for s in sorted(skills, key=lambda s: s["name"]):
-        out.append(
-            f"| [`{s['name']}`](./{s['path']}/) | {s['version']} "
-            f"| {STATUS_BADGE.get(s['status'], s['status'])} "
-            f"| {', '.join(s['domain'])} | {', '.join(s['data-source'])} "
-            f"| {', '.join(s['output-type'])} | {', '.join(s['tags'])} |")
-    out.append("")
+        for axis in ("domain", "data-source", "output-type"):
+            out.append(f"## {AXIS_TITLES[axis]}")
+            out.append("")
+            for value in VOCAB[axis]:
+                members = sorted([s for s in dispatch if value in s.get(axis, [])],
+                                 key=lambda s: s["name"])
+                if not members:
+                    continue
+                out.append(f"### `{value}`")
+                out.append("")
+                for s in members:
+                    badge = "" if s.get("status") == "stable" else f" — _{s.get('status', '')}_"
+                    pr = " ✓" if s.get("peer_reviewed") else ""
+                    out.append(f"- [`{s['name']}`](./{s['path']}/){badge}{pr} — "
+                               f"{first_sentence(s['description'])}")
+                out.append("")
+
+        out.append("## Dispatch skills (A–Z)")
+        out.append("")
+        out.append("| Skill | Version | Status | Peer rev. | Domain | Data source | Output | Tags |")
+        out.append("|---|---|---|---|---|---|---|---|")
+        for s in sorted(dispatch, key=lambda s: s["name"]):
+            out.append(
+                f"| [`{s['name']}`](./{s['path']}/) | {s.get('version', '')} "
+                f"| {STATUS_BADGE.get(s.get('status', ''), s.get('status', ''))} "
+                f"| {'✓' if s.get('peer_reviewed') else ''} "
+                f"| {', '.join(s.get('domain', []))} | {', '.join(s.get('data-source', []))} "
+                f"| {', '.join(s.get('output-type', []))} | {', '.join(s.get('tags', []))} |")
+        out.append("")
+
+    if sc:
+        out.append("## Service-contract skills (A–Z)")
+        out.append("")
+        out.append("These skills are consumed by the orchestrator backend. "
+                   "Each has a canonical `SKILL.md` with `inputs`, `acquire`, and `provider` blocks.")
+        out.append("")
+        out.append("| Skill | Production status | Peer rev. | Description |")
+        out.append("|---|---|---|---|")
+        for s in sorted(sc, key=lambda s: s["name"]):
+            prod = s.get("production_status", "")
+            out.append(
+                f"| [`{s['name']}`](./{s['path']}/) "
+                f"| {prod} "
+                f"| {'✓' if s.get('peer_reviewed') else ''} "
+                f"| {first_sentence(s.get('description', ''))} |")
+        out.append("")
+
     return "\n".join(out)
 
 
@@ -676,8 +825,12 @@ def main() -> int:
 
     for p, content in outputs.items():
         p.write_text(content, encoding="utf-8")
+    render_catalog_xlsx(skills)
+    n_dispatch = sum(1 for s in skills if s.get("skill_type") != "service-contract")
+    n_sc = len(skills) - n_dispatch
     print(f"Wrote catalog for {len(skills)} skills "
-          f"(catalog.json, INDEX.md, README table: {readme_status}); {len(warnings)} warning(s).")
+          f"({n_dispatch} dispatch, {n_sc} service-contract) — "
+          f"catalog.json, INDEX.md, README table: {readme_status}; {len(warnings)} warning(s).")
     if readme_status == "no markers":
         print(f"  note: README.md has no {TABLE_BEGIN} / {TABLE_END} markers; table not updated.")
     return 0
