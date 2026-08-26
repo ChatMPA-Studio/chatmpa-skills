@@ -1,0 +1,97 @@
+name: Corrección / actualización de skill
+description: Reporta un error o propone un cambio en una skill existente o nueva
+title: "[SKILL] "
+labels: []
+assignees: []
+body:
+  - type: dropdown
+    id: skill
+    attributes:
+      label: Skill afectada
+      description: Selecciona la skill que requiere corrección
+      options:
+        - (nueva skill — no existe aún)
+        - conapesca-catch-composition
+        - conapesca-cpue
+        - conapesca-landings-timeseries
+        - conapesca-lfo-ca
+        - conapesca-lfo-regions
+        - conapesca-national-ranking
+        - conapesca-pfe
+        - conapesca-ppr
+        - conapesca-tmca
+        - eda-multivariate
+        - erddap-chlorophyll
+        - erddap-pp
+        - erddap-sst-anomaly
+        - ltem-biomass-productivity
+        - ltem-fish-biomass
+        - ltem-fish-community
+        - ltem-invertebrate-abundance
+        - ltem-mpa-effectiveness
+        - ltem-nrsi-index
+        - ltem-temporal-trends
+        - management-plan-review
+        - management-plan-version-comparator
+        - marine-prosperity-brief
+        - marine-prosperity-publish
+        - marine-species-analysis
+        - model-diagnostics
+        - mpa-effectiveness-assessment
+        - ppr-ratio
+        - reef-drivers-lm
+        - reef-ecology-report
+        - sea-surface-temperature
+        - skill-author
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo de tarea
+      description: ¿Quién debe resolverlo?
+      options:
+        - science — requiere decisión o validación del equipo de ciencia
+        - engineering — requiere cambio de código o infraestructura
+        - ambos — science + engineering
+    validations:
+      required: true
+
+  - type: textarea
+    id: problema
+    attributes:
+      label: Descripción del problema o cambio propuesto
+      description: Sé específico. Si es un error de validador, pega el mensaje exacto.
+      placeholder: "Ejemplo: el campo output.table está como clave plana, debe estar anidado bajo output:"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: repos
+    attributes:
+      label: Repos afectados
+      description: Marca los repos donde debe aplicarse el cambio
+      options:
+        - label: chatmpa-skills (canónico — siempre si hay cambio de SKILL.md)
+        - label: chatmpa-data-hub
+        - label: chatmpa-mvp
+        - label: PrototipoNewChatMPA
+        - label: chat-mpa
+
+  - type: dropdown
+    id: prioridad
+    attributes:
+      label: Prioridad
+      options:
+        - blocking — bloquea demostración o producción
+        - normal — corrección planificada
+        - low — mejora futura
+    validations:
+      required: true
+
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto adicional (opcional)
+      description: Links, capturas de pantalla, o notas relevantes
