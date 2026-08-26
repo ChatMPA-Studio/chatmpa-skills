@@ -4,6 +4,7 @@ domain: [fisheries-ecology, biodiversity]
 data-source: [LTEM]
 output-type: [analysis, report]
 tags: [diversity, trophic, size-structure, community, shannon]
+peer_reviewed: true
 status: stable
 version: 0.2.0
 description: This skill analyzes fish community structure from the Baja California LTEM (Long-Term Ecological Monitoring) dataset. It calculates diversity indices, species composition, size structure, and trophic metrics. Use this skill when analyzing fish assemblages, comparing communities across sites or regions, or generating biodiversity reports from the LTEM database.
@@ -253,7 +254,8 @@ survey_meta = survey_df.groupby('survey_id').agg({
 
 diversity_df = diversity_df.merge(survey_meta, on='survey_id')
 
-print("\nDiversity Summary by Region:")
+print("
+Diversity Summary by Region:")
 print(diversity_df.groupby('region')[['species_richness', 'shannon_index',
                                        'total_biomass']].mean().round(2))
 ```
@@ -329,7 +331,8 @@ def trophic_structure(df, group_col='region'):
     return trophic_biomass
 
 trophic_df = trophic_structure(survey_df, group_col='region')
-print("\nTrophic Structure (% Biomass) by Region:")
+print("
+Trophic Structure (% Biomass) by Region:")
 print(trophic_df.pivot(index='trophic_group', columns='region',
                        values='biomass_proportion').round(1))
 ```
@@ -363,7 +366,8 @@ def size_structure(df, group_col='region', bins=[0, 10, 20, 30, 50, 100, 200]):
     return size_abundance
 
 size_df = size_structure(ltem, group_col='region')
-print("\nSize Structure (% Abundance) by Region:")
+print("
+Size Structure (% Abundance) by Region:")
 print(size_df.pivot(index='size_class', columns='region',
                     values='proportion').round(1))
 ```
