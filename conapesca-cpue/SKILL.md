@@ -6,32 +6,45 @@ description: >
   Compute CPUE (catch per unit effort) as a historical time series for a
   landing office, disaggregated by fleet type (MAYORES / MENORES). Fires on
   dashboard panel requests for a specific office, optionally filtered by
-  resource (nombre_principal) or species (nombre_cientifico_canonico).
-  Also applies to AMP-context questions about fishing pressure near an MPA
-  when an office proxy is provided.
+  resource group (nombre_principal) or species (nombre_cientifico_canonico).
 inputs:
   species:
     type: string
-    required: true
+    required: false
+    mutually_exclusive_with: resource_group
     description: >
-      Nombre científico canónico (`nombre_cientifico_canonico`), tal cual está
-      en la base de CONAPESCA — p. ej. "Lutjanus peru". No acepta nombres
-      comunes: "pargo" tiene que resolverse antes de llegar acá.
+      Nombre científico canónico (`nombre_cientifico_canonico`), p. ej.
+      "Lutjanus peru". No acepta nombres comunes: "pargo" debe resolverse
+      antes de llegar acá. Mutuamente excluyente con `resource_group`.
+      Si ninguno se proporciona, se computa CPUE para todas las especies.
+  resource_group:
+    type: string
+    required: false
+    mutually_exclusive_with: species
+    description: >
+      Grupo/recurso pesquero (`nombre_principal`), p. ej. "PARGO", "JUREL".
+      Mutuamente excluyente con `species`. Si ninguno se proporciona, se
+      computa CPUE para todas las especies.
   state_filter:
     type: string
     required: true
     description: >
       Estado de la oficina de desembarque (`nombre_estado`), p. ej.
-      "BAJA CALIFORNIA SUR". Define la escala regional, y es obligatorio
-      también cuando se pide la local.
+      "BAJA CALIFORNIA SUR". Requerido únicamente para desambiguar nombres
+      de oficina que se repiten entre estados (p. ej. EL ROSARIO existe en
+      Baja California y en Sinaloa). No define escala de análisis.
   office_filter:
     type: string
+    required: true
+    description: >
+      Oficina de desembarque (`nombre_oficina`), p. ej. "CABO SAN LUCAS".
+      Es la unidad de análisis. Siempre debe acompañarse de `state_filter`.
+  year_range:
+    type: integer_vector
     required: false
     description: >
-      Oficina de desembarque (`nombre_oficina`) dentro de `state_filter`,
-      p. ej. "CABO SAN LUCAS". Si viene, se agrega la serie de escala local.
-      Nunca va sin `state_filter`: los nombres de oficina no son únicos entre
-      estados (EL ROSARIO existe en Baja California y en Sinaloa).
+      Two-element vector `[start, end]`, e.g. `[2010, 2020]`. If omitted,
+      the full available time series is returned.
 acquire:
   # El MCP de CONAPESCA ya devuelve este contrato completo y sin tope de filas
   # vía get_landings(group_by="folio"), así que el orquestador trae la tabla y
@@ -44,15 +57,17 @@ acquire:
       args:
         group_by: folio
       params:
-        species:       especie
-        state_filter:  estado
-        office_filter: oficina
+        species:        especie
+        resource_group: nombre_principal
+        state_filter:   estado
+        office_filter:  oficina
     columns:
       - folio_aviso
       - anio_corte
       - tipo_aviso
       - nombre_estado
       - nombre_oficina
+      - nombre_principal
       - nombre_cientifico_canonico
       - peso_desembarcado_kg
       - dias_efectivos
@@ -68,8 +83,8 @@ acquire:
 # sola dejaría pasar un cambio que solo afecte la dispersión.
 comparable_value: [cpue_media, cpue_sd]
 reference: references/cabo_pulmo_cpue_reference.json
-# Con qué corre el ARNÉS contra el fixture. No son defaults del API: `species`
-# y `state_filter` siguen siendo obligatorios en toda llamada real.
+# Con qué corre el ARNÉS contra el fixture. `state_filter` y `office_filter`
+# son obligatorios en toda llamada real.
 validation:
   params:
     species: Lutjanus peru
