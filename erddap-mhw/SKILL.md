@@ -10,7 +10,14 @@ description: >
   whether heatwave frequency is increasing over time. Companion skill to
   erddap-sst-anomaly — that skill reports mean temperatures; this one reports
   extreme thermal events.
-inputs: {}
+inputs:
+  mpa:
+    type: string
+    required: false
+    description: >
+      Nombre del AMP tal como aparece en amp_geometry_lookup.csv (ej. "Cabo Pulmo").
+      Usado por skill.R para obtener geometry_local vía get_amp_geometry(mpa).
+      Si se omite, skill.R no puede recortar los datos y fallará.
 acquire:
   # Misma fuente que erddap-sst-anomaly pero con serie diaria completa.
   # El orquestador llama al MCP de ERDDAP y manda los datos en el body.
@@ -29,9 +36,9 @@ acquire:
       - lon
       - time
       - sst
-  - source: payload
-    as: geometry_local
-    type: sf
+  # geometry_local NO viene del orquestador.
+  # skill.R la obtiene internamente:
+  #   geometry_local <- get_amp_geometry(mpa)  # shared/spatial_join/spatial_join.R
 # Sin output.table: devuelve un data.frame con la serie anual de MHW metrics.
 # Skill determinista — el algoritmo heatwaveR es reproducible dado los datos.
 comparable_value: [kpi_mhw_days_per_yr, n_events_per_yr]
