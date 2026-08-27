@@ -44,9 +44,9 @@ acquire:
       args:
         group_by: folio
       params:
-        especie: nombre_cientifico_canonico
-        estado: nombre_estado
-        oficina: nombre_oficina
+        species:       especie
+        state_filter:  estado
+        office_filter: oficina
     columns:
       - folio_aviso
       - anio_corte
