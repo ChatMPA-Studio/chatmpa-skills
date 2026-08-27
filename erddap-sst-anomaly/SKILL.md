@@ -9,7 +9,14 @@ description: >
   thermal stress on reef communities, El Niño/La Niña impacts on a specific
   protected area, or how local sea surface temperature compares to the regional
   trend.
-inputs: {}
+inputs:
+  mpa:
+    type: string
+    required: false
+    description: >
+      Nombre del AMP tal como aparece en amp_geometry_lookup.csv (ej. "Cabo Pulmo").
+      Usado por skill.R para obtener geometry_local vía get_amp_geometry(mpa).
+      Si se omite, skill.R no puede recortar los datos y fallará.
 acquire:
   # El orquestador llama al MCP de ERDDAP (dos calls: sst y anom) y los manda
   # en el body fusionados. Dataset: ncdcOisst21Agg_LonPM180 (OISST v2.1, 0.25°).
@@ -27,18 +34,13 @@ acquire:
       - time
       - sst
       - anom
-  - source: payload
-    as: geometry_local
-    type: sf
-  - source: payload
-    as: geometry_regional
-    type: sf
+  # geometry_local y geometry_regional NO vienen del orquestador.
+  # skill.R las obtiene internamente:
+  #   geometry_local    <- get_amp_geometry(mpa)      # shared/spatial_join/spatial_join.R
+  #   geometry_regional <- get_lme_geometry(lme_name) # ídem, cached en shared/geometries/lme/
 # Sin `output.table`: run_skill() devuelve un solo data.frame con ambas escalas.
 # Skill determinista — media aritmética anual, sin bootstrap.
-# PENDING (issue #8): kpi_mhw_days_per_yr no está implementado.
-# El dashboard Card 4 / Chart Marine Heatwaves lo requiere.
-# Método: heatwaveR::ts2clm() + detect_event() sobre la serie diaria.
-# Decisión pendiente: extender esta skill o crear erddap-mhw separada.
+# MHW (kpi_mhw_days_per_yr) → skill separada erddap-mhw (issue #8 cerrado).
 comparable_value: [sst_media, anomalia_media]
 reference: references/cabo_pulmo_sst_reference.json
 validation:
