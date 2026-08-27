@@ -9,7 +9,14 @@ description: >
   about ocean productivity near an AMP, upwelling strength, food availability
   for fish communities, nutrient conditions, or how local chlorophyll compares
   to regional patterns.
-inputs: {}
+inputs:
+  mpa:
+    type: string
+    required: false
+    description: >
+      Nombre del AMP tal como aparece en amp_geometry_lookup.csv (ej. "Cabo Pulmo").
+      Usado por skill.R para obtener geometry_local vía get_amp_geometry(mpa).
+      Si se omite, skill.R no puede recortar los datos y fallará.
 acquire:
   # El orquestador llama al MCP de ERDDAP y manda los datos en el body.
   # Dataset: erdMH1chla8day_R202SQ (MODIS Aqua 8-day, 4 km).
@@ -25,12 +32,10 @@ acquire:
       - lon
       - time
       - chlorophyll
-  - source: payload
-    as: geometry_local
-    type: sf
-  - source: payload
-    as: geometry_regional
-    type: sf
+  # geometry_local y geometry_regional NO vienen del orquestador.
+  # skill.R las obtiene internamente:
+  #   geometry_local    <- get_amp_geometry(mpa)      # shared/spatial_join/spatial_join.R
+  #   geometry_regional <- get_lme_geometry(lme_name) # ídem, cached en shared/geometries/lme/
 # Sin `output.table`: run_skill() devuelve un solo data.frame con ambas escalas.
 # Skill determinista — media geométrica log10, sin bootstrap.
 comparable_value: [chl_geomean, anomalia_log10]
