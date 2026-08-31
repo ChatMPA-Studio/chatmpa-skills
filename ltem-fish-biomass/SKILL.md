@@ -69,6 +69,7 @@ acquire:
       - value
 output:
   table: annual_means
+  columns: [year, mean_biomass_g_m2, se_g_m2, n_reefs]
 # GAM con REML: determinista dado el ajuste. El KPI es media aritmética.
 comparable_value: [mean_biomass_g_m2, se_g_m2]
 reference: references/cabo_pulmo_biomass_reference.json
