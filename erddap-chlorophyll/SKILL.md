@@ -36,7 +36,9 @@ acquire:
   # skill.R las obtiene internamente:
   #   geometry_local    <- get_amp_geometry(mpa)      # shared/spatial_join/spatial_join.R
   #   geometry_regional <- get_lme_geometry(lme_name) # ídem, cached en shared/geometries/lme/
-# Sin `output.table`: run_skill() devuelve un solo data.frame con ambas escalas.
+output:
+  table: chl_annual
+  columns: [year, escala, chl_geomean, anomalia_log10, anomalia_mgm3, n_pixels, cobertura_pct, prod_flag]
 # Skill determinista — media geométrica log10, sin bootstrap.
 comparable_value: [chl_geomean, anomalia_log10]
 reference: references/cabo_pulmo_chl_reference.json

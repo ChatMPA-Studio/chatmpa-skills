@@ -75,9 +75,9 @@ acquire:
       - flag_fecha_generica
       - flag_dias_efectivos_sospechoso
       - flag_periodo_futuro
-# Sin `output.table`: run_skill() devuelve un solo data.frame, no una lista de
-# tablas, y ahí no hay nada que elegir.
-#
+output:
+  table: cpue_series
+  columns: [anio_corte, tipo_aviso, cpue_media, cpue_sd, n_viajes, n_viajes_excluidos, peso_desembarcado_kg_total, n_viajes_recomputado]
 # Skill determinista (sin controles aleatorios), así que las corridas deben
 # coincidir exactamente. Se comparan las dos columnas calculadas: `cpue_media`
 # sola dejaría pasar un cambio que solo afecte la dispersión.

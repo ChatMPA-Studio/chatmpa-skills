@@ -30,6 +30,7 @@ acquire:
       - reef
 output:
   table: nrsi_by_reef
+  columns: [time, reef, nrsi, ci_lo_95, ci_hi_95, ci_includes_zero, health_category, n_transects, n_ltl_dominant]
 # Bootstrap con seed=42 — determinista. Se comparan NRSI y CIs por reef-year.
 comparable_value: [nrsi, ci_lo_95, ci_hi_95]
 reference: references/cabo_pulmo_nrsi_reference.json

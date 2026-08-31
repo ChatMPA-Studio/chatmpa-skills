@@ -39,7 +39,9 @@ acquire:
   # geometry_local NO viene del orquestador.
   # skill.R la obtiene internamente:
   #   geometry_local <- get_amp_geometry(mpa)  # shared/spatial_join/spatial_join.R
-# Sin output.table: devuelve un data.frame con la serie anual de MHW metrics.
+output:
+  table: mhw_annual
+  columns: [year, kpi_mhw_days_per_yr, n_events_per_yr, mean_intensity_per_yr]
 # Skill determinista — el algoritmo heatwaveR es reproducible dado los datos.
 comparable_value: [kpi_mhw_days_per_yr, n_events_per_yr]
 reference: references/cabo_pulmo_mhw_reference.json

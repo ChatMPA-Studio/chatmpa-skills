@@ -38,7 +38,9 @@ acquire:
   # skill.R las obtiene internamente:
   #   geometry_local    <- get_amp_geometry(mpa)      # shared/spatial_join/spatial_join.R
   #   geometry_regional <- get_lme_geometry(lme_name) # ídem, cached en shared/geometries/lme/
-# Sin `output.table`: run_skill() devuelve un solo data.frame con ambas escalas.
+output:
+  table: sst_annual
+  columns: [year, escala, sst_media, anomalia_media, n_pixels, cobertura_pct, stress_flag]
 # Skill determinista — media aritmética anual, sin bootstrap.
 # MHW (kpi_mhw_days_per_yr) → skill separada erddap-mhw (issue #8 cerrado).
 comparable_value: [sst_media, anomalia_media]
