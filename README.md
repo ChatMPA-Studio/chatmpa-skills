@@ -69,6 +69,20 @@ git checkout main
 cd .claude/skills && git pull
 ```
 
+## Runtime dependencies
+
+Some per-database skills (all `erddap-*` and `ltem-*` skills with `source: payload`) call shared R helpers that live in `chatmpa-mvp`, not in this repo. Engineers deploying the platform need:
+
+| File | Repo | Purpose |
+|------|------|---------|
+| `shared/spatial_join/spatial_join.R` | `chatmpa-mvp` | `get_amp_geometry()`, `get_lme_geometry()`, `clip_to_geometry()` |
+| `shared/geometries/amp_geometry_lookup.csv` | `chatmpa-mvp` | Maps CONANP AMP name → geometry source and WDPA name |
+| `shared/geometries/wdpa_mex_amps.gpkg` | `chatmpa-mvp` | Polygons for the 32 Mexican AMPs with source `WDPA` (pre-built, no internet needed at runtime) |
+| `shared/geometries/conanp_overrides.gpkg` | `chatmpa-mvp` | Polygons for AMPs pending WDPA review |
+| `shared/interpretation/interpret.R` | `chatmpa-mvp` | `before_after()`, `mk_trend()`, `insight_sentence()` |
+
+All geometry files are committed to `chatmpa-mvp` — no setup or internet access is required at runtime. See `shared/geometries/README.md` in that repo for regeneration instructions.
+
 ## Skill structure
 
 Each skill follows the Claude Code skill format:
