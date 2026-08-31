@@ -65,13 +65,13 @@ acquire:
         region: region
         year:   year
     columns:
-      - functional_group
-      - value
+      - Functional_groups
+      - mean_biomass
 output:
   table: annual_means
-  columns: [year, mean_biomass_g_m2, se_g_m2, n_reefs]
+  columns: [year, mean_biomass_t_ha, se_t_ha, n_reefs]
 # GAM con REML: determinista dado el ajuste. El KPI es media aritmética.
-comparable_value: [mean_biomass_g_m2, se_g_m2]
+comparable_value: [mean_biomass_t_ha, se_t_ha]
 reference: references/cabo_pulmo_biomass_reference.json
 validation:
   params: {}
@@ -90,14 +90,17 @@ recent survey years as the KPI.
 Input — reef-year level biomass (one row per year × reef combination):
 - `time` — survey year (integer)
 - `reef` — reef identifier (character; used as random effect in GAM)
-- `value` — mean fish biomass (g/m²) for that reef-year (averaged across transects)
+- `value` — mean fish biomass (g/m²) for that reef-year (averaged across transects).
+  skill.R converts to T/ha (× 0.01) before any computation.
 - `region` — LTEM monitoring region name (used for output labelling only)
 - `n_transects` — number of transects contributing (optional; for diagnostic reporting)
 
 Optional secondary input — functional-group breakdown for the most recent year:
-- `functional_group` — one of: GenPred_solitary, GenPred_schooling,
-  EpiBent_schooling, Crip_schooling, Crip_solitary, Plank
-- `value` — mean biomass contribution (g/m²) for that functional group
+- `Functional_groups` — one of: piscivores, pisci-invertivores, grazers,
+  macro-invertivores, micro-invertivores, browsers, detritivores,
+  excavator/scraper, corallivore, planktivores, spongivore
+- `mean_biomass` — mean biomass (g/m²) for that functional group.
+  skill.R converts to T/ha (× 0.01) before output.
 
 MCP source (Stage 2 of ORCHESTRATION):
 - Primary: query that returns reef-year biomass (year × reef, with transect
