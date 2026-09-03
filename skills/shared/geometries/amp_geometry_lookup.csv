@@ -1,0 +1,36 @@
+conanp_nombre,wdpa_nombre,ltem_region,geometry_source,jaccard,jaccard_threshold,area_conanp_km2,area_wdpa_km2
+Alto Golfo de California y Delta del Río Colorado,NA,NA,CONANP_pending_review,NA,0.95,NA,NA
+Arrecife Alacranes,Arrecife Alacranes,NA,WDPA,0.95,0.95,NA,NA
+Arrecife de Puerto Morelos,Arrecife de Puerto Morelos,NA,WDPA,0.95,0.95,NA,NA
+Arrecifes de Cozumel,Arrecifes de Cozumel,NA,WDPA,0.95,0.95,NA,NA
+Arrecifes de Xcalak,Arrecifes de Xcalak,NA,WDPA,0.95,0.95,NA,NA
+Bahía de Loreto,Bahía de Loreto,Loreto,WDPA,0.95,0.95,NA,NA
+Bajos del Norte,Bajos del Norte,NA,WDPA,0.95,0.95,NA,NA
+Balandra,NA,La Paz,CONANP_pending_review,NA,0.95,NA,NA
+Banco Chinchorro,Banco Chinchorro,NA,WDPA,0.95,0.95,NA,NA
+Cabo Pulmo,Cabo Pulmo,Cabo Pulmo,WDPA,0.95,0.95,NA,NA
+Cabo San Lucas,Cabo San Lucas,Los Cabos,WDPA,0.95,0.95,NA,NA
+Caribe Mexicano,Caribe Mexicano,NA,WDPA,0.95,0.95,NA,NA
+Complejo Sian Ka'an,Complejo Sian Ka'an,NA,WDPA,0.95,0.95,NA,NA
+"Costa Occ. de I. Mujeres, Pta. Cancún y Pta. Nizuc","Costa Occ. de I. Mujeres, Pta. Cancún y Pta. Nizuc",NA,WDPA,0.95,0.95,NA,NA
+El Vizcaíno,El Vizcaíno,Santa Rosalia,WDPA,0.95,0.95,NA,NA
+Huatulco,Huatulco,Huatulco,WDPA,0.95,0.95,NA,NA
+Isla Contoy,Isla Contoy,NA,WDPA,0.95,0.95,NA,NA
+Isla Guadalupe,Isla Guadalupe,NA,WDPA,0.95,0.95,NA,NA
+Isla San Pedro Mártir,Isla San Pedro Mártir,Alto Golfo,WDPA,0.95,0.95,NA,NA
+Islas del Pacifico de la Peninsula de Baja California,Islas del Pacifico de la Peninsula de Baja California,NA,WDPA,0.95,0.95,NA,NA
+Islas Marías,Islas Marías,Islas Marias,WDPA,0.95,0.95,NA,NA
+Islas Marietas,Islas Marietas,Bahia Banderas,WDPA,0.95,0.95,NA,NA
+Laguna de Terminos,Laguna de Terminos,NA,WDPA,0.95,0.95,NA,NA
+Los Petenes,Los Petenes,NA,WDPA,0.95,0.95,NA,NA
+Pacífico Mexicano Profundo,Pacífico Mexicano Profundo,NA,WDPA,0.95,0.95,NA,NA
+Revillagigedo,Revillagigedo,Revillagigedo,WDPA,0.95,0.95,NA,NA
+Sistema Arrecifal Lobos-Tuxpan,Sistema Arrecifal Lobos-Tuxpan,NA,WDPA,0.95,0.95,NA,NA
+Sistema Arrecifal Veracruzano,Sistema Arrecifal Veracruzano,NA,WDPA,0.95,0.95,NA,NA
+Tiburón Ballena,Tiburón Ballena,NA,WDPA,0.95,0.95,NA,NA
+Ventilas Hidrotermales de la Cuenca de Guaymas y de la Dorsal del Pacífico Oriental,Ventilas Hidrotermales de la Cuenca de Guaymas y de la Dorsal del Pacífico Oriental,NA,WDPA,0.95,0.95,NA,NA
+Yum Balam,Yum Balam,NA,WDPA,0.95,0.95,NA,NA
+"Zona marina Bahía de los Ángeles, canales de Ballenas y de Salsipuedes","Zona marina Bahía de los Ángeles, canales de Ballenas y de Salsipuedes",Alto Golfo,WDPA,0.95,0.95,NA,NA
+Zona Marina de Isla Isabel,Zona Marina de Isla Isabel,NA,WDPA,0.95,0.95,NA,NA
+Zona marina del Archipiélago de Espíritu Santo,Zona marina del Archipiélago de Espíritu Santo,La Paz,WDPA,0.95,0.95,NA,NA
+Zona marina del Archipiélago de San Lorenzo,NA,Alto Golfo,CONANP_pending_review,NA,0.95,NA,NA
