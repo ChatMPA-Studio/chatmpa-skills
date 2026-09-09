@@ -67,6 +67,43 @@ acquire:
     columns:
       - Functional_groups
       - mean_biomass
+  - source: payload
+    as: data_family
+    required: false
+    # Devuelve TODAS las familias — el filtro por familia (ej. Serranidae,
+    # Lutjanidae, Carangidae) es responsabilidad del caller (chat-mpa),
+    # igual que el top-N en data_species. No se expone families como input
+    # del skill porque el filtro es una decisión de presentación aguas abajo.
+    provider:
+      server: ltem
+      tool: family_biomass
+      params:
+        mpa:    mpa
+        region: region
+        reef:   reef
+        year:   year
+    columns:
+      - year
+      - family
+      - mean_biomass
+      - n_transects
+  - source: payload
+    as: data_species
+    required: false
+    provider:
+      server: ltem
+      tool: species_biomass
+      params:
+        mpa:    mpa
+        region: region
+        reef:   reef
+        year:   year
+    columns:
+      - species_id
+      - species_name
+      - trophic_group
+      - mean_biomass
+      - n_transects
 output:
   table: annual_means
   columns: [year, mean_biomass_t_ha, se_t_ha, n_reefs]
@@ -102,16 +139,36 @@ Optional secondary input — functional-group breakdown for the most recent year
 - `mean_biomass` — mean biomass (g/m²) for that functional group.
   skill.R converts to T/ha (× 0.01) before output.
 
+Optional input — biomass by taxonomic family (`data_family`), one row per year × family.
+Feeds `GET /species/family-biomass`. Unit: g/m² (consistent with `get_biomass_data`).
+The tool returns ALL families — filtering to specific families (e.g. Serranidae, Lutjanidae,
+Carangidae) is the caller's responsibility, analogous to how top-N selection is delegated
+to the caller for `data_species`.
+- `year` — survey year
+- `family` — taxonomic family
+- `mean_biomass` — mean biomass (g/m²); SUM per transect then AVG across transects
+- `n_transects` — number of transects contributing
+
+Optional input — biomass by species (`data_species`), one row per species.
+Feeds `GET /biomass/top-species`. Unit: g/m² (consistent with `get_biomass_data`).
+Biomass is collapsed across years unless `year` is specified. Ranking (top-N) is the
+caller's responsibility.
+- `species_id` — IDSpecies from ltem_historical_database
+- `species_name` — scientific name
+- `trophic_group` — TrophicGroup from ltem_historical_database
+- `mean_biomass` — mean biomass (g/m²); SUM per transect then AVG across transects
+- `n_transects` — number of transects contributing
+
 MCP source (Stage 2 of ORCHESTRATION):
-- Primary: query that returns reef-year biomass (year × reef, with transect
-  aggregation already done) for the specified region.
-  Use `mcp__ltem__get_observations` or the biomass endpoint that exposes reef-level
-  data. NOT `annual_time_series` (already aggregated — lacks reef column needed
-  for random effect).
-- Optional breakdown: `mcp__ltem__trophic_biomass(region = <region>)`
+- Primary: `mcp__ltem__get_biomass_data(mpa, region, reef, year)` — reef-year biomass
+  (year × reef, transect aggregation already done). NOT `annual_time_series`
+  (already aggregated — lacks reef column needed for random effect).
+- Optional breakdown by functional group: `mcp__ltem__trophic_biomass(region, year)`
+- Optional breakdown by taxonomic family: `mcp__ltem__family_biomass(mpa, region, reef, year)` — feeds `GET /species/family-biomass`
+- Optional breakdown by species: `mcp__ltem__species_biomass(mpa, region, reef, year)` — feeds `GET /biomass/top-species`
 
 Processing already applied by the MCP before data reaches this skill:
-- Fish records filtered to `label == "PEC"` and `Family != "Carangidae"`
+- Fish records filtered to `label == "PEC"` and `Biomass IS NOT NULL`
 - Outlier removal: `size_check()` at 95th quantile
 - Corredor region: Haemulidae and Carangidae records with `biomass > 3` excluded
 - Aggregation: within-reef mean across transects for each year
@@ -180,4 +237,6 @@ A complete fish biomass analysis includes:
 - Trend: GAM smooth over full year range with 95% CI, deviance explained.
 - Observed annual means ± SE for overlaying on the trend plot.
 - Number of unique reefs and survey years used.
-- Functional-group breakdown for the most recent year (if secondary input provided).
+- Functional-group breakdown for the most recent year (if `data_func` provided).
+- Biomass by taxonomic family as time series year × family (if `data_family` provided).
+- Biomass by species ranked by mean biomass (if `data_species` provided).
