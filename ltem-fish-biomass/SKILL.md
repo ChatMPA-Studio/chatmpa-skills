@@ -56,17 +56,21 @@ acquire:
       - value
       - region
   - source: payload
-    as: data_func
+    as: data_behavioral
     required: false
     provider:
       server: ltem
-      tool: functional_group_biomass
+      tool: behavioral_group_biomass
       params:
+        mpa:    mpa
         region: region
+        reef:   reef
         year:   year
     columns:
-      - Functional_groups
+      - year
+      - functional_name
       - mean_biomass
+      - n_transects
   - source: payload
     as: data_family
     required: false
@@ -132,12 +136,20 @@ Input — reef-year level biomass (one row per year × reef combination):
 - `region` — LTEM monitoring region name (used for output labelling only)
 - `n_transects` — number of transects contributing (optional; for diagnostic reporting)
 
-Optional secondary input — functional-group breakdown for the most recent year:
-- `Functional_groups` — one of: piscivores, pisci-invertivores, grazers,
-  macro-invertivores, micro-invertivores, browsers, detritivores,
-  excavator/scraper, corallivore, planktivores, spongivore
-- `mean_biomass` — mean biomass (g/m²) for that functional group.
-  skill.R converts to T/ha (× 0.01) before output.
+Optional secondary input — behavioral functional group biomass (`data_behavioral`),
+one row per year × functional_name. Feeds `TrophicYear` schema.
+- `year` — survey year
+- `functional_name` — one of 6 behavioral categories:
+  `GenPred_solitary` (Depredadores solitarios),
+  `GenPred_schooling` (Depredadores en cardúmenes),
+  `EpiBent_schooling` (Omnívoros en cardumen),
+  `Crip_schooling` (Herbívoros en cardumen),
+  `Crip_solitary` (Crípticos solitarios),
+  `Plank` (Planctívoros).
+  Species with `functional_name = 'Pelagic'` or without a match in `species_traits`
+  are excluded by the MCP. Maps 1:1 to the 6 fields of `TrophicYear`.
+- `mean_biomass` — mean biomass (g/m²); SUM per transect → AVG per reef → AVG per year.
+- `n_transects` — total transects contributing across reefs.
 
 Optional input — biomass by taxonomic family (`data_family`), one row per year × family.
 Feeds `GET /species/family-biomass`. Unit: g/m² (consistent with `get_biomass_data`).
@@ -163,7 +175,7 @@ MCP source (Stage 2 of ORCHESTRATION):
 - Primary: `mcp__ltem__get_biomass_data(mpa, region, reef, year)` — reef-year biomass
   (year × reef, transect aggregation already done). NOT `annual_time_series`
   (already aggregated — lacks reef column needed for random effect).
-- Optional breakdown by functional group: `mcp__ltem__trophic_biomass(region, year)`
+- Optional breakdown by behavioral functional group: `mcp__ltem__behavioral_group_biomass(mpa, region, reef, year)` — feeds `TrophicYear`
 - Optional breakdown by taxonomic family: `mcp__ltem__family_biomass(mpa, region, reef, year)` — feeds `GET /species/family-biomass`
 - Optional breakdown by species: `mcp__ltem__species_biomass(mpa, region, reef, year)` — feeds `GET /biomass/top-species`
 
@@ -237,6 +249,6 @@ A complete fish biomass analysis includes:
 - Trend: GAM smooth over full year range with 95% CI, deviance explained.
 - Observed annual means ± SE for overlaying on the trend plot.
 - Number of unique reefs and survey years used.
-- Functional-group breakdown for the most recent year (if `data_func` provided).
+- Behavioral functional-group breakdown per year × group (if `data_behavioral` provided), mapped to `TrophicYear`.
 - Biomass by taxonomic family as time series year × family (if `data_family` provided).
 - Biomass by species ranked by mean biomass (if `data_species` provided).
