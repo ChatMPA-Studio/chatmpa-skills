@@ -57,6 +57,7 @@ acquire:
       - region
 output:
   table: trend_summary
+  columns: [taxa, status, dev_expl_pct, n_years]
 # GAM por taxón con REML: determinista. Se comparan desviance explained y
 # el número de años usados por taxón.
 comparable_value: [dev_expl_pct, n_years]
