@@ -1,6 +1,6 @@
 ---
 name: erddap-chlorophyll
-version: 0.1.0
+version: 0.2.0
 tier: 1
 description: >
   Assess primary productivity and phytoplankton trends at a marine protected
@@ -15,27 +15,74 @@ inputs:
     required: false
     description: >
       Nombre del AMP tal como aparece en amp_geometry_lookup.csv (ej. "Cabo Pulmo").
-      Usado por skill.R para obtener geometry_local vía get_amp_geometry(mpa).
-      Si se omite, skill.R no puede recortar los datos y fallará.
+      No se usa para recortar datos (ver bbox_local) — solo para que skill.R
+      reporte geometry_source (WDPA vs CONANP_pending_review) en el output.
+  bbox_local:
+    type: array
+    required: true
+    description: >
+      [lon_min, lon_max, lat_min, lat_max] del AMP. Debe resolverse ANTES de
+      llamar a esta skill, buscando `mpa` en
+      shared/geometries/amp_bbox_lookup.csv (chatmpa-mvp) — generado por
+      shared/geometries/generate_bbox_lookups.R a partir de la misma geometría
+      que usa get_amp_geometry(). No se calcula en tiempo real.
+  lme:
+    type: string
+    required: false
+    default: "Gulf of California"
+    description: >
+      Nombre del LME (Large Marine Ecosystem) para la escala regional, p. ej.
+      "Gulf of California", "Gulf of Mexico". Usado para reportar
+      geometry_source regional y para resolver bbox_regional.
+  bbox_regional:
+    type: array
+    required: false
+    description: >
+      [lon_min, lon_max, lat_min, lat_max] del LME indicado en `lme`, resuelto
+      de antemano contra shared/geometries/lme_bbox_lookup.csv. Si se omite,
+      no se calcula la escala regional (solo local).
+  date_range:
+    type: date_range
+    required: false
+    default: ["2003-01-01", "today"]
+    description: >
+      Rango de fechas [inicio, fin] para la consulta. MODIS Aqua 8-day
+      composites inician en 2003. "today" debe resolverse a la fecha actual
+      al momento de la llamada.
 acquire:
-  # El orquestador llama al MCP de ERDDAP y manda los datos en el body.
-  # Dataset: erdMH1chla8day_R202SQ (MODIS Aqua 8-day, 4 km).
+  # El MCP de ERDDAP promedia espacialmente del lado del servidor
+  # (aggregate_spatial=TRUE) y regresa un valor por composite de 8 días — no
+  # pixel-composite crudo. bbox_local/bbox_regional ya vienen resueltos (ver
+  # inputs) — este acquire nunca calcula geometría.
   - source: payload
-    as: data
+    as: data_local
     provider:
       server: erddap
       tool: get_data
       args:
         variable: chlorophyll
+        aggregate_spatial: true
+      params:
+        bbox:       bbox_local
+        date_range: date_range
     columns:
-      - lat
-      - lon
       - time
       - chlorophyll
-  # geometry_local y geometry_regional NO vienen del orquestador.
-  # skill.R las obtiene internamente:
-  #   geometry_local    <- get_amp_geometry(mpa)      # shared/spatial_join/spatial_join.R
-  #   geometry_regional <- get_lme_geometry(lme_name) # ídem, cached en shared/geometries/lme/
+  - source: payload
+    as: data_regional
+    required: false
+    provider:
+      server: erddap
+      tool: get_data
+      args:
+        variable: chlorophyll
+        aggregate_spatial: true
+      params:
+        bbox:       bbox_regional
+        date_range: date_range
+    columns:
+      - time
+      - chlorophyll
 output:
   table: chl_annual
   columns: [year, escala, chl_geomean, anomalia_log10, anomalia_mgm3, n_pixels, cobertura_pct, prod_flag]
@@ -58,27 +105,35 @@ phytoplankton biomass and primary productivity.
 
 ## Data contract (minimal interface, NOT the local file)
 
-The orchestrator calls the ERDDAP MCP once before passing data to this skill:
+The orchestrator calls the ERDDAP MCP once per scale, with spatial averaging
+done server-side:
 
 ```
-get_data(variable="chlorophyll", region=<region>, date_start=, date_end=)
+get_data(variable="chlorophyll", aggregate_spatial=true,
+         bbox=<bbox_local>,    date_range=<date_range>) → data_local
+get_data(variable="chlorophyll", aggregate_spatial=true,
+         bbox=<bbox_regional>, date_range=<date_range>) → data_regional (optional)
 ```
 
-- Input `data`: a data.frame carrying, per observation (one row per pixel per
-  8-day composite):
-  - `lat`, `lon`      — pixel center coordinates (MODIS 4 km grid, WGS84)
-  - `time`            — start date of the 8-day composite period
-  - `chlorophyll`     — chlorophyll-a concentration (mg/m³); NA over clouds
-- `geometry_local`    — sf object for the AMP polygon, from `get_amp_geometry()`
-- `geometry_regional` — sf object for the LME polygon, from `get_lme_geometry()`
+- `data_local` / `data_regional`: one row **per 8-day composite** (not per
+  pixel-composite — the MCP already averaged over all pixels in the bbox):
+  - `time`        — start date of the 8-day composite period
+  - `chlorophyll` — chlorophyll-a concentration (mg/m³), spatial mean over
+    the bbox; `NA` over clouds
+- `bbox_local` / `bbox_regional` are resolved **before** this skill runs, from
+  `amp_bbox_lookup.csv` / `lme_bbox_lookup.csv` (`shared/geometries/` in
+  `chatmpa-mvp`) — see `inputs` above. skill.R never computes a bbox itself.
+- `mpa` / `lme` are passed through unchanged to `skill.R` purely so it can
+  call `get_amp_geometry()` / `get_lme_geometry()` for `geometry_source`
+  metadata — not for spatial filtering.
 
 - Missing-data rule: rows where `chlorophyll` is `NA` or ≤ 0 are excluded
   before any aggregation. Cloud cover routinely causes large gaps — this is
   expected and handled via `cobertura_pct`. Years where `cobertura_pct < 30`
   are returned as `NA` with a warning. The 30% threshold (lower than SST's 50%)
   reflects the expected cloud-driven gaps in 8-day composites.
-- Aggregation unit: **pixel per 8-day composite** → annual geometric mean per
-  scale. Fixed, not optional.
+- Aggregation unit: **8-day composite** (already bbox-averaged) → annual
+  geometric mean per scale. Fixed, not optional.
 - Dataset: MODIS Aqua Science Quality 8-day composites, 4 km resolution,
   2003–present. Source: `erdMH1chla8day_R202SQ` on
   `https://coastwatch.pfeg.noaa.gov/erddap`.
@@ -90,20 +145,17 @@ events and must not be used. All averaging is done in log10 space.
 
 Computation steps, applied identically at both scales:
 
-1. `clip_to_geometry(data, geometry_local)`    → `data_local`
-2. `clip_to_geometry(data, geometry_regional)` → `data_regional`
-3. For each scale and each calendar year:
+1. For each scale and each calendar year:
    a. Exclude rows where `chlorophyll` is `NA` or ≤ 0
-   b. Compute `cobertura_pct` = valid pixel-composites / expected pixel-composites × 100
-      (expected = n_pixels_within_polygon × 46 composites/year)
+   b. Compute `cobertura_pct` = valid composites / 46 (expected composites/year) × 100
    c. If `cobertura_pct < 30`: set outputs to `NA`, emit `warning()` with year
       and coverage value
    d. Otherwise compute the **annual geometric mean**:
       `chl_geomean = 10 ^ mean(log10(chlorophyll))`
-4. Compute the **anomaly** relative to the baseline period (2003–2020):
+2. Compute the **anomaly** relative to the baseline period (2003–2020):
    - Baseline geometric mean per scale:
      `chl_baseline = 10 ^ mean(log10(chlorophyll))` over all valid
-     pixel-composites within the polygon across 2003–2020
+     composites across 2003–2020
    - Annual anomaly (log10 units, interpretable as order-of-magnitude deviation):
      `anomalia_log10 = log10(chl_geomean) - log10(chl_baseline)`
    - Also report in natural units for interpretability:
@@ -137,9 +189,9 @@ or stochastic step).
   questions and must always be reported separately.
 - Do NOT interpret `anomalia_log10` without noting the baseline period and
   `cobertura_pct`. A positive anomaly in a low-coverage year is unreliable.
-- Do NOT flag n_pixels < 4 as a warning for chlorophyll as aggressively as for
-  SST — MODIS resolution (4 km) is finer than OISST (25 km), so small AMPs
-  still have meaningful pixel coverage.
+- Do NOT compute `bbox_local` / `bbox_regional` inside `skill.R` or at
+  request time — they must come from the precomputed lookup tables. Adding a
+  new AMP means re-running `generate_bbox_lookups.R`, not adding logic here.
 
 ## Validation checklist
 - [ ] self-consistency: run N times on fixed data, outputs match within
@@ -152,7 +204,7 @@ or stochastic step).
 A complete chlorophyll analysis includes:
 - Annual series of `chl_geomean`, `anomalia_log10`, and `anomalia_mgm3` for
   both scales (local AMP and regional LME), covering 2003–present.
-- `cobertura_pct` and `n_pixels` reported per year and scale.
+- `cobertura_pct` reported per year and scale.
 - `geometry_source` attribute documented in output (`"WDPA"` or
   `"CONANP_pending_review"`).
 - Baseline period (2003–2020) explicitly stated in any reported result.
@@ -163,27 +215,11 @@ A complete chlorophyll analysis includes:
 
 ---
 
-## Planned scale architecture — PENDING: gradilla costera
+## Precisión del bbox — nota, no bloqueo
 
-> Este bloque documenta la arquitectura objetivo del MVP. No modifica el
-> contrato actual. Implementar cuando la gradilla esté disponible.
-
-### Cambio de escala local
-- **Actual**: `clip_to_geometry(data, geometry_local)` con polígono del AMP
-- **Planeado**: extraer valores de clorofila en celdas de la gradilla donde `nombre_amp == <amp_name>`
-- Extracción: centroide de cada celda como punto sobre el raster ERDDAP (MODIS 4 km, probablemente más fino que la gradilla)
-- Si se quiere promedio por polígono de celda en lugar del valor puntual, usar extracción por polígono — decisión pendiente
-
-### Cambio de escala regional
-- **Actual**: `clip_to_geometry(data, geometry_regional)` con polígono del LME
-- **Planeado**: extraer valores en celdas de la gradilla donde `region_id == <region>` (de `conapesca-lfo-regions`)
-
-### Lo que NO cambia
-- Fórmula: media geométrica log₁₀, anomalía log₁₀ vs. baseline 2003–2020 — idéntica
-- Regla de cobertura (`cobertura_pct < 50` → NA)
-- Outputs: misma estructura
-
-### Dependencias para implementar
-- [ ] Gradilla costera disponible (sf con `nombre_amp`, `region_id`)
-- [ ] `conapesca-lfo-regions` ejecutado
-- [ ] Decisión: extracción por centroide vs. por polígono de celda
+`bbox_local` es el rectángulo mínimo que contiene el polígono del AMP, no el
+polígono exacto. Dado que MODIS (4 km) es más fino que OISST (25 km), el
+efecto de esta simplificación en `chl_geomean` es aún menor que en
+`erddap-sst-anomaly`. Si en el futuro se necesita precisión de polígono
+exacto, la alternativa es una gradilla costera fina — no implementada
+todavía, y no bloquea el uso actual.

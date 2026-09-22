@@ -1,0 +1,18 @@
+{
+  "skill": "conapesca-national-ranking",
+  "skill_version": "0.1.0",
+  "id": "cabo_pulmo_national_ranking",
+  "status": "PENDING",
+  "description": "National ranking (volume and value) for the Cabo San Lucas office (BCS), all species. Must be verified against direct CONAPESCA records by the team before use.",
+  "amp_name": "Cabo Pulmo",
+  "office": "CABO SAN LUCAS",
+  "state": "BAJA CALIFORNIA SUR",
+  "expected_rank_volumen": null,
+  "expected_rank_valor": null,
+  "expected_pct_volumen": null,
+  "expected_pct_valor": null,
+  "tolerance": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until a hand-verified ranking is provided. Do not fill with the skill's own output."
+}

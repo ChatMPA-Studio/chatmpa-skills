@@ -1,0 +1,16 @@
+{
+  "skill": "conapesca-catch-composition",
+  "skill_version": "0.1.0",
+  "id": "cabo_pulmo_catch_composition",
+  "status": "PENDING",
+  "description": "Capture vs aquaculture composition (volume and value) for the Cabo San Lucas office (BCS), full period, all species. Must be verified against direct CONAPESCA records by the team before use.",
+  "amp_name": "Cabo Pulmo",
+  "office": "CABO SAN LUCAS",
+  "state": "BAJA CALIFORNIA SUR",
+  "expected_pct_volume_capture": null,
+  "expected_pct_value_capture": null,
+  "tolerance": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until hand-verified values are provided. Do not fill with the skill's own output."
+}

@@ -1,6 +1,6 @@
 ---
 name: conapesca-cpue
-version: 0.1.0
+version: 0.2.0
 tier: 1
 description: >
   Compute CPUE (catch per unit effort) as a historical time series for a
@@ -57,7 +57,7 @@ acquire:
       args:
         group_by: folio
       params:
-        species:        especie
+        species:        nombre_cientifico_canonico
         resource_group: nombre_principal
         state_filter:   estado
         office_filter:  oficina
@@ -78,6 +78,9 @@ acquire:
 output:
   table: cpue_series
   columns: [anio_corte, tipo_aviso, cpue_media, cpue_sd, n_viajes, n_viajes_excluidos, peso_desembarcado_kg_total, n_viajes_recomputado]
+  scalars:
+    kpi_cpue_menores: numeric  # mean(cpue_media) for MENORES over the filtered year range; NA if no rows
+    kpi_cpue_mayores: numeric  # mean(cpue_media) for MAYORES over the filtered year range; NA if no rows
 # Skill determinista (sin controles aleatorios), así que las corridas deben
 # coincidir exactamente. Se comparan las dos columnas calculadas: `cpue_media`
 # sola dejaría pasar un cambio que solo afecte la dispersión.
@@ -199,6 +202,15 @@ as an independent observation and avoid large trips dominating the index.
 4. COUNT EXCLUDED TRIPS (for transparency)
    n_viajes_excluidos ← folios matching state + office + fleet + species/resource
                         filters but removed by quality flags in step 1.
+
+5. KPI SCALARS
+   Computed from cpue_series after step 3, over all years present in the output
+   (year_range filtering already applied by run_skill() itself in step 1 — not
+   by the MCP; species/resource/state/office filters are the only ones pushed
+   down to the get_landings() call):
+   kpi_cpue_menores ← mean(cpue_media[tipo_aviso == "MENORES"], na.rm = TRUE)
+   kpi_cpue_mayores ← mean(cpue_media[tipo_aviso == "MAYORES"], na.rm = TRUE)
+   If a fleet has no rows in cpue_series, its KPI = NA.
 ```
 
 ### Output structure
@@ -216,10 +228,11 @@ peso_desembarcado_kg_total | n_viajes_recomputado
 - Y axis: `cpue_media` (kg / effective fishing day). Log₁₀ scale applied automatically
   when max/min ratio across all series exceeds 10 (large fleet-size differences).
 - Two lines: one per fleet type (MAYORES / MENORES), always in the same panel.
-- Colors: MAYORES = `#E69F00` (amber), MENORES = `#0072B2` (blue) — Okabe-Ito palette,
-  colorblind-friendly.
+- Colors: MAYORES = `#4E79A7` (blue), MENORES = `#F28E2B` (orange) — Tableau 10
+  palette, consistent with the other conapesca skills (e.g. landings-timeseries).
 - Point shapes: MAYORES = filled triangle (▲), MENORES = filled circle (●).
-  Points with `n_viajes < 5` rendered as hollow shapes (△ / ○) to signal low reliability.
+  Points with `n_viajes < 5` are rendered as a hollow circle (○) for both fleets
+  to signal low reliability — the shape is not fleet-specific for unreliable points.
 - Labels: real `cpue_media` value printed above each point (below hollow points).
 - Legend: horizontal, below the chart.
 - Caption: notes hollow-point threshold, log scale if applied, method used.
@@ -250,6 +263,8 @@ Not applicable (deterministic skill).
   flagging it explicitly — small n makes the mean unreliable.
 - Do NOT interpret CPUE by office as spatially precise — landing offices record
   where fish were landed, not where they were caught.
+- Do NOT compute `kpi_cpue_*` in the frontend — the skill returns them as scalars
+  over the already-filtered year range.
 
 ## Validation checklist
 - [ ] self-consistency: run twice on fixed data, outputs match exactly.
@@ -267,6 +282,7 @@ A complete CPUE panel output must include:
 - `n_viajes` and `n_viajes_excluidos` reported per year-fleet cell.
 - Years with n < 5 trips flagged in the narrative.
 - If no especie/resource filter: note that series represents all landings for the office.
+- `kpi_cpue_menores` and `kpi_cpue_mayores` present in output (NA if fleet absent).
 
 ---
 

@@ -1,11 +1,97 @@
 ---
 name: conapesca-tmca
+version: 0.1.0
+tier: 1
 description: >
   Computes the Mean Annual Growth Rate (TMCA) of landed volume for a landing
   office (oficina de pesca — administrative unit, not a port) and classifies
   the trend: growing, stable, or declining. Without species filter = overall
   office trend (all species); with species filter = trend of that species or
   resource at that same office. Returns a single numeric value + category string.
+inputs:
+  window:
+    type: integer
+    required: false
+    default: 10
+    description: >
+      Años hacia atrás desde el año más reciente disponible para calcular la
+      ventana de la TMCA. Mínimo 2. Si el año ideal de inicio no está
+      disponible, se usa el más cercano posterior, con warning.
+  fleet_filter:
+    type: string
+    required: false
+    description: >
+      Tipo de flota (`tipo_aviso`): "MAYORES", "MENORES", "COSECHA". Si se
+      omite, se agregan todas las flotas.
+  office_filter:
+    type: string
+    required: false
+    description: >
+      Oficina de desembarque (`nombre_oficina`), p. ej. "ENSENADA". Opcional:
+      si se omite, la TMCA refleja el agregado nacional (o el universo que el
+      resto de filtros delimite). Se recomienda acompañar de `state_filter`
+      cuando se especifica, ya que los nombres de oficina se repiten entre
+      estados.
+  state_filter:
+    type: string
+    required: false
+    description: >
+      Estado de la oficina de desembarque (`nombre_estado`). Recomendado junto
+      con `office_filter` para desambiguar oficinas homónimas entre estados.
+  resource_group:
+    type: string
+    required: false
+    mutually_exclusive_with: species
+    description: >
+      Grupo/recurso pesquero (`nombre_principal`), p. ej. "PARGO", "JUREL".
+      Mutuamente excluyente con `species`. Si ninguno se proporciona, la TMCA
+      refleja todas las especies combinadas en la oficina.
+  species:
+    type: string
+    required: false
+    mutually_exclusive_with: resource_group
+    description: >
+      Nombre científico canónico (`nombre_cientifico_canonico`), p. ej.
+      "Lutjanus peru". No acepta nombres comunes. Mutuamente excluyente con
+      `resource_group`.
+acquire:
+  # get_landings(group_by="year_fleet") ya trae la serie anual filtrada;
+  # el orquestador la manda en el body. office_filter/state_filter/
+  # resource_group/species sí se empujan al MCP aquí — a diferencia de
+  # conapesca-national-ranking, esta skill necesita UNA sola oficina, no el
+  # universo completo. `window` no va a acquire: es un parámetro de cómputo
+  # interno de skill.R, no un filtro de datos.
+  - source: payload
+    as: data
+    provider:
+      server: conapesca
+      tool: get_landings
+      args:
+        group_by: year_fleet
+      params:
+        office_filter:  oficina
+        state_filter:   estado
+        resource_group: nombre_principal
+        species:        nombre_cientifico_canonico
+        fleet_filter:   tipo_aviso
+    columns:
+      - anio_corte
+      - tipo_aviso
+      - total_kg
+output:
+  table: value
+  columns: [anio_corte, total_tonnes]
+  scalars:
+    tmca:     numeric    # TMCA en %, 2 decimales
+    category: character  # "growing" | "growing moderately" | "stable" | "declining moderately" | "declining"
+# category se deriva determinísticamente de tmca (función escalón) — comparar
+# solo tmca basta para detectar cualquier desviación en el cálculo o la
+# categorización.
+comparable_value: [tmca]
+reference: references/cabo_pulmo_tmca_reference.json
+validation:
+  params: {}
+depends_on: []
 ---
 
 # CONAPESCA TMCA — Mean Annual Growth Rate
@@ -28,21 +114,9 @@ resource group *at this specific office*. The MCP already filtered data to the
 office before the skill runs — the species filter narrows what is measured, not
 where. The result is still office-level, not national.
 
-## Parameters
+## Data contract (minimal interface, NOT the local file)
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `data` | data.frame | **Yes** | Pre-aggregated from `get_landings(group_by="year_fleet")`. MCP applies all filters. |
-| `window` | integer | No | Years in the window back from the most recent year. Default: 10. Minimum: 2. |
-| `fleet_filter` | character or NULL | No | `"MAYORES"`, `"MENORES"`, `"COSECHA"`, or NULL (all fleets). |
-| `office_filter` | character or NULL | No | Label only. |
-| `state_filter` | character or NULL | No | Label only. |
-| `nombre_principal` | character or NULL | No | Label only. Mutually exclusive with `nombre_cientifico_canonico`. |
-| `nombre_cientifico_canonico` | character or NULL | No | Label only. |
-
-## Data contract
-
-Columns from `get_landings(group_by="year_fleet")`:
+Input columns required from the CONAPESCA MCP (`get_landings(group_by="year_fleet")`):
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -56,7 +130,7 @@ Accepted alias: `peso_desembarcado_kg` → `total_kg`.
 ## Method (fixed, no degrees of freedom)
 
 ```
-1. DATA ALREADY FILTERED BY MCP
+1. DATA ALREADY FILTERED BY MCP (office, state, resource_group/species)
 
 2. OPTIONAL FLEET FILTER
    If fleet_filter specified: keep only rows where tipo_aviso = fleet_filter.
@@ -117,7 +191,7 @@ Example chatbot output:
 - Do NOT compute TMCA with n < 2 years — raise `stop()`.
 - Do NOT interpolate missing years — use the nearest available with `warning()`.
 - Do NOT include plots — the value + category is sufficient.
-- Do NOT mix `nombre_principal` and `nombre_cientifico_canonico`.
+- Do NOT mix `resource_group` and `species`.
 
 ## Validation checklist
 - [ ] `tmca` matches manual calculation: `((v_end/v_start)^(1/n)-1)*100`.
