@@ -1,6 +1,6 @@
 ---
 name: erddap-mhw
-version: 0.1.0
+version: 0.2.0
 tier: 1
 description: >
   Detect and quantify Marine Heatwave (MHW) events at a marine protected area,
@@ -16,13 +16,32 @@ inputs:
     required: false
     description: >
       Nombre del AMP tal como aparece en amp_geometry_lookup.csv (ej. "Cabo Pulmo").
-      Usado por skill.R para obtener geometry_local vía get_amp_geometry(mpa).
-      Si se omite, skill.R no puede recortar los datos y fallará.
+      No se usa para recortar datos (ver bbox_local) — solo para que skill.R
+      reporte geometry_source (WDPA vs CONANP_pending_review) en el output.
+  bbox_local:
+    type: array
+    required: true
+    description: >
+      [lon_min, lon_max, lat_min, lat_max] del AMP. Debe resolverse ANTES de
+      llamar a esta skill, buscando `mpa` en
+      shared/geometries/amp_bbox_lookup.csv (chatmpa-mvp) — generado por
+      shared/geometries/generate_bbox_lookups.R a partir de la misma geometría
+      que usa get_amp_geometry(). No se calcula en tiempo real.
+  date_range:
+    type: date_range
+    required: false
+    default: ["1982-01-01", "today"]
+    description: >
+      Rango de fechas [inicio, fin]. Debe iniciar en 1982-01-01 o antes — la
+      climatología de referencia (1982–2011) necesita la serie completa desde
+      ese año. "today" debe resolverse a la fecha actual al momento de la
+      llamada.
 acquire:
-  # Misma fuente que erddap-sst-anomaly pero con serie diaria completa.
-  # El orquestador llama al MCP de ERDDAP y manda los datos en el body.
-  # Se necesita la serie histórica completa (desde 1982) para construir
-  # la climatología de referencia con ts2clm().
+  # El MCP de ERDDAP promedia espacialmente del lado del servidor
+  # (aggregate_spatial=TRUE) y regresa un valor por día — no pixel-día crudo.
+  # Se necesita la serie histórica completa (desde 1982) para construir la
+  # climatología de referencia con ts2clm(). bbox_local ya viene resuelto
+  # (ver inputs) — este acquire nunca calcula geometría.
   - source: payload
     as: data
     provider:
@@ -31,14 +50,13 @@ acquire:
       args:
         variable: sst
         sst_var: sst
+        aggregate_spatial: true
+      params:
+        bbox:       bbox_local
+        date_range: date_range
     columns:
-      - lat
-      - lon
       - time
       - sst
-  # geometry_local NO viene del orquestador.
-  # skill.R la obtiene internamente:
-  #   geometry_local <- get_amp_geometry(mpa)  # shared/spatial_join/spatial_join.R
 output:
   table: mhw_annual
   columns: [year, kpi_mhw_days_per_yr, n_events_per_yr, mean_intensity_per_yr]
@@ -60,31 +78,36 @@ from daily OISST SST data.
 
 ## Data contract (minimal interface, NOT the local file)
 
-The orchestrator calls the ERDDAP MCP and passes the full daily SST series and
-the AMP geometry:
+The orchestrator calls the ERDDAP MCP once, with spatial averaging done
+server-side:
 
 ```
-get_data(variable="sst", sst_var="sst", bbox=<region>, date_range=["1982-01-01", <today>])
+get_data(variable="sst", sst_var="sst", aggregate_spatial=true,
+         bbox=<bbox_local>, date_range=<date_range>)
 ```
 
-- Input `data`: one row per pixel-day:
-  - `lat`, `lon` — pixel center coordinates (OISST 0.25° grid, WGS84)
+- `data`: one row **per day** (not per pixel-day — the MCP already averaged
+  over all pixels in the bbox):
   - `time` — date (daily)
-  - `sst` — sea surface temperature (°C)
-- `geometry_local` — sf object for the AMP polygon, from `get_amp_geometry()`
+  - `sst`  — sea surface temperature (°C), spatial mean over the bbox
+- `bbox_local` is resolved **before** this skill runs, from
+  `amp_bbox_lookup.csv` (`shared/geometries/` in `chatmpa-mvp`) — see `inputs`
+  above. skill.R never computes a bbox itself.
+- `mpa` is passed through unchanged to `skill.R` purely so it can call
+  `get_amp_geometry()` for `geometry_source` metadata — not for spatial
+  filtering.
 
 The series must start from 1982 — earlier dates are not available in OISST v2.1.
 The climatology baseline period (1982–2011) requires at least 30 years of data.
 
-- Missing-data rule: pixel-days with `NA` in `sst` are excluded before any
-  aggregation. If coverage for any day < 50% of expected pixels within the polygon,
-  that day is excluded from the spatially-averaged series.
+- Missing-data rule: days with `NA` in `sst` are excluded before any
+  aggregation.
 
 ## Method (fixed, no degrees of freedom)
 
-### Step 1 — Spatial aggregation
-`clip_to_geometry(data, geometry_local)` → daily mean SST within the AMP polygon:
-one value per day = `mean(sst)` across all valid pixels inside the geometry.
+### Step 1 — Build the daily series
+`data` already arrives as one spatially-averaged value per day — no clipping
+or spatial aggregation happens in this skill.
 
 ### Step 2 — Climatology baseline (ts2clm)
 `heatwaveR::ts2clm(ts, climatologyPeriod = c("1982-01-01", "2011-12-31"),
@@ -132,10 +155,11 @@ same event detection given fixed parameters.
   of a Marine Heatwave.
 - Do NOT change `minDuration` below 5 — events shorter than 5 days do not qualify
   as MHWs under the Hobday definition.
-- Do NOT aggregate before Step 1 — the spatial averaging must be done on raw
-  pixel-day data, not on annual means.
-- Do NOT report MHW metrics when the baseline period has < 20 years of data —
+- Do NOT report MHW metrics when the baseline period has < 30 years of data —
   the climatology is unreliable.
+- Do NOT compute `bbox_local` inside `skill.R` or at request time — it must
+  come from the precomputed lookup table. Adding a new AMP means re-running
+  `generate_bbox_lookups.R`, not adding logic here.
 
 ## Validation checklist
 - [ ] self-consistency: same input → same output across N runs.
@@ -150,7 +174,6 @@ A complete MHW analysis includes:
   (1982–present).
 - Mean intensity per year (°C above threshold).
 - Identification of the most intense/longest event on record.
-- Comparison against the regional trend if geometry_regional is provided.
 
 ## References
 - Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves.

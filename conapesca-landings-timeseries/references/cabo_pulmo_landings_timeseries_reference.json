@@ -1,0 +1,16 @@
+{
+  "skill": "conapesca-landings-timeseries",
+  "skill_version": "0.1.0",
+  "id": "cabo_pulmo_landings_timeseries",
+  "status": "PENDING",
+  "description": "Annual landed volume and value KPIs (TOTAL) for the Cabo San Lucas office (BCS), all species. Must be verified against direct CONAPESCA records by the team before use.",
+  "amp_name": "Cabo Pulmo",
+  "office": "CABO SAN LUCAS",
+  "state": "BAJA CALIFORNIA SUR",
+  "expected_kpi_vol_total": null,
+  "expected_kpi_val_total": null,
+  "tolerance": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until hand-verified values are provided. Do not fill with the skill's own output."
+}

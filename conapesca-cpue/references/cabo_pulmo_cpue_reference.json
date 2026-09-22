@@ -1,0 +1,20 @@
+{
+  "skill": "conapesca-cpue",
+  "skill_version": "0.2.0",
+  "id": "cabo_pulmo_cpue",
+  "status": "PENDING",
+  "description": "Mean CPUE (kg/dia efectivo) for Lutjanus peru landed at Cabo San Lucas office (BCS), disaggregated by fleet type. Must be verified against direct CONAPESCA records by the team before use.",
+  "amp_name": "Cabo Pulmo",
+  "office": "CABO SAN LUCAS",
+  "state": "BAJA CALIFORNIA SUR",
+  "species": "Lutjanus peru",
+  "year": null,
+  "expected_cpue_media_mayores": null,
+  "expected_cpue_sd_mayores": null,
+  "expected_cpue_media_menores": null,
+  "expected_cpue_sd_menores": null,
+  "tolerance": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until a hand-verified CPUE value is provided. Do not fill with the skill's own output."
+}
