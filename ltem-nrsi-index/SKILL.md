@@ -1,6 +1,6 @@
 ---
 name: ltem-nrsi-index
-version: 0.1.0
+version: 0.1.1
 tier: 2
 description: >
   Assess the trophic health of a reef and answer whether it is healthy,
@@ -67,6 +67,7 @@ comparable_value: [nrsi, ci_lo_95, ci_hi_95]
 reference: references/cabo_pulmo_nrsi_reference.json
 validation:
   params:
+    region: Cabo Pulmo
     n_boot: 100
 depends_on: []
 ---
@@ -97,9 +98,14 @@ regional comparison.
   NRSI computation; count reported as `n_empty` in the warning message.
 - Aggregation unit: **transect** for NRSI computation, then averaged to
   **reef-year**. Fixed, not optional.
+- Not applied: the filter of reefs monitored ≥ 5 years. `ltem_report` applies it
+  in its own analysis (`04-full_trends_analysis.R:500`), so its values are not
+  directly comparable with this skill's (ltem-db-mcp#10).
+- Data source: Centro para la Biodiversidad Marina y la Conservación [CBMC] (2026),
+  LTEM database.
 
 ## Method (fixed, no degrees of freedom)
-Relative biomass proportions UTL, LTL, CTL are computed **within each transect**
+The index follows Favoretto et al. (2024). Relative biomass proportions UTL, LTL, CTL are computed **within each transect**
 (each category's summed biomass / total), then:
 
 ```
@@ -115,25 +121,46 @@ Computation steps: classify each observation's `TrophicLevelF` → sum biomass p
 transect per category → compute relative proportions → apply standard or
 conditional formula per transect → average transect NRSI per reef.
 
-- Reference: NRSI formula follows the LTEM analysis approach
-  (`04-full_trends_analysis.R`, lines 1038–1075); bootstrap adapted from
-  `resample_mean()` in the same script. See `references/nrsi_methodology.md`.
+- Reference: NRSI formula from Favoretto et al. (2024), including the conditional
+  rule (present in the paper's code, `CBMC-GCMP/nrsi`, `01-analysis.R`). The
+  implementation follows the LTEM analysis script (`04-full_trends_analysis.R`,
+  section `# NRSI`, lines 499–640 in version a9ac148, 2025-11-25); bootstrap adapted
+  from `resample_mean()` in the same script. See `references/nrsi_methodology.md`.
 - Parameters (documented defaults): bootstrap `n_boot = 100` (range 100–500);
-  95% CI from the 2.5th and 97.5th percentiles of the bootstrap distribution.
+  95% CI from the 2.5th and 97.5th percentiles of the bootstrap distribution
+  (percentile bootstrap; Efron & Tibshirani, 1993). Favoretto et al. (2024) use
+  9,999 resamples; this skill keeps 100 by default.
+
+### Interpretation
+Computed on the annual NRSI series (mean across reefs per year):
+- Before/after comparison (`before_after()`): first 5 years vs. last 5 years.
+- Mann-Kendall test (Mann, 1945; Kendall, 1975) via `mk_trend()`
+  (`Kendall::MannKendall`, `shared/interpretation/interpret.R`); minimum number of
+  years as set in `mk_trend()`.
+- Status: `"positive"` if `after_mean > 0` and the direction is increasing;
+  `"negative"` if `after_mean < −0.15`, or if `delta < −0.1` and Mann-Kendall
+  p < 0.10; otherwise `"neutral"`.
 
 ## Random controls
 - Seed: **fixed at `42`** (`set.seed(42L)` called once before the bootstrap
   loop in `skill.R`). CIs are fully reproducible across runs.
 - Bootstrap: resample transect-level NRSI values within each reef, with
   replacement (n = number of transects per reef), `n_boot = 100` by default.
+- The seed is set once for the whole run: the CIs depend on the order of the
+  reef × year groups and on the full dataset, so the reference case runs on the
+  whole region without filtering year or reef.
 
 ## Reference value and tolerance
-- Reference case: **PENDING** — Cabo Pulmo (year to be defined) → expected NRSI
-  value. Cabo Pulmo typically shows positive NRSI (apex-predator recovery), but
-  the exact expected number is not yet hand-verified.
-- Tolerance: PENDING (to be set with the reference value).
-- Status: PENDING: needs a value verified by Edu/Fabio. Do NOT invent one.
-  Stored in `references/` with `status: PENDING`.
+- Reference cases: 3 (`nrsi`, `ci_lo_95`, `ci_hi_95`) in
+  `references/cabo_pulmo_nrsi_reference.json`.
+- Case: Cabo Pulmo region, full series, `n_boot` = 100, seed = 42; the row compared
+  is year 2023, reef LOBERA_CABO_PULMO (8 transects).
+- Expected values: `nrsi` = −0.1891, `ci_lo_95` = −0.5274, `ci_hi_95` = 0.1506,
+  verified by Carolina (2026-10-02) with an independent calculation on LTEM server
+  data (`get_nrsi_data`, snapshot 2026-10-02).
+- Tolerance: ±0.00005 (the skill rounds to 4 decimals).
+- Seed: 42.
+- Status: VERIFIED.
 
 ## Do-not rules
 - Do NOT emit a silent NaN for the UTL=LTL=CTL=0 edge case (transect with no
@@ -154,8 +181,8 @@ conditional formula per transect → average transect NRSI per reef.
 - [x] Seed fixed at `42` (`set.seed(42L)`) — bootstrap CIs are reproducible.
 - [x] UTL=LTL=CTL=0 edge case: transects with zero total biomass are excluded
       with a `warning()` before NRSI computation; count reported in message.
-- [x] Reference case created: `references/cabo_pulmo_nrsi_reference.json`
-      with `status: PENDING` — awaiting human-verified values from Edu/Fabio.
+- [x] Reference cases created and verified: `references/cabo_pulmo_nrsi_reference.json`
+      (`status: VERIFIED`).
 
 ## Success criteria
 A complete NRSI analysis includes:
@@ -165,3 +192,18 @@ A complete NRSI analysis includes:
 - Temporal comparison if multiple years are available.
 - A clear mapping of NRSI values to ecological health categories:
   0.5–1.0 Excellent · 0.0–0.5 Good · -0.5–0.0 Degraded · -1.0–-0.5 Severely degraded.
+
+## References
+- Centro para la Biodiversidad Marina y la Conservación. (2026). *Programa de
+  Monitoreo Ecológico de Largo Plazo (LTEM)* [Datos sin publicar].
+- Efron, B., & Tibshirani, R. J. (1993). *An introduction to the bootstrap*.
+  Chapman & Hall. https://doi.org/10.1007/978-1-4899-4541-9
+- Favoretto, F., López-Sagástegui, C., León-Solórzano, E., & Aburto-Oropeza, O.
+  (2024). A scalable and normalized reef status index for assessing fish trophic
+  structure reveals conservation gaps. *Ecological Indicators, 166*, Article 112515.
+  https://doi.org/10.1016/j.ecolind.2024.112515
+- Kendall, M. G. (1975). *Rank correlation methods* (4th ed.). Charles Griffin.
+- Mann, H. B. (1945). Nonparametric tests against trend. *Econometrica, 13*(3),
+  245–259. https://doi.org/10.2307/1907187
+- McLeod, A. I. (2025). *Kendall: Kendall rank correlation and Mann-Kendall trend test*
+  (Version 2.2.2) [R package]. https://CRAN.R-project.org/package=Kendall
