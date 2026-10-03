@@ -1,6 +1,6 @@
 ---
 name: conapesca-landings-timeseries
-version: 0.1.0
+version: 0.1.1
 tier: 1
 description: >
   Produce historical annual time series of landed volume (tonnes) and estimated
@@ -78,7 +78,7 @@ acquire:
       - tipo_aviso
       - total_kg
       - total_valor_mxn
-      - n_registros
+      - n_records
   - source: payload
     as: data_folio
     required: false
@@ -124,7 +124,11 @@ output:
 comparable_value: [kpi_vol_total, kpi_val_total]
 reference: references/cabo_pulmo_landings_timeseries_reference.json
 validation:
-  params: {}
+  params:
+    office_filter: CABO SAN LUCAS
+    state_filter: BAJA CALIFORNIA SUR
+    year_from: 2016
+    year_to: 2025
 depends_on: []
 ---
 
@@ -152,10 +156,18 @@ Input columns from `get_landings(group_by="year_fleet")`:
 | `tipo_aviso` | character | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
 | `total_kg` | numeric | Sum of landed weight in kg (MCP alias: `peso_desembarcado_kg`) |
 | `total_valor_mxn` | numeric | Sum of estimated value in MXN (MCP alias: `valor_pesos_estimado`) |
-| `n_registros` | integer | Record count (MCP alias: `n_records`) |
+| `n_records` | integer | Number of landing records (renamed internally to `n_registros`) |
 
+Units: `total_kg` in kg; `total_valor_mxn` in nominal MXN; `n_records` in records.
 Column name aliases are handled transparently by `.normalize_ts_cols()`.
 No quality flag filtering is applied — all records contribute to the sums.
+
+- **Missing data:** annual sums use `na.rm = TRUE`; years without records do not
+  enter the KPI means (they do not count as 0).
+- **Aggregation unit:** year × fleet type (`anio_corte`, `tipo_aviso`).
+- **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
+  curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
+  catalogue) from the delivery of 29 June 2026.
 
 ### `data_folio` — optional folio-level format
 
@@ -191,7 +203,8 @@ call, so `data_folio` itself is fetched without a year restriction.
    c("TOTAL", "MAYORES", "MENORES", "COSECHA"):
      kpi_vol_{tolower(fleet)} ← mean(total_toneladas[tipo_aviso == fleet], na.rm = TRUE)
      kpi_val_{tolower(fleet)} ← mean(total_valor_mxn[tipo_aviso == fleet], na.rm = TRUE)
-   Result: 8 scalar fields. NA if a fleet has no rows for the office/filter.
+   Result: 8 scalar fields, rounded to 2 decimals. NA if a fleet has no rows
+   for the office/filter.
 
 6. CPUE (when data_folio provided)
    Reconstruct year_range <- c(year_from, year_to) (using -Inf/Inf for any
@@ -252,7 +265,15 @@ Labels on points always show the value in display units (same scale as axis).
 Not applicable (deterministic skill).
 
 ## Reference value and tolerance
-- Status: PENDING. Do NOT invent one. Store in `references/` when available.
+- Reference cases: 2 (`kpi_vol_total`, `kpi_val_total`) in
+  `references/cabo_pulmo_landings_timeseries_reference.json`.
+- Case: Cabo San Lucas landing office (BCS), all species, 2016–2025 (proxy for the
+  Cabo Pulmo MPA: the skill resolves by landing office).
+- Expected values: 336.52 t and 20948052.00 MXN (annual means), verified by
+  Carolina (2026-10-01).
+- Tolerance: ±0.005 (the skill rounds to 2 decimals).
+- Seed: not applicable.
+- Status: VERIFIED.
 
 ## Do-not rules
 - Do NOT filter or aggregate `data` inside this skill — MCP already did it.
@@ -269,6 +290,8 @@ Not applicable (deterministic skill).
 
 ## Validation checklist
 - [ ] self-consistency: run twice on fixed data, outputs match.
+- [ ] reference: output matches the `references/` value within tolerance.
+- [ ] coherence: TOTAL and fleet KPIs consistent with the annual tables.
 - [ ] TOTAL = sum of MAYORES + MENORES + COSECHA for each year (volume and value).
 - [ ] Volume in tonnes (not kg) in both table and plot.
 - [ ] Four series present in output (or fewer if a fleet type has no data for the office).
@@ -281,3 +304,9 @@ Not applicable (deterministic skill).
 - Years with n < 5 records shown as hollow points in the plot.
 - When `data_folio` provided: `value_cpue` and `plot_cpue` populated from conapesca-cpue.
 - 8 KPI scalars present (`kpi_vol_*`, `kpi_val_*`), NA where fleet is absent.
+
+## References
+- Comisión Nacional de Acuacultura y Pesca. (2026). *Avisos de arribo y de cosecha*
+  [Datos sin publicar, obtenidos mediante solicitud de acceso a la información pública
+  núm. 340008100012626, Plataforma Nacional de Transparencia; entregados el 29 de junio
+  de 2026].
