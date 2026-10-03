@@ -1,11 +1,12 @@
 ---
 name: conapesca-catch-composition
-version: 0.1.0
+version: 0.2.0
 tier: 1
 description: >
   Shows the production composition of a landing office: percentage from capture
   fisheries (MAYORES + MENORES) vs aquaculture (COSECHA), in both volume and
-  estimated value, accumulated over the full available period.
+  estimated value, accumulated over the requested period (year_from–year_to)
+  or the full available period if no years are given.
   Two pie charts + composition table.
 inputs:
   office_filter:
@@ -37,8 +38,20 @@ inputs:
       Nombre científico canónico (`nombre_cientifico_canonico`), p. ej.
       "Lutjanus peru". No acepta nombres comunes. Mutuamente excluyente con
       `resource_group`.
+  year_from:
+    type: integer
+    required: false
+    description: >
+      Año inicial del periodo (inclusive). Si se omiten year_from y year_to,
+      se usa todo el periodo disponible.
+  year_to:
+    type: integer
+    required: false
+    description: >
+      Año final del periodo (inclusive). Si se omiten year_from y year_to,
+      se usa todo el periodo disponible.
 acquire:
-  # Siempre agrega el período completo disponible — no acepta año como input.
+  # Agrega el periodo year_from–year_to (o todo el periodo disponible si se omiten).
   - source: payload
     as: data
     provider:
@@ -51,19 +64,25 @@ acquire:
         state_filter:   estado
         resource_group: nombre_principal
         species:        nombre_cientifico_canonico
+        year_from:      year_from
+        year_to:        year_to
     columns:
       - anio_corte
       - tipo_aviso
       - total_kg
       - total_valor_mxn
-      - n_registros
+      - n_records
 output:
   table: value
   columns: [component, total_tonnes, total_value_mxn, pct_volume, pct_value, year_min, year_max]
 comparable_value: [pct_volume, pct_value]
 reference: references/cabo_pulmo_catch_composition_reference.json
 validation:
-  params: {}
+  params:
+    office_filter: CABO SAN LUCAS
+    state_filter: BAJA CALIFORNIA SUR
+    year_from: 2016
+    year_to: 2025
 depends_on: []
 ---
 
@@ -73,28 +92,35 @@ depends_on: []
 
 Answers: "What share of this office's production comes from fishing vs aquaculture?"
 
-Aggregates the full available period and expresses composition as percentages.
+Aggregates the requested period (`year_from`–`year_to`, or the full available
+period if omitted) and expresses composition as percentages.
 Does not repeat time series — that is `conapesca-landings-timeseries`.
 
 ## Data contract (minimal interface, NOT the local file)
 
 Columns from `get_landings(group_by="year_fleet")`:
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `anio_corte` | integer | Year |
-| `tipo_aviso` | character | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
-| `total_kg` | numeric | Sum of landed weight in kg |
-| `total_valor_mxn` | numeric | Sum of estimated value (MXN) |
-| `n_registros` | integer | Record count |
+| Column | Type | Unit | Description |
+|--------|------|------|-------------|
+| `anio_corte` | integer | year | Year |
+| `tipo_aviso` | character | — | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
+| `total_kg` | numeric | kg | Sum of landed weight |
+| `total_valor_mxn` | numeric | MXN (nominal) | Sum of estimated value |
+| `n_records` | integer | records | Number of landing records |
 
-Accepted aliases: `peso_desembarcado_kg` → `total_kg`, `valor_pesos_estimado` → `total_valor_mxn`,
-`n_records` → `n_registros`.
+Accepted aliases: `peso_desembarcado_kg` → `total_kg`, `valor_pesos_estimado` → `total_valor_mxn`.
+`n_records` (name delivered by the MCP) is renamed internally to `n_registros`.
+
+- **Missing data:** sums use `na.rm = TRUE`.
+- **Aggregation unit:** the whole period received, by component (Capture / Aquaculture).
+- **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
+  curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
+  catalogue) from the delivery of 29 June 2026.
 
 ## Method (fixed, no degrees of freedom)
 
 ```
-1. DATA ALREADY FILTERED BY MCP (office, state, resource_group/species)
+1. DATA ALREADY FILTERED BY MCP (office, state, resource_group/species, year_from/year_to)
 
 2. AGGREGATE FULL PERIOD
    capture_kg    ← sum(total_kg)        where tipo_aviso IN ('MAYORES','MENORES')
@@ -106,6 +132,11 @@ Accepted aliases: `peso_desembarcado_kg` → `total_kg`, `valor_pesos_estimado` 
    pct_volume ← capture_kg    / (capture_kg    + aquac_kg)    × 100
    pct_value  ← capture_valor / (capture_valor + aquac_valor) × 100
 ```
+
+`pct_volume` and `pct_value` are rounded to 1 decimal.
+
+## Random controls
+Not applicable (deterministic skill).
 
 ## Output structure
 
@@ -135,10 +166,23 @@ Rows: `"Capture"` and `"Aquaculture"`.
 - [ ] `pct_volume[Capture] + pct_volume[Aquaculture]` = 100.
 - [ ] `pct_value[Capture] + pct_value[Aquaculture]` = 100 (may differ ±0.1 due to rounding).
 - [ ] `total_tonnes[Capture] + total_tonnes[Aquaculture]` = period total.
+- [ ] Self-consistency, reference and coherence checks (validation harness, `run_checks.R`).
 
 ## Reference value and tolerance
-- Status: PENDING. Do NOT invent one. Store in `references/` when available.
+- Case: Cabo San Lucas landing office (BCS), all species, 2016–2025 (proxy for the
+  Cabo Pulmo MPA: the skill resolves by landing office).
+- Expected value: `pct_volume` = 100.0 and `pct_value` = 100.0 (Capture), verified by
+  Carolina (2026-09-30). Trivial case: the office has no COSECHA.
+- Tolerance: ±0.05 (the skill rounds to 1 decimal).
+- Seed: not applicable.
+- Status: VERIFIED. Cases in `references/cabo_pulmo_catch_composition_reference.json`.
 
 ## Success criteria
 - Table with two rows and correct percentages.
 - Two pie charts with visible percentages and clear legend.
+
+## References
+- Comisión Nacional de Acuacultura y Pesca. (2026). *Avisos de arribo y de cosecha*
+  [Datos sin publicar, obtenidos mediante solicitud de acceso a la información pública
+  núm. 340008100012626, Plataforma Nacional de Transparencia; entregados el 29 de junio
+  de 2026].
