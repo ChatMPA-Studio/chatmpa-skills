@@ -1,6 +1,6 @@
 ---
 name: conapesca-national-ranking
-version: 0.1.0
+version: 0.2.0
 tier: 1
 description: >
   Computes the national position of a landing office by total landed volume
@@ -56,10 +56,10 @@ inputs:
 acquire:
   # get_landings(group_by="office_year_fleet") trae TODAS las oficinas que
   # cumplan el resto de filtros — es el universo contra el que se rankea.
-  # office_filter NO se manda al MCP: identificar la oficina focal es
-  # responsabilidad del Method (paso 6), dentro de la tabla ya traída. Si
-  # office_filter se mandara al MCP, la tool devolvería solo esa oficina y no
-  # habría universo contra el cual rankear.
+  # office_filter y state_filter NO se mandan al MCP: identificar la oficina
+  # focal es responsabilidad del Method (paso 6), dentro de la tabla ya traída.
+  # Si se mandaran, la tool devolvería sólo esa oficina (o ese estado) y no
+  # habría universo nacional contra el cual rankear.
   - source: payload
     as: data
     provider:
@@ -68,7 +68,6 @@ acquire:
       args:
         group_by: office_year_fleet
       params:
-        state_filter:   estado
         resource_group: nombre_principal
         species:        nombre_cientifico_canonico
         fleet_filter:   tipo_aviso
@@ -81,7 +80,7 @@ acquire:
       - tipo_aviso
       - total_kg
       - total_valor_mxn
-      - n_registros
+      - n_records
 output:
   table: value
   columns: [nombre_oficina, nombre_estado, total_toneladas, total_valor_mxn, rank_volumen, rank_valor, pct_volumen, pct_valor, n_years, n_registros]
@@ -102,6 +101,8 @@ validation:
   params:
     office_filter: CABO SAN LUCAS
     state_filter: BAJA CALIFORNIA SUR
+    year_from: 2016
+    year_to: 2025
 depends_on: []
 ---
 
@@ -126,28 +127,37 @@ Both uses are valid and complementary.
 
 Columns from `get_landings(group_by="office_year_fleet")`:
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `nombre_oficina` | character | Office name |
-| `nombre_estado` | character | State name |
-| `anio_corte` | integer | Year |
-| `tipo_aviso` | character | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
-| `total_kg` | numeric | Sum of landed weight in kg |
-| `total_valor_mxn` | numeric | Sum of estimated value (MXN) |
-| `n_registros` | integer | Record count |
+| Column | Type | Unit | Description |
+|--------|------|------|-------------|
+| `nombre_oficina` | character | — | Office name |
+| `nombre_estado` | character | — | State name |
+| `anio_corte` | integer | year | Year |
+| `tipo_aviso` | character | — | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
+| `total_kg` | numeric | kg | Sum of landed weight (converted to `total_toneladas`, t) |
+| `total_valor_mxn` | numeric | MXN (nominal) | Sum of estimated value |
+| `n_records` | integer | records | Number of landing records |
 
-Accepted aliases: `peso_desembarcado_kg` → `total_kg`, `valor_pesos_estimado` → `total_valor_mxn`,
-`n_records` → `n_registros`.
+Accepted aliases: `peso_desembarcado_kg` → `total_kg`, `valor_pesos_estimado` → `total_valor_mxn`.
+`n_records` (name delivered by the MCP) is renamed internally to `n_registros`.
 
-`data` covers ALL offices matching `state_filter`/`resource_group`/`species`/
-`fleet_filter`/`year_from`/`year_to` — never just the focal office. That is
-what makes ranking possible.
+`data` covers ALL offices in the country matching `resource_group`/`species`/
+`fleet_filter`/`year_from`/`year_to` — never just the focal office or state.
+That is what makes the national ranking possible. `state_filter` only
+identifies the focal office (step 6).
+
+- **Aggregation unit:** office × state, summed over all years and fleets of the period.
+- **Missing data:** sums use `na.rm = TRUE`; a group with `nombre_oficina` or
+  `nombre_estado` = NA counts in `n_offices` with total 0.
+- **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
+  curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
+  catalogue) from the delivery of 29 June 2026.
 
 ## Method (fixed, no degrees of freedom)
 
 ```
-1. DATA ALREADY FILTERED BY MCP (state, resource_group/species, fleet, year)
-   — covers ALL offices within that filter, not just the focal one.
+1. DATA ALREADY FILTERED BY MCP (resource_group/species, fleet, year)
+   — the universe is ALL offices in the country, not just the focal one
+   (state_filter is not sent to the tool).
 
 2. OPTIONAL FLEET FILTER
    If fleet_filter specified: keep only rows where tipo_aviso = fleet_filter.
@@ -167,6 +177,8 @@ what makes ranking possible.
 5. NATIONAL SHARE
    pct_volumen ← total_tonnes_focal    / sum(total_tonnes)    × 100
    pct_valor   ← total_valor_mxn_focal / sum(total_valor_mxn) × 100
+   pct_volumen and pct_valor are rounded to 2 decimals; ranks are computed
+   from the unrounded totals.
 
 6. EXTRACT FOCAL SCALARS
    Identify focal office by nombre_oficina + nombre_estado (never name alone).
@@ -198,6 +210,9 @@ rank_volumen   | rank_valor    | pct_volumen | pct_valor | n_years | n_registros
 Sorted by `rank_volumen` ascending. No plots — visualization is handled by the
 frontend/chatbot using this table if additional context is requested.
 
+## Random controls
+Not applicable (deterministic skill).
+
 ## Do-not rules
 - Do NOT produce plots — the frontend/chatbot handles visualization.
 - Do NOT identify the focal office by `nombre_oficina` alone — always use
@@ -212,10 +227,26 @@ frontend/chatbot using this table if additional context is requested.
 - [ ] `rank_volumen = 1` corresponds to the office with the highest `total_toneladas`.
 - [ ] Focal office present in `value` with correct scalars in `ranking`.
 - [ ] `n_offices = nrow(value)`.
+- [ ] Self-consistency, reference and coherence checks (validation harness, `run_checks.R`).
 
 ## Reference value and tolerance
-- Status: PENDING. Do NOT invent one. Store in `references/` when available.
+- Reference cases: 4 (`rank_volumen`, `rank_valor`, `pct_volumen`, `pct_valor`) in
+  `references/cabo_pulmo_national_ranking_reference.json`.
+- Case: Cabo San Lucas landing office (BCS) against all landing offices in the
+  country (156), all species and fleets, 2016–2025 (proxy for the Cabo Pulmo MPA:
+  the skill resolves by landing office).
+- Expected values: rank 125 (volume) and 120 (value); 0.02 % and 0.05 %, verified by
+  Carolina (2026-10-01).
+- Tolerance: 0 (ranks) and ±0.005 (%, the skill rounds to 2 decimals).
+- Seed: not applicable.
+- Status: VERIFIED.
 
 ## Success criteria
 - `ranking` with 7 correct scalars for the focal office.
 - `value` with all offices ranked, sorted by `rank_volumen`.
+
+## References
+- Comisión Nacional de Acuacultura y Pesca. (2026). *Avisos de arribo y de cosecha*
+  [Datos sin publicar, obtenidos mediante solicitud de acceso a la información pública
+  núm. 340008100012626, Plataforma Nacional de Transparencia; entregados el 29 de junio
+  de 2026].
