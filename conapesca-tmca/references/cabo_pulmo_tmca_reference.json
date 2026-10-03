@@ -1,0 +1,17 @@
+{
+  "skill": "conapesca-tmca",
+  "skill_version": "0.1.0",
+  "id": "cabo_pulmo_tmca",
+  "status": "PENDING",
+  "description": "TMCA (Mean Annual Growth Rate) of landed volume for the Cabo San Lucas office (BCS), 10-year window. Must be verified against direct CONAPESCA records by the team before use.",
+  "amp_name": "Cabo Pulmo",
+  "office": "CABO SAN LUCAS",
+  "state": "BAJA CALIFORNIA SUR",
+  "window": 10,
+  "expected_tmca": null,
+  "expected_category": null,
+  "tolerance": null,
+  "verified_by": null,
+  "verified_date": null,
+  "notes": "PENDING — do not use as reference until a hand-verified TMCA value is provided. Do not fill with the skill's own output."
+}
