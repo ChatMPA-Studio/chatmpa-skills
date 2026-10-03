@@ -1,18 +1,139 @@
 {
   "skill": "conapesca-national-ranking",
-  "skill_version": "0.1.0",
-  "id": "cabo_pulmo_national_ranking",
-  "status": "PENDING",
-  "description": "National ranking (volume and value) for the Cabo San Lucas office (BCS), all species. Must be verified against direct CONAPESCA records by the team before use.",
-  "amp_name": "Cabo Pulmo",
-  "office": "CABO SAN LUCAS",
-  "state": "BAJA CALIFORNIA SUR",
-  "expected_rank_volumen": null,
-  "expected_rank_valor": null,
-  "expected_pct_volumen": null,
-  "expected_pct_valor": null,
-  "tolerance": null,
-  "verified_by": null,
-  "verified_date": null,
-  "notes": "PENDING — do not use as reference until a hand-verified ranking is provided. Do not fill with the skill's own output."
+  "skill_version": "0.2.0",
+  "seed": null,
+  "cases": [
+    {
+      "id": "cabo_san_lucas_national_ranking_rank_volumen",
+      "metric": "rank_volumen",
+      "row": null,
+      "unit": "rank",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS) ranked against all landing offices nationwide, all species and fleets, 2016–2025. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": 125,
+      "tolerance": 0,
+      "tolerance_rationale": "Integer: exact match.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "National universe (156 offices): state_filter is not sent to the tool and only identifies the focal office (SKILL.md 0.2.0). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "cabo_san_lucas_national_ranking_rank_valor",
+      "metric": "rank_valor",
+      "row": null,
+      "unit": "rank",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS) ranked against all landing offices nationwide, all species and fleets, 2016–2025. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": 120,
+      "tolerance": 0,
+      "tolerance_rationale": "Integer: exact match.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "National universe (156 offices): state_filter is not sent to the tool and only identifies the focal office (SKILL.md 0.2.0). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "cabo_san_lucas_national_ranking_pct_volumen",
+      "metric": "pct_volumen",
+      "row": null,
+      "unit": "%",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS) ranked against all landing offices nationwide, all species and fleets, 2016–2025. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": 0.02,
+      "tolerance": 0.005,
+      "tolerance_rationale": "Deterministic; the skill rounds to 2 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "National universe (156 offices): state_filter is not sent to the tool and only identifies the focal office (SKILL.md 0.2.0). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "cabo_san_lucas_national_ranking_pct_valor",
+      "metric": "pct_valor",
+      "row": null,
+      "unit": "%",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS) ranked against all landing offices nationwide, all species and fleets, 2016–2025. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": 0.05,
+      "tolerance": 0.005,
+      "tolerance_rationale": "Deterministic; the skill rounds to 2 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "National universe (156 offices): state_filter is not sent to the tool and only identifies the focal office (SKILL.md 0.2.0). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    }
+  ]
 }
