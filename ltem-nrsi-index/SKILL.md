@@ -82,7 +82,7 @@ regional comparison.
 ## Data contract (minimal interface, NOT the local file)
 - Input: a table on the minimal contract carrying, per observation:
   - `time` — survey year,
-  - `value` — `Biomass` in g/m², and
+  - `value` — `Biomass` in T/ha, and
   - the categorical trophic-level range `TrophicLevelF` (e.g. `2-2.5`, `4-4.5`)
   - a transect identifier and a reef identifier for aggregation.
   `lat`/`lon` apply when NRSI is mapped spatially. The skill reads this

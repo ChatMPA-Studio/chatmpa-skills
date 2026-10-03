@@ -54,6 +54,7 @@ acquire:
       - reef
       - taxa
       - value
+      - richness
       - region
 output:
   table: trend_summary
@@ -82,12 +83,19 @@ Input — reef-year level invertebrate abundance (one row per year × reef × ta
 - `taxa` — one of: `"Echinoidea"`, `"Asteroidea"`, `"Holaxonia"`, `"Scleractinia"`
 - `value` — mean abundance count per transect for that reef-year-taxon
 - `region` — LTEM monitoring region name (for output labelling only)
-- `richness` — mean species richness per transect (optional)
+- `richness` — mean distinct-species count per transect for that reef-year-taxon.
+  Computed the same way as `value`: `COUNT(DISTINCT Species)` per transect,
+  then averaged across transects within the reef-year. This **underestimates**
+  the reef's true combined species richness (pooling all transects would
+  count more distinct species than averaging per-transect counts) — it is a
+  per-transect average, not reef-level gamma diversity. Kept consistent with
+  how `value` is computed rather than pooled, pending a methods review with
+  the science team.
 
-MCP source (Stage 2 of ORCHESTRATION):
-- `mcp__ltem__invertebrate_temporal_trends(region = <region>)` if it exposes
-  reef-level data; otherwise use the raw observations endpoint and aggregate
-  to reef-year level before passing to this skill.
+MCP source: `mcp__ltem__get_invertebrate_data(mpa, region, reef, year)` — see
+`acquire` above. Returns reef-year-taxon level data with `value` and
+`richness` both already aggregated server-side; this skill does no further
+row-level aggregation.
 
 Focal taxa (fixed — 4 only):
 - `Echinoidea` — sea urchins (`taxa2 == "Echinoidea"`)

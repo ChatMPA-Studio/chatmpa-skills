@@ -1,10 +1,10 @@
 ---
 name: ltem-fish-biomass
-version: 0.1.0
+version: 0.2.0
 tier: 2
 description: >
   Assess fish standing stock and recovery trends at a marine protected area,
-  reporting mean fish biomass (g/m²) and its temporal trend from the LTEM
+  reporting mean fish biomass (T/ha) and its temporal trend from the LTEM
   database. Fires on questions about fish biomass recovery at an MPA, whether
   fish stocks are increasing or declining, the current fish standing stock,
   how biomass has changed over time, or whether protection has led to biomass
@@ -111,6 +111,10 @@ acquire:
 output:
   table: annual_means
   columns: [year, mean_biomass_t_ha, se_t_ha, n_reefs]
+  scalars:
+    mk_p_value:         numeric    # Mann-Kendall two-sided p-value; NA if < 8 survey years
+    mk_slope_direction: character  # "positive" | "negative" | "none" | "insufficient_data"
+    mk_label:           character  # human-readable trend category (Spanish)
 # GAM con REML: determinista dado el ajuste. El KPI es media aritmética.
 comparable_value: [mean_biomass_t_ha, se_t_ha]
 reference: references/cabo_pulmo_biomass_reference.json
@@ -131,7 +135,7 @@ recent survey years as the KPI.
 Input — reef-year level biomass (one row per year × reef combination):
 - `time` — survey year (integer)
 - `reef` — reef identifier (character; used as random effect in GAM)
-- `value` — mean fish biomass (g/m²) for that reef-year (averaged across transects).
+- `value` — mean fish biomass (T/ha) for that reef-year (averaged across transects).
   skill.R converts to T/ha (× 0.01) before any computation.
 - `region` — LTEM monitoring region name (used for output labelling only)
 - `n_transects` — number of transects contributing (optional; for diagnostic reporting)
@@ -148,27 +152,27 @@ one row per year × functional_name. Feeds `TrophicYear` schema.
   `Plank` (Planctívoros).
   Species with `functional_name = 'Pelagic'` or without a match in `species_traits`
   are excluded by the MCP. Maps 1:1 to the 6 fields of `TrophicYear`.
-- `mean_biomass` — mean biomass (g/m²); SUM per transect → AVG per reef → AVG per year.
+- `mean_biomass` — mean biomass (T/ha); SUM per transect → AVG per reef → AVG per year.
 - `n_transects` — total transects contributing across reefs.
 
 Optional input — biomass by taxonomic family (`data_family`), one row per year × family.
-Feeds `GET /species/family-biomass`. Unit: g/m² (consistent with `get_biomass_data`).
+Feeds `GET /species/family-biomass`. Unit: T/ha (consistent with `get_biomass_data`).
 The tool returns ALL families — filtering to specific families (e.g. Serranidae, Lutjanidae,
 Carangidae) is the caller's responsibility, analogous to how top-N selection is delegated
 to the caller for `data_species`.
 - `year` — survey year
 - `family` — taxonomic family
-- `mean_biomass` — mean biomass (g/m²); SUM per transect then AVG across transects
+- `mean_biomass` — mean biomass (T/ha); SUM per transect then AVG across transects
 - `n_transects` — number of transects contributing
 
 Optional input — biomass by species (`data_species`), one row per species.
-Feeds `GET /biomass/top-species`. Unit: g/m² (consistent with `get_biomass_data`).
+Feeds `GET /biomass/top-species`. Unit: T/ha (consistent with `get_biomass_data`).
 Biomass is collapsed across years unless `year` is specified. Ranking (top-N) is the
 caller's responsibility.
 - `species_id` — IDSpecies from ltem_historical_database
 - `species_name` — scientific name
 - `trophic_group` — TrophicGroup from ltem_historical_database
-- `mean_biomass` — mean biomass (g/m²); SUM per transect then AVG across transects
+- `mean_biomass` — mean biomass (T/ha); SUM per transect then AVG across transects
 - `n_transects` — number of transects contributing
 
 MCP source (Stage 2 of ORCHESTRATION):
@@ -185,7 +189,7 @@ Processing already applied by the MCP before data reaches this skill:
 - Corredor region: Haemulidae and Carangidae records with `biomass > 3` excluded
 - Aggregation: within-reef mean across transects for each year
 - Consistent site filter: only reefs monitored ≥ 5 years retained
-- Unit: g/m² (note: 1 g/m² = 0.01 T/ha for conversion if needed)
+- Unit: T/ha. The LTEM `Biomass` column is loaded as Quantity × a × Size^b / (Area × 100) = g/m² ÷ 100 = T/ha; the skill does not convert it.
 
 Missing-data rule: if a reef-year combination is missing (reef not surveyed in
 a given year), that row is absent — do not impute. The GAM handles irregular
@@ -211,6 +215,27 @@ Arithmetic mean of `value` across all reefs, computed separately for each of
 the most recent 5 survey years, then averaged. This is the observed mean (not
 the GAM-smoothed value) and is reported with its SD.
 
+### Mann-Kendall trend label
+Applied to the **observed annual means** (not the GAM smooth): for each unique
+survey year, use the mean of `value` across all reefs (already computed in the
+annual means step), yielding one data point per year. Run a two-sided
+Mann-Kendall test on this chronologically-ordered series. Estimate the slope
+via the Theil-Sen method.
+
+**Minimum data requirement:** if fewer than 8 unique survey years are available,
+skip the test and return:
+- `mk_p_value = NA`
+- `mk_slope_direction = "insufficient_data"`
+- `mk_label = "Datos insuficientes para tendencia"`
+
+**Classification rules (when n_years ≥ 8):**
+- `p < 0.05` and Sen's slope > 0 → direction = `"positive"` → label = `"Biomasa íctica en aumento"`
+- `p < 0.05` and Sen's slope < 0 → direction = `"negative"` → label = `"Biomasa íctica en declive"`
+- `p ≥ 0.05`                     → direction = `"none"`     → label = `"Biomasa íctica estable"`
+
+**Implementation:** `trend::mk.test()` for the p-value; `trend::sens.slope()` for
+the Theil-Sen estimator. Package `trend` must be installed.
+
 ## Random controls
 None. The GAM is deterministic given REML optimization.
 
@@ -235,6 +260,11 @@ None. The GAM is deterministic given REML optimization.
 - Do NOT fit the GAM with fewer than 5 unique survey years — return
   `"insufficient_data"`.
 - Do NOT impute missing reef-year combinations.
+- Do NOT run Mann-Kendall on the GAM smooth — run it on the observed annual
+  means (one value per year, averaged across reefs). The smooth is for the trend
+  plot; MK is the inferential test.
+- Do NOT run Mann-Kendall with fewer than 8 unique survey years — return
+  `"insufficient_data"` in all three MK fields.
 
 ## Validation checklist
 - [ ] self-consistency: run twice on the same input → identical fit/lwr/upr.
@@ -245,10 +275,12 @@ None. The GAM is deterministic given REML optimization.
 
 ## Success criteria
 A complete fish biomass analysis includes:
-- KPI: observed mean biomass (g/m²) for the most recent 5 survey years ± SD.
+- KPI: observed mean biomass (T/ha) for the most recent 5 survey years ± SD.
 - Trend: GAM smooth over full year range with 95% CI, deviance explained.
 - Observed annual means ± SE for overlaying on the trend plot.
 - Number of unique reefs and survey years used.
 - Behavioral functional-group breakdown per year × group (if `data_behavioral` provided), mapped to `TrophicYear`.
 - Biomass by taxonomic family as time series year × family (if `data_family` provided).
 - Biomass by species ranked by mean biomass (if `data_species` provided).
+- Mann-Kendall scalars (`mk_p_value`, `mk_slope_direction`, `mk_label`) always
+  present in output, even when `"insufficient_data"` (< 8 survey years).
