@@ -1,6 +1,6 @@
 ---
 name: conapesca-tmca
-version: 0.1.0
+version: 0.2.0
 tier: 1
 description: >
   Computes the Mean Annual Growth Rate (TMCA) of landed volume for a landing
@@ -14,8 +14,8 @@ inputs:
     required: false
     default: 10
     description: >
-      Años hacia atrás desde el año más reciente disponible para calcular la
-      ventana de la TMCA. Mínimo 2. Si el año ideal de inicio no está
+      Años hacia atrás desde `year_to` (o desde el año más reciente disponible
+      si se omite) para calcular la ventana de la TMCA. Mínimo 2. Si el año ideal de inicio no está
       disponible, se usa el más cercano posterior, con warning.
   fleet_filter:
     type: string
@@ -54,13 +54,20 @@ inputs:
       Nombre científico canónico (`nombre_cientifico_canonico`), p. ej.
       "Lutjanus peru". No acepta nombres comunes. Mutuamente excluyente con
       `resource_group`.
+  year_to:
+    type: integer
+    required: false
+    description: >
+      Año final de la ventana (inclusive). Si se omite, se usa el último año
+      disponible.
 acquire:
   # get_landings(group_by="year_fleet") ya trae la serie anual filtrada;
   # el orquestador la manda en el body. office_filter/state_filter/
   # resource_group/species sí se empujan al MCP aquí — a diferencia de
   # conapesca-national-ranking, esta skill necesita UNA sola oficina, no el
   # universo completo. `window` no va a acquire: es un parámetro de cómputo
-  # interno de skill.R, no un filtro de datos.
+  # interno de skill.R, no un filtro de datos. `year_to` sí se manda: fija el
+  # último año de la serie (yr_end).
   - source: payload
     as: data
     provider:
@@ -74,6 +81,7 @@ acquire:
         resource_group: nombre_principal
         species:        nombre_cientifico_canonico
         fleet_filter:   tipo_aviso
+        year_to:        year_to
     columns:
       - anio_corte
       - tipo_aviso
@@ -90,7 +98,11 @@ output:
 comparable_value: [tmca]
 reference: references/cabo_pulmo_tmca_reference.json
 validation:
-  params: {}
+  params:
+    office_filter: CABO SAN LUCAS
+    state_filter: BAJA CALIFORNIA SUR
+    window: 10
+    year_to: 2025
 depends_on: []
 ---
 
@@ -118,19 +130,27 @@ where. The result is still office-level, not national.
 
 Input columns required from the CONAPESCA MCP (`get_landings(group_by="year_fleet")`):
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `anio_corte` | integer | Year |
-| `tipo_aviso` | character | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
-| `total_kg` | numeric | Sum of landed weight in kg |
+| Column | Type | Unit | Description |
+|--------|------|------|-------------|
+| `anio_corte` | integer | year | Year |
+| `tipo_aviso` | character | — | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
+| `total_kg` | numeric | kg | Sum of landed weight (converted to `total_tonnes`, t) |
 
 Accepted alias: `peso_desembarcado_kg` → `total_kg`.
 `total_valor_mxn` is ignored — this skill operates on volume only.
 
+- **Aggregation unit:** annual total, summing MAYORES, MENORES and COSECHA (or only
+  `fleet_filter` if given).
+- **Missing data:** sums use `na.rm = TRUE`; if the ideal start year is missing, the
+  nearest later year is used (step 4).
+- **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
+  curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
+  catalogue) from the delivery of 29 June 2026.
+
 ## Method (fixed, no degrees of freedom)
 
 ```
-1. DATA ALREADY FILTERED BY MCP (office, state, resource_group/species)
+1. DATA ALREADY FILTERED BY MCP (office, state, resource_group/species, year_to)
 
 2. OPTIONAL FLEET FILTER
    If fleet_filter specified: keep only rows where tipo_aviso = fleet_filter.
@@ -140,7 +160,7 @@ Accepted alias: `peso_desembarcado_kg` → `total_kg`.
    total_tonnes ← sum(total_kg) / 1000  per anio_corte
 
 4. RESOLVE WINDOW ENDPOINTS
-   yr_end   ← max(anio_corte)
+   yr_end   ← max(anio_corte)   (= year_to when given)
    yr_start ← yr_end - window
    If yr_start absent from data: use nearest available year >= yr_start
    with warning(). If none found: use earliest available year.
@@ -148,8 +168,9 @@ Accepted alias: `peso_desembarcado_kg` → `total_kg`.
 
 5. TMCA
    TMCA = ((total_tonnes[yr_end] / total_tonnes[yr_start])^(1/n) - 1) × 100
+   rounded to 2 decimals.
 
-6. CATEGORIZE
+6. CATEGORIZE (on the TMCA already rounded to 2 decimals)
    TMCA > +3%          → "growing"
    +1% < TMCA ≤ +3%   → "growing moderately"
    -1% ≤ TMCA ≤ +1%   → "stable"
@@ -169,6 +190,9 @@ user can assess context.
 Thresholds (±1%, ±3%) are conventional and documented here. They do not represent
 an official ecological or regulatory criterion. To adjust, update this section and
 the `.THRESH_*` constants in `skill.R`.
+
+## Random controls
+Not applicable (deterministic skill).
 
 ## Output structure
 
@@ -198,11 +222,28 @@ Example chatbot output:
 - [ ] `category` corresponds to the correct threshold for the `tmca` value.
 - [ ] `params$yr_start` and `params$yr_end` both exist in `value$anio_corte`.
 - [ ] `warning()` emitted if the ideal start year was unavailable.
+- [ ] Self-consistency, reference and coherence checks (validation harness, `run_checks.R`).
 
 ## Reference value and tolerance
-- Status: PENDING. Do NOT invent one. Store in `references/` when available.
+- Reference cases: 1 (`tmca`) in `references/cabo_pulmo_tmca_reference.json`.
+- Case: Cabo San Lucas landing office (BCS), all species and fleets, `window` = 10,
+  `year_to` = 2025 (2015 vs 2025; proxy for the Cabo Pulmo MPA: the skill resolves by
+  landing office).
+- Expected value: −20.43 (% per year), verified by Carolina (2026-10-01).
+- Tolerance: ±0.005 (the skill rounds to 2 decimals).
+- Seed: not applicable.
+- Status: VERIFIED.
 
 ## Success criteria
 - Correct numeric `tmca`.
 - `category` consistent with documented thresholds.
 - `value` with full annual series for context.
+
+## References
+- Comisión Nacional de Acuacultura y Pesca. (2026). *Avisos de arribo y de cosecha*
+  [Datos sin publicar, obtenidos mediante solicitud de acceso a la información pública
+  núm. 340008100012626, Plataforma Nacional de Transparencia; entregados el 29 de junio
+  de 2026].
+
+The categorization thresholds (±1 %, ±3 %) are an internal convention without a
+bibliographic source (see *Categorization thresholds*).
