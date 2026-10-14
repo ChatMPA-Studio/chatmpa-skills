@@ -1,6 +1,6 @@
 ---
 name: ltem-invertebrate-abundance
-version: 0.1.0
+version: 0.1.1
 tier: 2
 description: >
   Assess the abundance and diversity of key invertebrate groups at a marine
@@ -54,6 +54,7 @@ acquire:
       - reef
       - taxa
       - value
+      - richness
       - region
 output:
   table: trend_summary
@@ -63,7 +64,8 @@ output:
 comparable_value: [dev_expl_pct, n_years]
 reference: references/cabo_pulmo_inv_reference.json
 validation:
-  params: {}
+  params:
+    region: Cabo Pulmo
 depends_on: []
 ---
 
@@ -80,14 +82,22 @@ Input — reef-year level invertebrate abundance (one row per year × reef × ta
 - `time` — survey year (integer)
 - `reef` — reef identifier (character; used as random effect in GAM)
 - `taxa` — one of: `"Echinoidea"`, `"Asteroidea"`, `"Holaxonia"`, `"Scleractinia"`
-- `value` — mean abundance count per transect for that reef-year-taxon
+- `value` — mean abundance per transect for that reef-year-taxon (individuals per
+  transect: sum per transect, then mean across transects of the reef × year × taxon)
 - `region` — LTEM monitoring region name (for output labelling only)
-- `richness` — mean species richness per transect (optional)
+- `richness` — mean distinct-species count per transect for that reef-year-taxon.
+  Computed the same way as `value`: `COUNT(DISTINCT Species)` per transect,
+  then averaged across transects within the reef-year. This **underestimates**
+  the reef's true combined species richness (pooling all transects would
+  count more distinct species than averaging per-transect counts) — it is a
+  per-transect average, not reef-level gamma diversity. Kept consistent with
+  how `value` is computed rather than pooled, pending a methods review with
+  the science team.
 
-MCP source (Stage 2 of ORCHESTRATION):
-- `mcp__ltem__invertebrate_temporal_trends(region = <region>)` if it exposes
-  reef-level data; otherwise use the raw observations endpoint and aggregate
-  to reef-year level before passing to this skill.
+MCP source: `mcp__ltem__get_invertebrate_data(mpa, region, reef, year)` — see
+`acquire` above. Returns reef-year-taxon level data with `value` and
+`richness` both already aggregated server-side; this skill does no further
+row-level aggregation.
 
 Focal taxa (fixed — 4 only):
 - `Echinoidea` — sea urchins (`taxa2 == "Echinoidea"`)
@@ -98,10 +108,19 @@ Records not matching any focal taxon are excluded.
 
 Processing already applied by the MCP before data reaches this skill:
 - Records filtered to `label == "INV"`
-- Taxa classification: Holaxonia > Scleractinia (taxa3), then Asteroidea >
-  Echinoidea (taxa2); non-matching records excluded
 - Aggregation: transect (SUM quantity, n_distinct species) → reef-year (MEAN)
-- Consistent site filter: reefs monitored ≥ 5 years only
+
+Required but not yet delivered by the tool: taxa classification Holaxonia >
+Scleractinia (taxa3), then Asteroidea > Echinoidea (taxa2). `get_invertebrate_data`
+currently groups by `Taxa2`, so Holaxonia and Scleractinia arrive empty (depends on
+ltem-db-mcp#9).
+
+Not applied (by the MCP or by this skill): the filter of reefs monitored ≥ 5 years.
+`ltem_report` applies it in its own analysis (`04-full_trends_analysis.R`), so its
+values are not directly comparable with this skill's (ltem-db-mcp#10).
+
+Data source: Centro para la Biodiversidad Marina y la Conservación [CBMC] (2026),
+LTEM database.
 
 Missing-data rule: if a reef is absent in a given year, that row is missing —
 do not impute. The GAM handles irregular sampling. Require at least 5 unique
@@ -111,6 +130,7 @@ that taxon.
 ## Method (fixed, no degrees of freedom)
 
 ### Trend: GAM with reef random effect (fit independently per taxon)
+Generalized additive model fitted by REML (Wood, 2011, 2017).
 Formula: `quantity ~ s(year, k = k_use) + s(reef, bs = "re")`
 - `k_use = min(10, n_distinct_years_for_taxon - 1)` — smoothing knots, capped at 10
 - `s(reef, bs = "re")` — reef as random effect; accounts for repeated measurements
@@ -131,12 +151,16 @@ most recent 5 survey years per taxon, then averaged. Reported with SD.
 None. The GAM is deterministic given REML optimization.
 
 ## Reference value and tolerance
-- Reference case: **PENDING** — Cabo Pulmo, most recent year available.
-  Source: `ltem_report/artifacts/figure9_echi-ast_bars_CaboPulmo.png` (Echinoidea,
-  Asteroidea) and `figure10_holax-scle_bars_CaboPulmo.png` (Holaxonia, Scleractinia).
-- Tolerance: PENDING.
-- Status: PENDING — do NOT use as reference until verified by Edu/Fabio.
-  Stored in `references/cabo_pulmo_inv_reference.json`.
+- Reference cases in `references/cabo_pulmo_inv_reference.json` (`dev_expl_pct` and
+  `n_years` per taxon, Cabo Pulmo region, full series):
+  - Echinoidea: `dev_expl_pct` = 18.4, `n_years` = 16 — VERIFIED.
+  - Asteroidea: `dev_expl_pct` = 33.5, `n_years` = 14 — VERIFIED.
+  - Holaxonia and Scleractinia: PENDING until the tool groups by Taxa3
+    (ltem-db-mcp#9); today `n_years` = 0.
+- Verified by Carolina (2026-10-01) with an independent calculation (GAM REML,
+  mgcv 1.9.4) on LTEM server data (`get_invertebrate_data`, snapshot 2026-10-01).
+- Tolerance: ±0.05 for `dev_expl_pct` (the skill rounds to 1 decimal); 0 for `n_years`.
+- Seed: not applicable (deterministic).
 
 ## Do-not rules
 - Do NOT change `k` above 10 or below `n_taxon_years - 1` — follow the reference
@@ -152,8 +176,8 @@ None. The GAM is deterministic given REML optimization.
 
 ## Validation checklist
 - [ ] self-consistency: run twice on the same input → identical fit/lwr/upr per taxon.
-- [ ] reference: KPI mean abundance per taxon for Cabo Pulmo matches `references/`
-      value within tolerance (PENDING until reference is set).
+- [ ] reference: `dev_expl_pct` and `n_years` per taxon for Cabo Pulmo match the
+      `references/` values within tolerance.
 - [ ] coherence: GAM trend directions are ecologically plausible per taxon; deviance
       explained reported in method metadata.
 
@@ -164,3 +188,13 @@ A complete invertebrate abundance analysis includes:
 - Trend: GAM smooth per taxon with 95% CI (lwr clipped at 0) + deviance explained.
 - Observed annual means ± SE per taxon (for overlaying on the trend plot).
 - Species richness per taxon if richness data is present in the input.
+
+## References
+- Centro para la Biodiversidad Marina y la Conservación. (2026). *Programa de
+  Monitoreo Ecológico de Largo Plazo (LTEM)* [Datos sin publicar].
+- Wood, S. N. (2011). Fast stable restricted maximum likelihood and marginal
+  likelihood estimation of semiparametric generalized linear models. *Journal of
+  the Royal Statistical Society: Series B (Statistical Methodology), 73*(1), 3–36.
+  https://doi.org/10.1111/j.1467-9868.2010.00749.x
+- Wood, S. N. (2017). *Generalized additive models: An introduction with R* (2nd ed.).
+  Chapman and Hall/CRC. https://doi.org/10.1201/9781315370279

@@ -1,19 +1,247 @@
 {
-  "id": "cabo_pulmo_invertebrate_abundance",
-  "status": "PENDING",
-  "description": "Mean abundance per transect for each focal taxon at Cabo Pulmo. Must be verified by Edu/Fabio before use as reference.",
-  "region": "Cabo Pulmo",
-  "year": null,
-  "focal_taxa": ["Echinoidea", "Asteroidea", "Holaxonia", "Scleractinia"],
-  "expected_abundance_per_transect": {
-    "Echinoidea": null,
-    "Asteroidea": null,
-    "Holaxonia": null,
-    "Scleractinia": null
-  },
-  "tolerance": null,
-  "provisional_source": "ltem_report/artifacts/figure9_echi-ast_bars_CaboPulmo.png and figure10_holax-scle_bars_CaboPulmo.png — extract numeric values from figures or from cabo_pulmo_resumen_anual.csv when invertebrate columns are available.",
-  "verified_by": null,
-  "verified_date": null,
-  "notes": "PENDING — do not use as reference until human-verified values are provided. Visual context: Echinoidea and Asteroidea trends available in figure9; Holaxonia (gorgonians, warm) and Scleractinia (hard corals, cold) in figure10 for Cabo Pulmo region."
+  "skill": "ltem-invertebrate-abundance",
+  "skill_version": "0.1.1",
+  "seed": null,
+  "cases": [
+    {
+      "id": "cabo_pulmo_inv_echinoidea_dev_expl_pct",
+      "metric": "dev_expl_pct",
+      "row": {
+        "taxa": "Echinoidea"
+      },
+      "unit": "%",
+      "input": {
+        "description": "Cabo Pulmo region, full series, taxon Echinoidea.",
+        "filters": {
+          "region": "Cabo Pulmo"
+        }
+      },
+      "expected_value": 18.4,
+      "tolerance": 0.05,
+      "tolerance_rationale": "Deterministic GAM (REML); the skill rounds to 1 decimal: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_ltem.Rmd), on LTEM server data (database ecological_monitoring), Cabo Pulmo region; data up to the November 2025 survey.",
+        "path_or_doi": "Validación ChatMPA/referencias_ltem/verificacion_referencias_ltem.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_invertebrate_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-01"
+      },
+      "notes": "GAM REML, mgcv 1.9.4; snapshot get_invertebrate_data 2026-10-01. The taxon is not an input: it is selected in row."
+    },
+    {
+      "id": "cabo_pulmo_inv_echinoidea_n_years",
+      "metric": "n_years",
+      "row": {
+        "taxa": "Echinoidea"
+      },
+      "unit": "years",
+      "input": {
+        "description": "Cabo Pulmo region, full series, taxon Echinoidea.",
+        "filters": {
+          "region": "Cabo Pulmo"
+        }
+      },
+      "expected_value": 16,
+      "tolerance": 0,
+      "tolerance_rationale": "Integer: exact match.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_ltem.Rmd), on LTEM server data (database ecological_monitoring), Cabo Pulmo region; data up to the November 2025 survey.",
+        "path_or_doi": "Validación ChatMPA/referencias_ltem/verificacion_referencias_ltem.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_invertebrate_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-01"
+      },
+      "notes": "GAM REML, mgcv 1.9.4; snapshot get_invertebrate_data 2026-10-01. The taxon is not an input: it is selected in row."
+    },
+    {
+      "id": "cabo_pulmo_inv_asteroidea_dev_expl_pct",
+      "metric": "dev_expl_pct",
+      "row": {
+        "taxa": "Asteroidea"
+      },
+      "unit": "%",
+      "input": {
+        "description": "Cabo Pulmo region, full series, taxon Asteroidea.",
+        "filters": {
+          "region": "Cabo Pulmo"
+        }
+      },
+      "expected_value": 33.5,
+      "tolerance": 0.05,
+      "tolerance_rationale": "Deterministic GAM (REML); the skill rounds to 1 decimal: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_ltem.Rmd), on LTEM server data (database ecological_monitoring), Cabo Pulmo region; data up to the November 2025 survey.",
+        "path_or_doi": "Validación ChatMPA/referencias_ltem/verificacion_referencias_ltem.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_invertebrate_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-01"
+      },
+      "notes": "GAM REML, mgcv 1.9.4; snapshot get_invertebrate_data 2026-10-01. The taxon is not an input: it is selected in row."
+    },
+    {
+      "id": "cabo_pulmo_inv_asteroidea_n_years",
+      "metric": "n_years",
+      "row": {
+        "taxa": "Asteroidea"
+      },
+      "unit": "years",
+      "input": {
+        "description": "Cabo Pulmo region, full series, taxon Asteroidea.",
+        "filters": {
+          "region": "Cabo Pulmo"
+        }
+      },
+      "expected_value": 14,
+      "tolerance": 0,
+      "tolerance_rationale": "Integer: exact match.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_ltem.Rmd), on LTEM server data (database ecological_monitoring), Cabo Pulmo region; data up to the November 2025 survey.",
+        "path_or_doi": "Validación ChatMPA/referencias_ltem/verificacion_referencias_ltem.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_invertebrate_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-01"
+      },
+      "notes": "GAM REML, mgcv 1.9.4; snapshot get_invertebrate_data 2026-10-01. The taxon is not an input: it is selected in row."
+    },
+    {
+      "id": "cabo_pulmo_inv_holaxonia_dev_expl_pct",
+      "metric": "dev_expl_pct",
+      "row": {
+        "taxa": "Holaxonia"
+      },
+      "unit": "%",
+      "input": {
+        "description": "Cabo Pulmo region, full series, taxon Holaxonia.",
+        "filters": {
+          "region": "Cabo Pulmo"
+        }
+      },
+      "expected_value": null,
+      "tolerance": null,
+      "tolerance_rationale": "Deterministic GAM (REML); the skill rounds to 1 decimal: half a unit of the last decimal.",
+      "status": "PENDING",
+      "verified_by": null,
+      "verified_date": null,
+      "source": null,
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_invertebrate_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-01"
+      },
+      "notes": "PENDING: Holaxonia and Scleractinia are Taxa3 levels and get_invertebrate_data groups by Taxa2, so today n_years = 0 (ltem-db-mcp#9). Verify after the tool is fixed."
+    },
+    {
+      "id": "cabo_pulmo_inv_holaxonia_n_years",
+      "metric": "n_years",
+      "row": {
+        "taxa": "Holaxonia"
+      },
+      "unit": "years",
+      "input": {
+        "description": "Cabo Pulmo region, full series, taxon Holaxonia.",
+        "filters": {
+          "region": "Cabo Pulmo"
+        }
+      },
+      "expected_value": null,
+      "tolerance": null,
+      "tolerance_rationale": "Integer: exact match.",
+      "status": "PENDING",
+      "verified_by": null,
+      "verified_date": null,
+      "source": null,
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_invertebrate_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-01"
+      },
+      "notes": "PENDING: Holaxonia and Scleractinia are Taxa3 levels and get_invertebrate_data groups by Taxa2, so today n_years = 0 (ltem-db-mcp#9). Verify after the tool is fixed."
+    },
+    {
+      "id": "cabo_pulmo_inv_scleractinia_dev_expl_pct",
+      "metric": "dev_expl_pct",
+      "row": {
+        "taxa": "Scleractinia"
+      },
+      "unit": "%",
+      "input": {
+        "description": "Cabo Pulmo region, full series, taxon Scleractinia.",
+        "filters": {
+          "region": "Cabo Pulmo"
+        }
+      },
+      "expected_value": null,
+      "tolerance": null,
+      "tolerance_rationale": "Deterministic GAM (REML); the skill rounds to 1 decimal: half a unit of the last decimal.",
+      "status": "PENDING",
+      "verified_by": null,
+      "verified_date": null,
+      "source": null,
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_invertebrate_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-01"
+      },
+      "notes": "PENDING: Holaxonia and Scleractinia are Taxa3 levels and get_invertebrate_data groups by Taxa2, so today n_years = 0 (ltem-db-mcp#9). Verify after the tool is fixed."
+    },
+    {
+      "id": "cabo_pulmo_inv_scleractinia_n_years",
+      "metric": "n_years",
+      "row": {
+        "taxa": "Scleractinia"
+      },
+      "unit": "years",
+      "input": {
+        "description": "Cabo Pulmo region, full series, taxon Scleractinia.",
+        "filters": {
+          "region": "Cabo Pulmo"
+        }
+      },
+      "expected_value": null,
+      "tolerance": null,
+      "tolerance_rationale": "Integer: exact match.",
+      "status": "PENDING",
+      "verified_by": null,
+      "verified_date": null,
+      "source": null,
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_invertebrate_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-01"
+      },
+      "notes": "PENDING: Holaxonia and Scleractinia are Taxa3 levels and get_invertebrate_data groups by Taxa2, so today n_years = 0 (ltem-db-mcp#9). Verify after the tool is fixed."
+    }
+  ]
 }

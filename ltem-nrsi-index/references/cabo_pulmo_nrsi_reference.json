@@ -1,16 +1,109 @@
 {
-  "id": "cabo_pulmo_nrsi",
-  "status": "PENDING",
-  "description": "Mean NRSI for Cabo Pulmo reef(s) for a year to be defined. Must be verified against direct LTEM analysis by Edu/Fabio before use.",
-  "reef": "Cabo Pulmo",
-  "year": null,
-  "expected_nrsi": null,
-  "expected_ci_lo_95": null,
-  "expected_ci_hi_95": null,
-  "tolerance": null,
+  "skill": "ltem-nrsi-index",
+  "skill_version": "0.1.1",
   "seed": 42,
-  "n_boot": 100,
-  "verified_by": null,
-  "verified_date": null,
-  "notes": "PENDING — do not use as reference until human-verified value is provided. Cabo Pulmo typically shows positive NRSI (apex-predator recovery)."
+  "cases": [
+    {
+      "id": "cabo_pulmo_nrsi_2023_lobera_cabo_pulmo_nrsi",
+      "metric": "nrsi",
+      "row": {
+        "time": 2023,
+        "reef": "LOBERA_CABO_PULMO"
+      },
+      "unit": "dimensionless (−1 to 1)",
+      "input": {
+        "description": "Cabo Pulmo region, full series, n_boot = 100, seed = 42; year 2023, reef LOBERA_CABO_PULMO (8 transects).",
+        "filters": {
+          "region": "Cabo Pulmo",
+          "n_boot": 100
+        }
+      },
+      "expected_value": -0.1891,
+      "tolerance": 5e-05,
+      "tolerance_rationale": "Deterministic with seed = 42 and n_boot = 100 in the same R version; the skill rounds to 4 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-02",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_ltem.Rmd), on LTEM server data (database ecological_monitoring), Cabo Pulmo region; data up to the November 2025 survey.",
+        "path_or_doi": "Validación ChatMPA/referencias_ltem/verificacion_referencias_ltem.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_nrsi_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-02"
+      },
+      "notes": "Bootstrap seed 42 set once for the whole run: run with the full region (region: Cabo Pulmo, n_boot: 100), no year/reef filter. R 4.5.3, RNGkind Mersenne-Twister/Inversion/Rejection. Snapshot get_nrsi_data 2026-10-02 (5358 rows). nrsi_by_reef has one row per year × reef: there is no region-level NRSI."
+    },
+    {
+      "id": "cabo_pulmo_nrsi_2023_lobera_cabo_pulmo_ci_lo_95",
+      "metric": "ci_lo_95",
+      "row": {
+        "time": 2023,
+        "reef": "LOBERA_CABO_PULMO"
+      },
+      "unit": "dimensionless (−1 to 1)",
+      "input": {
+        "description": "Cabo Pulmo region, full series, n_boot = 100, seed = 42; year 2023, reef LOBERA_CABO_PULMO (8 transects).",
+        "filters": {
+          "region": "Cabo Pulmo",
+          "n_boot": 100
+        }
+      },
+      "expected_value": -0.5274,
+      "tolerance": 5e-05,
+      "tolerance_rationale": "Deterministic with seed = 42 and n_boot = 100 in the same R version; the skill rounds to 4 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-02",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_ltem.Rmd), on LTEM server data (database ecological_monitoring), Cabo Pulmo region; data up to the November 2025 survey.",
+        "path_or_doi": "Validación ChatMPA/referencias_ltem/verificacion_referencias_ltem.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_nrsi_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-02"
+      },
+      "notes": "Bootstrap seed 42 set once for the whole run: run with the full region (region: Cabo Pulmo, n_boot: 100), no year/reef filter. R 4.5.3, RNGkind Mersenne-Twister/Inversion/Rejection. Snapshot get_nrsi_data 2026-10-02 (5358 rows). nrsi_by_reef has one row per year × reef: there is no region-level NRSI."
+    },
+    {
+      "id": "cabo_pulmo_nrsi_2023_lobera_cabo_pulmo_ci_hi_95",
+      "metric": "ci_hi_95",
+      "row": {
+        "time": 2023,
+        "reef": "LOBERA_CABO_PULMO"
+      },
+      "unit": "dimensionless (−1 to 1)",
+      "input": {
+        "description": "Cabo Pulmo region, full series, n_boot = 100, seed = 42; year 2023, reef LOBERA_CABO_PULMO (8 transects).",
+        "filters": {
+          "region": "Cabo Pulmo",
+          "n_boot": 100
+        }
+      },
+      "expected_value": 0.1506,
+      "tolerance": 5e-05,
+      "tolerance_rationale": "Deterministic with seed = 42 and n_boot = 100 in the same R version; the skill rounds to 4 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-02",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_ltem.Rmd), on LTEM server data (database ecological_monitoring), Cabo Pulmo region; data up to the November 2025 survey.",
+        "path_or_doi": "Validación ChatMPA/referencias_ltem/verificacion_referencias_ltem.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "ltem",
+        "tool": "get_nrsi_data",
+        "db_version": "No version log (ltem-db-mcp#11): 449,626 rows in ltem_historical_database, surveys up to November 2025",
+        "retrieved_date": "2026-10-02"
+      },
+      "notes": "Bootstrap seed 42 set once for the whole run: run with the full region (region: Cabo Pulmo, n_boot: 100), no year/reef filter. R 4.5.3, RNGkind Mersenne-Twister/Inversion/Rejection. Snapshot get_nrsi_data 2026-10-02 (5358 rows). nrsi_by_reef has one row per year × reef: there is no region-level NRSI."
+    }
+  ]
 }

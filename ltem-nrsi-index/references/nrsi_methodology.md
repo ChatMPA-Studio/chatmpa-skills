@@ -71,7 +71,7 @@ If CI includes 0, the reef's trophic state is ambiguous.
 
 ## Key References
 
-- The NRSI formula follows the approach used in the LTEM analysis scripts (04-full_trends_analysis.R, lines 1038-1075)
-- Bootstrap methodology adapted from the `resample_mean()` function in the same R script
+- The NRSI formula follows Favoretto, F., López-Sagástegui, C., León-Solórzano, E., & Aburto-Oropeza, O. (2024). A scalable and normalized reef status index for assessing fish trophic structure reveals conservation gaps. *Ecological Indicators, 166*, Article 112515. https://doi.org/10.1016/j.ecolind.2024.112515
+- Implementation follows the LTEM analysis script (`04-full_trends_analysis.R`, section `# NRSI`, lines 499–640 in version a9ac148, 2025-11-25)
+- Bootstrap methodology adapted from the `resample_mean()` function in the same R script (percentile bootstrap; Efron & Tibshirani, 1993)
 - Trophic level assignments are pre-computed in the database (`TrophicLevelF` column)
-- Iglewicz, B. & Hoaglin, D. (1993). Volume 16: How to Detect and Handle Outliers. ASQC Quality Press.
