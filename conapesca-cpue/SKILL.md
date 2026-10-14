@@ -1,6 +1,6 @@
 ---
 name: conapesca-cpue
-version: 0.1.0
+version: 0.2.1
 tier: 1
 description: >
   Compute CPUE (catch per unit effort) as a historical time series for a
@@ -57,7 +57,7 @@ acquire:
       args:
         group_by: folio
       params:
-        species:        especie
+        species:        nombre_cientifico_canonico
         resource_group: nombre_principal
         state_filter:   estado
         office_filter:  oficina
@@ -67,17 +67,21 @@ acquire:
       - tipo_aviso
       - nombre_estado
       - nombre_oficina
-      - nombre_principal
-      - nombre_cientifico_canonico
       - peso_desembarcado_kg
       - dias_efectivos
       - dias_efectivos_fuente
       - flag_fecha_generica
       - flag_dias_efectivos_sospechoso
       - flag_periodo_futuro
+      # nombre_principal y nombre_cientifico_canonico NO están en el output de
+      # get_landings(group_by="folio"): una fila por viaje. El filtro de
+      # especie/recurso se aplica server-side vía params (chatmpa-skills#16).
 output:
   table: cpue_series
   columns: [anio_corte, tipo_aviso, cpue_media, cpue_sd, n_viajes, n_viajes_excluidos, peso_desembarcado_kg_total, n_viajes_recomputado]
+  scalars:
+    kpi_cpue_menores: numeric  # mean(cpue_media) for MENORES over the filtered year range; NA if no rows
+    kpi_cpue_mayores: numeric  # mean(cpue_media) for MAYORES over the filtered year range; NA if no rows
 # Skill determinista (sin controles aleatorios), así que las corridas deben
 # coincidir exactamente. Se comparan las dos columnas calculadas: `cpue_media`
 # sola dejaría pasar un cambio que solo afecte la dispersión.
@@ -87,7 +91,7 @@ reference: references/cabo_pulmo_cpue_reference.json
 # son obligatorios en toda llamada real.
 validation:
   params:
-    species: Lutjanus peru
+    species: Balistes polylepis
     state_filter: BAJA CALIFORNIA SUR
     office_filter: CABO SAN LUCAS
 depends_on: []
@@ -137,9 +141,7 @@ Input columns required from the CONAPESCA MCP (`get_landings(group_by="folio")`)
 | `tipo_aviso` | character | Fleet type: `MAYORES` or `MENORES` |
 | `nombre_estado` | character | State of the landing office |
 | `nombre_oficina` | character | Landing office |
-| `nombre_principal` | character | Resource group (e.g. JUREL, OSTION) |
-| `nombre_cientifico_canonico` | character | Canonical species name |
-| `peso_desembarcado_kg` | numeric | Landed weight in kg |
+| `peso_desembarcado_kg` | numeric | Landed weight in kg of the trip (only the requested species/resource when a filter is set) |
 | `dias_efectivos` | integer | Effective fishing days (quality-controlled) |
 | `dias_efectivos_fuente` | character | Source of effort value: `original`, `duracion`, `recomputado` |
 | `flag_fecha_generica` | logical | TRUE = generic date placeholder; effort unreliable |
@@ -164,10 +166,20 @@ Input columns required from the CONAPESCA MCP (`get_landings(group_by="folio")`)
 
 **Aggregation unit:** `folio_aviso` (one fishing trip / notice). Fixed, not optional.
 
+**Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
+curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
+catalogue) from the delivery of 29 June 2026.
+
 ## Method (fixed, no degrees of freedom)
 
 CPUE is computed as **mean of ratios** (not ratio of means) to treat each trip
 as an independent observation and avoid large trips dominating the index.
+
+The CPUE is nominal (not standardized): it does not correct for changes in fishing
+power, in the spatial distribution of the fleet or in vessel composition, so it is
+not always proportional to abundance (Gulland, 1971). Each row of
+`get_landings(group_by = "folio")` is one trip. `cpue_media` and `cpue_sd` are
+rounded to 4 decimals.
 
 ### Step-by-step
 
@@ -199,7 +211,26 @@ as an independent observation and avoid large trips dominating the index.
 4. COUNT EXCLUDED TRIPS (for transparency)
    n_viajes_excluidos ← folios matching state + office + fleet + species/resource
                         filters but removed by quality flags in step 1.
+
+5. KPI SCALARS
+   Computed from cpue_series after step 3, over all years present in the output
+   (year_range filtering already applied by run_skill() itself in step 1 — not
+   by the MCP; species/resource/state/office filters are the only ones pushed
+   down to the get_landings() call):
+   kpi_cpue_menores ← mean(cpue_media[tipo_aviso == "MENORES"], na.rm = TRUE)
+   kpi_cpue_mayores ← mean(cpue_media[tipo_aviso == "MAYORES"], na.rm = TRUE)
+   If a fleet has no rows in cpue_series, its KPI = NA.
 ```
+
+### Interpretation
+Computed per fleet (MENORES / MAYORES) on the annual `cpue_media` series:
+- Before/after comparison (`before_after()`): first 5 years vs. last 5 years.
+- Mann-Kendall monotonic trend test (Mann, 1945; Kendall, 1975) via `mk_trend()`
+  (`Kendall::MannKendall`, `shared/interpretation/interpret.R`); minimum number of
+  years as set in `mk_trend()`.
+- In this skill Mann-Kendall only feeds `interpretation$significance` and the
+  insight sentence; it does not decide the status, which is always `"ambiguous"`
+  (declining CPUE may reflect overfishing, stock depletion or reduced effort).
 
 ### Output structure
 
@@ -216,10 +247,11 @@ peso_desembarcado_kg_total | n_viajes_recomputado
 - Y axis: `cpue_media` (kg / effective fishing day). Log₁₀ scale applied automatically
   when max/min ratio across all series exceeds 10 (large fleet-size differences).
 - Two lines: one per fleet type (MAYORES / MENORES), always in the same panel.
-- Colors: MAYORES = `#E69F00` (amber), MENORES = `#0072B2` (blue) — Okabe-Ito palette,
-  colorblind-friendly.
+- Colors: MAYORES = `#4E79A7` (blue), MENORES = `#F28E2B` (orange) — Tableau 10
+  palette, consistent with the other conapesca skills (e.g. landings-timeseries).
 - Point shapes: MAYORES = filled triangle (▲), MENORES = filled circle (●).
-  Points with `n_viajes < 5` rendered as hollow shapes (△ / ○) to signal low reliability.
+  Points with `n_viajes < 5` are rendered as a hollow circle (○) for both fleets
+  to signal low reliability — the shape is not fleet-specific for unreliable points.
 - Labels: real `cpue_media` value printed above each point (below hollow points).
 - Legend: horizontal, below the chart.
 - Caption: notes hollow-point threshold, log scale if applied, method used.
@@ -228,10 +260,16 @@ peso_desembarcado_kg_total | n_viajes_recomputado
 Not applicable (deterministic skill).
 
 ## Reference value and tolerance
-- Reference case: PENDING — needs an office + species/resource + year combination
-  with a hand-verified CPUE value.
-- Tolerance: PENDING.
-- Status: PENDING. Do NOT invent one. Store in `references/` with `status: PENDING`.
+- Reference cases: 4 (`cpue_media` and `cpue_sd` for MAYORES 2018 and MENORES 2020)
+  in `references/cabo_pulmo_cpue_reference.json`.
+- Case: *Balistes polylepis*, Cabo San Lucas landing office (BCS), full series (proxy
+  for the Cabo Pulmo MPA: the skill resolves by landing office). Year chosen per
+  fleet: MAYORES with ≥ 5 trips, MENORES with ≥ 30 trips.
+- Expected values: 231.3858 / 54.2755 (MAYORES 2018) and 247.4857 / 383.7774
+  (MENORES 2020), verified by Carolina (2026-09-30).
+- Tolerance: ±0.00005 (the skill rounds to 4 decimals).
+- Seed: not applicable.
+- Status: VERIFIED.
 
 ## Do-not rules
 - Do NOT sum `dias_efectivos` across species rows of the same folio — effort is
@@ -250,6 +288,8 @@ Not applicable (deterministic skill).
   flagging it explicitly — small n makes the mean unreliable.
 - Do NOT interpret CPUE by office as spatially precise — landing offices record
   where fish were landed, not where they were caught.
+- Do NOT compute `kpi_cpue_*` in the frontend — the skill returns them as scalars
+  over the already-filtered year range.
 
 ## Validation checklist
 - [ ] self-consistency: run twice on fixed data, outputs match exactly.
@@ -267,6 +307,22 @@ A complete CPUE panel output must include:
 - `n_viajes` and `n_viajes_excluidos` reported per year-fleet cell.
 - Years with n < 5 trips flagged in the narrative.
 - If no especie/resource filter: note that series represents all landings for the office.
+- `kpi_cpue_menores` and `kpi_cpue_mayores` present in output (NA if fleet absent).
+
+
+## References
+- Comisión Nacional de Acuacultura y Pesca. (2026). *Avisos de arribo y de cosecha*
+  [Datos sin publicar, obtenidos mediante solicitud de acceso a la información pública
+  núm. 340008100012626, Plataforma Nacional de Transparencia; entregados el 29 de junio
+  de 2026].
+- Gulland, J. A. (1971). *Manual de métodos para la evaluación de las poblaciones de
+  peces. Parte 1. Análisis de poblaciones de peces* (Manuales de la FAO de Ciencias
+  Pesqueras, FRs/M4). Editorial Acribia; FAO. https://www.fao.org/4/x5685s/x5685s00.htm
+- Kendall, M. G. (1975). *Rank correlation methods* (4th ed.). Charles Griffin.
+- Mann, H. B. (1945). Nonparametric tests against trend. *Econometrica, 13*(3),
+  245–259. https://doi.org/10.2307/1907187
+- McLeod, A. I. (2025). *Kendall: Kendall rank correlation and Mann-Kendall trend test*
+  (Version 2.2.2) [R package]. https://CRAN.R-project.org/package=Kendall
 
 ---
 

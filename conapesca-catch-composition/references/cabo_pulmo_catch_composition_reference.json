@@ -1,0 +1,77 @@
+{
+  "skill": "conapesca-catch-composition",
+  "skill_version": "0.2.0",
+  "seed": null,
+  "cases": [
+    {
+      "id": "cabo_san_lucas_catch_composition_pct_volume",
+      "metric": "pct_volume",
+      "row": {
+        "component": "Capture"
+      },
+      "unit": "%",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS), all species, 2016–2025; share of capture (MAYORES + MENORES) in total volume. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": 100.0,
+      "tolerance": 0.05,
+      "tolerance_rationale": "Deterministic; the skill rounds to 1 decimal: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-09-30",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "Uses the inputs year_from / year_to (SKILL.md 0.2.0). Trivial case: the office has no COSECHA (100 %). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "cabo_san_lucas_catch_composition_pct_value",
+      "metric": "pct_value",
+      "row": {
+        "component": "Capture"
+      },
+      "unit": "%",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS), all species, 2016–2025; share of capture (MAYORES + MENORES) in total value. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": 100.0,
+      "tolerance": 0.05,
+      "tolerance_rationale": "Deterministic; the skill rounds to 1 decimal: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-09-30",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "Uses the inputs year_from / year_to (SKILL.md 0.2.0). Trivial case: the office has no COSECHA (100 %). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    }
+  ]
+}

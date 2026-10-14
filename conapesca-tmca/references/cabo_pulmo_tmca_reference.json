@@ -1,0 +1,40 @@
+{
+  "skill": "conapesca-tmca",
+  "skill_version": "0.2.0",
+  "seed": null,
+  "cases": [
+    {
+      "id": "cabo_san_lucas_tmca_window10_tmca",
+      "metric": "tmca",
+      "row": null,
+      "unit": "% per year",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS), all species and fleets, 10-year window ending in 2025 (2015 vs 2025). Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "window": 10,
+          "year_to": 2025
+        }
+      },
+      "expected_value": -20.43,
+      "tolerance": 0.005,
+      "tolerance_rationale": "Deterministic; the skill rounds to 2 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "Uses the input year_to (SKILL.md 0.2.0): yr_start = 2015, yr_end = 2025. OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    }
+  ]
+}

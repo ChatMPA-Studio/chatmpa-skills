@@ -1,11 +1,109 @@
 ---
 name: conapesca-tmca
+version: 0.2.0
+tier: 1
 description: >
   Computes the Mean Annual Growth Rate (TMCA) of landed volume for a landing
   office (oficina de pesca — administrative unit, not a port) and classifies
   the trend: growing, stable, or declining. Without species filter = overall
   office trend (all species); with species filter = trend of that species or
   resource at that same office. Returns a single numeric value + category string.
+inputs:
+  window:
+    type: integer
+    required: false
+    default: 10
+    description: >
+      Años hacia atrás desde `year_to` (o desde el año más reciente disponible
+      si se omite) para calcular la ventana de la TMCA. Mínimo 2. Si el año ideal de inicio no está
+      disponible, se usa el más cercano posterior, con warning.
+  fleet_filter:
+    type: string
+    required: false
+    description: >
+      Tipo de flota (`tipo_aviso`): "MAYORES", "MENORES", "COSECHA". Si se
+      omite, se agregan todas las flotas.
+  office_filter:
+    type: string
+    required: false
+    description: >
+      Oficina de desembarque (`nombre_oficina`), p. ej. "ENSENADA". Opcional:
+      si se omite, la TMCA refleja el agregado nacional (o el universo que el
+      resto de filtros delimite). Se recomienda acompañar de `state_filter`
+      cuando se especifica, ya que los nombres de oficina se repiten entre
+      estados.
+  state_filter:
+    type: string
+    required: false
+    description: >
+      Estado de la oficina de desembarque (`nombre_estado`). Recomendado junto
+      con `office_filter` para desambiguar oficinas homónimas entre estados.
+  resource_group:
+    type: string
+    required: false
+    mutually_exclusive_with: species
+    description: >
+      Grupo/recurso pesquero (`nombre_principal`), p. ej. "PARGO", "JUREL".
+      Mutuamente excluyente con `species`. Si ninguno se proporciona, la TMCA
+      refleja todas las especies combinadas en la oficina.
+  species:
+    type: string
+    required: false
+    mutually_exclusive_with: resource_group
+    description: >
+      Nombre científico canónico (`nombre_cientifico_canonico`), p. ej.
+      "Lutjanus peru". No acepta nombres comunes. Mutuamente excluyente con
+      `resource_group`.
+  year_to:
+    type: integer
+    required: false
+    description: >
+      Año final de la ventana (inclusive). Si se omite, se usa el último año
+      disponible.
+acquire:
+  # get_landings(group_by="year_fleet") ya trae la serie anual filtrada;
+  # el orquestador la manda en el body. office_filter/state_filter/
+  # resource_group/species sí se empujan al MCP aquí — a diferencia de
+  # conapesca-national-ranking, esta skill necesita UNA sola oficina, no el
+  # universo completo. `window` no va a acquire: es un parámetro de cómputo
+  # interno de skill.R, no un filtro de datos. `year_to` sí se manda: fija el
+  # último año de la serie (yr_end).
+  - source: payload
+    as: data
+    provider:
+      server: conapesca
+      tool: get_landings
+      args:
+        group_by: year_fleet
+      params:
+        office_filter:  oficina
+        state_filter:   estado
+        resource_group: nombre_principal
+        species:        nombre_cientifico_canonico
+        fleet_filter:   tipo_aviso
+        year_to:        year_to
+    columns:
+      - anio_corte
+      - tipo_aviso
+      - total_kg
+output:
+  table: value
+  columns: [anio_corte, total_tonnes]
+  scalars:
+    tmca:     numeric    # TMCA en %, 2 decimales
+    category: character  # "growing" | "growing moderately" | "stable" | "declining moderately" | "declining"
+# category se deriva determinísticamente de tmca (función escalón) — comparar
+# solo tmca basta para detectar cualquier desviación en el cálculo o la
+# categorización.
+comparable_value: [tmca]
+reference: references/cabo_pulmo_tmca_reference.json
+validation:
+  params:
+    office_filter: CABO SAN LUCAS
+    state_filter: BAJA CALIFORNIA SUR
+    window: 10
+    year_to: 2025
+depends_on: []
 ---
 
 # CONAPESCA TMCA — Mean Annual Growth Rate
@@ -28,35 +126,31 @@ resource group *at this specific office*. The MCP already filtered data to the
 office before the skill runs — the species filter narrows what is measured, not
 where. The result is still office-level, not national.
 
-## Parameters
+## Data contract (minimal interface, NOT the local file)
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `data` | data.frame | **Yes** | Pre-aggregated from `get_landings(group_by="year_fleet")`. MCP applies all filters. |
-| `window` | integer | No | Years in the window back from the most recent year. Default: 10. Minimum: 2. |
-| `fleet_filter` | character or NULL | No | `"MAYORES"`, `"MENORES"`, `"COSECHA"`, or NULL (all fleets). |
-| `office_filter` | character or NULL | No | Label only. |
-| `state_filter` | character or NULL | No | Label only. |
-| `nombre_principal` | character or NULL | No | Label only. Mutually exclusive with `nombre_cientifico_canonico`. |
-| `nombre_cientifico_canonico` | character or NULL | No | Label only. |
+Input columns required from the CONAPESCA MCP (`get_landings(group_by="year_fleet")`):
 
-## Data contract
-
-Columns from `get_landings(group_by="year_fleet")`:
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `anio_corte` | integer | Year |
-| `tipo_aviso` | character | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
-| `total_kg` | numeric | Sum of landed weight in kg |
+| Column | Type | Unit | Description |
+|--------|------|------|-------------|
+| `anio_corte` | integer | year | Year |
+| `tipo_aviso` | character | — | Fleet type: `MAYORES`, `MENORES`, or `COSECHA` |
+| `total_kg` | numeric | kg | Sum of landed weight (converted to `total_tonnes`, t) |
 
 Accepted alias: `peso_desembarcado_kg` → `total_kg`.
 `total_valor_mxn` is ignored — this skill operates on volume only.
 
+- **Aggregation unit:** annual total, summing MAYORES, MENORES and COSECHA (or only
+  `fleet_filter` if given).
+- **Missing data:** sums use `na.rm = TRUE`; if the ideal start year is missing, the
+  nearest later year is used (step 4).
+- **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
+  curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
+  catalogue) from the delivery of 29 June 2026.
+
 ## Method (fixed, no degrees of freedom)
 
 ```
-1. DATA ALREADY FILTERED BY MCP
+1. DATA ALREADY FILTERED BY MCP (office, state, resource_group/species, year_to)
 
 2. OPTIONAL FLEET FILTER
    If fleet_filter specified: keep only rows where tipo_aviso = fleet_filter.
@@ -66,7 +160,7 @@ Accepted alias: `peso_desembarcado_kg` → `total_kg`.
    total_tonnes ← sum(total_kg) / 1000  per anio_corte
 
 4. RESOLVE WINDOW ENDPOINTS
-   yr_end   ← max(anio_corte)
+   yr_end   ← max(anio_corte)   (= year_to when given)
    yr_start ← yr_end - window
    If yr_start absent from data: use nearest available year >= yr_start
    with warning(). If none found: use earliest available year.
@@ -74,8 +168,9 @@ Accepted alias: `peso_desembarcado_kg` → `total_kg`.
 
 5. TMCA
    TMCA = ((total_tonnes[yr_end] / total_tonnes[yr_start])^(1/n) - 1) × 100
+   rounded to 2 decimals.
 
-6. CATEGORIZE
+6. CATEGORIZE (on the TMCA already rounded to 2 decimals)
    TMCA > +3%          → "growing"
    +1% < TMCA ≤ +3%   → "growing moderately"
    -1% ≤ TMCA ≤ +1%   → "stable"
@@ -95,6 +190,9 @@ user can assess context.
 Thresholds (±1%, ±3%) are conventional and documented here. They do not represent
 an official ecological or regulatory criterion. To adjust, update this section and
 the `.THRESH_*` constants in `skill.R`.
+
+## Random controls
+Not applicable (deterministic skill).
 
 ## Output structure
 
@@ -117,18 +215,35 @@ Example chatbot output:
 - Do NOT compute TMCA with n < 2 years — raise `stop()`.
 - Do NOT interpolate missing years — use the nearest available with `warning()`.
 - Do NOT include plots — the value + category is sufficient.
-- Do NOT mix `nombre_principal` and `nombre_cientifico_canonico`.
+- Do NOT mix `resource_group` and `species`.
 
 ## Validation checklist
 - [ ] `tmca` matches manual calculation: `((v_end/v_start)^(1/n)-1)*100`.
 - [ ] `category` corresponds to the correct threshold for the `tmca` value.
 - [ ] `params$yr_start` and `params$yr_end` both exist in `value$anio_corte`.
 - [ ] `warning()` emitted if the ideal start year was unavailable.
+- [ ] Self-consistency, reference and coherence checks (validation harness, `run_checks.R`).
 
 ## Reference value and tolerance
-- Status: PENDING. Do NOT invent one. Store in `references/` when available.
+- Reference cases: 1 (`tmca`) in `references/cabo_pulmo_tmca_reference.json`.
+- Case: Cabo San Lucas landing office (BCS), all species and fleets, `window` = 10,
+  `year_to` = 2025 (2015 vs 2025; proxy for the Cabo Pulmo MPA: the skill resolves by
+  landing office).
+- Expected value: −20.43 (% per year), verified by Carolina (2026-10-01).
+- Tolerance: ±0.005 (the skill rounds to 2 decimals).
+- Seed: not applicable.
+- Status: VERIFIED.
 
 ## Success criteria
 - Correct numeric `tmca`.
 - `category` consistent with documented thresholds.
 - `value` with full annual series for context.
+
+## References
+- Comisión Nacional de Acuacultura y Pesca. (2026). *Avisos de arribo y de cosecha*
+  [Datos sin publicar, obtenidos mediante solicitud de acceso a la información pública
+  núm. 340008100012626, Plataforma Nacional de Transparencia; entregados el 29 de junio
+  de 2026].
+
+The categorization thresholds (±1 %, ±3 %) are an internal convention without a
+bibliographic source (see *Categorization thresholds*).

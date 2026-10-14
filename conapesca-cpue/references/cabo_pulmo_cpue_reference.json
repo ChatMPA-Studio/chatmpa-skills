@@ -1,0 +1,147 @@
+{
+  "skill": "conapesca-cpue",
+  "skill_version": "0.2.1",
+  "seed": null,
+  "cases": [
+    {
+      "id": "cabo_san_lucas_cpue_mayores_cpue_media",
+      "metric": "cpue_media",
+      "row": {
+        "anio_corte": 2018,
+        "tipo_aviso": "MAYORES"
+      },
+      "unit": "kg per effective fishing day",
+      "input": {
+        "description": "Balistes polylepis, Cabo San Lucas landing office (BCS), full series; fleet MAYORES, year 2018. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "species": "Balistes polylepis"
+        }
+      },
+      "expected_value": 231.3858,
+      "tolerance": 5e-05,
+      "tolerance_rationale": "Deterministic; the skill rounds to 4 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-09-30",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "Year chosen per fleet: MAYORES with ≥ 5 trips (n = 8 in 2018). The full series enters and the year is selected in row (each year's CPUE is independent of the others). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "cabo_san_lucas_cpue_mayores_cpue_sd",
+      "metric": "cpue_sd",
+      "row": {
+        "anio_corte": 2018,
+        "tipo_aviso": "MAYORES"
+      },
+      "unit": "kg per effective fishing day",
+      "input": {
+        "description": "Balistes polylepis, Cabo San Lucas landing office (BCS), full series; fleet MAYORES, year 2018. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "species": "Balistes polylepis"
+        }
+      },
+      "expected_value": 54.2755,
+      "tolerance": 5e-05,
+      "tolerance_rationale": "Deterministic; the skill rounds to 4 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-09-30",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "Year chosen per fleet: MAYORES with ≥ 5 trips (n = 8 in 2018). The full series enters and the year is selected in row (each year's CPUE is independent of the others). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "cabo_san_lucas_cpue_menores_cpue_media",
+      "metric": "cpue_media",
+      "row": {
+        "anio_corte": 2020,
+        "tipo_aviso": "MENORES"
+      },
+      "unit": "kg per effective fishing day",
+      "input": {
+        "description": "Balistes polylepis, Cabo San Lucas landing office (BCS), full series; fleet MENORES, year 2020. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "species": "Balistes polylepis"
+        }
+      },
+      "expected_value": 247.4857,
+      "tolerance": 5e-05,
+      "tolerance_rationale": "Deterministic; the skill rounds to 4 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-09-30",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "Year chosen per fleet: MENORES with ≥ 30 trips (n = 65 in 2020). The full series enters and the year is selected in row (each year's CPUE is independent of the others). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "cabo_san_lucas_cpue_menores_cpue_sd",
+      "metric": "cpue_sd",
+      "row": {
+        "anio_corte": 2020,
+        "tipo_aviso": "MENORES"
+      },
+      "unit": "kg per effective fishing day",
+      "input": {
+        "description": "Balistes polylepis, Cabo San Lucas landing office (BCS), full series; fleet MENORES, year 2020. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "species": "Balistes polylepis"
+        }
+      },
+      "expected_value": 383.7774,
+      "tolerance": 5e-05,
+      "tolerance_rationale": "Deterministic; the skill rounds to 4 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-09-30",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "Year chosen per fleet: MENORES with ≥ 30 trips (n = 65 in 2020). The full series enters and the year is selected in row (each year's CPUE is independent of the others). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    }
+  ]
+}

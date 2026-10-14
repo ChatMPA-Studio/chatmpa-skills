@@ -1,0 +1,73 @@
+{
+  "skill": "conapesca-landings-timeseries",
+  "skill_version": "0.1.1",
+  "seed": null,
+  "cases": [
+    {
+      "id": "cabo_san_lucas_landings_kpi_vol_total",
+      "metric": "kpi_vol_total",
+      "row": null,
+      "unit": "t (annual mean)",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS), all species, fleet TOTAL, 2016–2025; mean annual volume. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": 336.52,
+      "tolerance": 0.005,
+      "tolerance_rationale": "Deterministic; the skill rounds to 2 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "year_from / year_to define the period that is averaged. Values in nominal MXN (not deflated). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "cabo_san_lucas_landings_kpi_val_total",
+      "metric": "kpi_val_total",
+      "row": null,
+      "unit": "MXN (annual mean)",
+      "input": {
+        "description": "Cabo San Lucas landing office (BCS), all species, fleet TOTAL, 2016–2025; mean annual value. Landing office used as proxy for Cabo Pulmo MPA (MVP).",
+        "filters": {
+          "office_filter": "CABO SAN LUCAS",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": 20948052.0,
+      "tolerance": 0.005,
+      "tolerance_rationale": "Deterministic; the skill rounds to 2 decimals: half a unit of the last decimal.",
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-01",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_referencias_conapesca.Rmd), on the curated CONAPESCA database (snapshot 2026-08-07).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_referencias_conapesca.Rmd (outside the repos)"
+      },
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database",
+        "retrieved_date": "2026-08-07"
+      },
+      "notes": "year_from / year_to define the period that is averaged. Values in nominal MXN (not deflated). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    }
+  ]
+}
