@@ -1,13 +1,22 @@
 ---
 name: conapesca-catch-composition
-version: 0.2.0
+version: 0.2.1
 tier: 1
 description: >
   Shows the production composition of a landing office: percentage from capture
   fisheries (MAYORES + MENORES) vs aquaculture (COSECHA), in both volume and
   estimated value, accumulated over the requested period (year_from–year_to)
   or the full available period if no years are given.
-  Two pie charts + composition table.
+  Composition table, plus two pie charts when ggplot2 is installed.
+description_es:
+  - >
+    Muestra la composición de la producción de una oficina de desembarque:
+    qué porcentaje viene de la pesca de captura (embarcaciones mayores y
+    menores) y qué porcentaje de la acuacultura (avisos de cosecha), en
+    volumen y en valor estimado, acumulado en el periodo solicitado. Se activa
+    con preguntas sobre cuánto de la producción de una oficina es captura y
+    cuánto acuacultura.
+  - qué parte del volumen o del valor de una oficina de pesca viene de la captura y qué parte de la acuacultura.
 inputs:
   office_filter:
     type: string
@@ -73,7 +82,6 @@ acquire:
       - total_valor_mxn
       - n_records
 output:
-  table: value
   columns: [component, total_tonnes, total_value_mxn, pct_volume, pct_value, year_min, year_max]
 comparable_value: [pct_volume, pct_value]
 reference: references/cabo_pulmo_catch_composition_reference.json

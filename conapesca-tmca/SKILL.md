@@ -1,6 +1,6 @@
 ---
 name: conapesca-tmca
-version: 0.2.0
+version: 0.2.1
 tier: 1
 description: >
   Computes the Mean Annual Growth Rate (TMCA) of landed volume for a landing
@@ -8,6 +8,15 @@ description: >
   the trend: growing, stable, or declining. Without species filter = overall
   office trend (all species); with species filter = trend of that species or
   resource at that same office. Returns a single numeric value + category string.
+description_es:
+  - >
+    Calcula la tasa media de crecimiento anual (TMCA) del volumen desembarcado
+    en una oficina de desembarque y clasifica la tendencia como creciente,
+    estable o decreciente. Sin filtro, es la tendencia de toda la oficina; con
+    filtro de recurso o especie, la de esa pesquería en la misma oficina. Se
+    activa con preguntas sobre si los desembarques de una oficina están
+    creciendo o disminuyendo.
+  - si los desembarques de una oficina de pesca están creciendo, estables o disminuyendo, y a qué tasa anual.
 inputs:
   window:
     type: integer
@@ -87,7 +96,6 @@ acquire:
       - tipo_aviso
       - total_kg
 output:
-  table: value
   columns: [anio_corte, total_tonnes]
   scalars:
     tmca:     numeric    # TMCA en %, 2 decimales

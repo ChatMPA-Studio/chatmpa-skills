@@ -1,12 +1,20 @@
 ---
 name: conapesca-cpue
-version: 0.2.1
+version: 0.2.2
 tier: 1
 description: >
   Compute CPUE (catch per unit effort) as a historical time series for a
   landing office, disaggregated by fleet type (MAYORES / MENORES). Fires on
   dashboard panel requests for a specific office, optionally filtered by
   resource group (nombre_principal) or species (nombre_cientifico_canonico).
+description_es:
+  - >
+    Calcula la serie histórica de CPUE (captura por unidad de esfuerzo) de
+    una oficina de desembarque, desagregada por tipo de flota
+    (mayores/menores). Se activa con preguntas sobre el panel de captura o
+    esfuerzo pesquero de una oficina específica, opcionalmente filtradas por
+    grupo de recurso o especie.
+  - esfuerzo pesquero o captura por unidad de esfuerzo de una oficina de desembarque.
 inputs:
   species:
     type: string
@@ -40,7 +48,8 @@ inputs:
       Oficina de desembarque (`nombre_oficina`), p. ej. "CABO SAN LUCAS".
       Es la unidad de análisis. Siempre debe acompañarse de `state_filter`.
   year_range:
-    type: integer_vector
+    type: array
+    items: integer
     required: false
     description: >
       Two-element vector `[start, end]`, e.g. `[2010, 2020]`. If omitted,
@@ -77,7 +86,6 @@ acquire:
       # get_landings(group_by="folio"): una fila por viaje. El filtro de
       # especie/recurso se aplica server-side vía params (chatmpa-skills#16).
 output:
-  table: cpue_series
   columns: [anio_corte, tipo_aviso, cpue_media, cpue_sd, n_viajes, n_viajes_excluidos, peso_desembarcado_kg_total, n_viajes_recomputado]
   scalars:
     kpi_cpue_menores: numeric  # mean(cpue_media) for MENORES over the filtered year range; NA if no rows

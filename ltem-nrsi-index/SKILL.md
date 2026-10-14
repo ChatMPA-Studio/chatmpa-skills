@@ -1,6 +1,6 @@
 ---
 name: ltem-nrsi-index
-version: 0.1.1
+version: 0.1.2
 tier: 2
 description: >
   Assess the trophic health of a reef and answer whether it is healthy,
