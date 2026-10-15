@@ -1,6 +1,6 @@
 ---
 name: conapesca-national-ranking
-version: 0.2.1
+version: 0.2.2
 tier: 1
 description: >
   Computes the national position of a landing office by total landed volume
@@ -154,8 +154,9 @@ That is what makes the national ranking possible. `state_filter` only
 identifies the focal office (step 6).
 
 - **Aggregation unit:** office × state, summed over all years and fleets of the period.
-- **Missing data:** sums use `na.rm = TRUE`; a group with `nombre_oficina` or
-  `nombre_estado` = NA counts in `n_offices` with total 0.
+- **Missing data:** sums use `na.rm = TRUE`; rows with `nombre_oficina` or
+  `nombre_estado` = NA form their own group, which counts in `n_offices` with the
+  sum of its rows (the curated base has no such rows).
 - **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
   curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
   catalogue) from the delivery of 29 June 2026.
@@ -186,10 +187,14 @@ identifies the focal office (step 6).
    pct_volumen ← total_tonnes_focal    / sum(total_tonnes)    × 100
    pct_valor   ← total_valor_mxn_focal / sum(total_valor_mxn) × 100
    pct_volumen and pct_valor are rounded to 2 decimals; ranks are computed
-   from the unrounded totals.
+   from the unrounded totals. If the national total (volume or value) is 0,
+   the corresponding shares are NA with a warning().
 
 6. EXTRACT FOCAL SCALARS
    Identify focal office by nombre_oficina + nombre_estado (never name alone).
+   If the focal office has no rows under the filters it is not part of the
+   universe: rank_volumen, rank_valor, pct_*, total_* = NA with a warning()
+   (not an error), n_offices still reported.
 ```
 
 ## Output structure

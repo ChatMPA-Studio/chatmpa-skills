@@ -1,6 +1,6 @@
 ---
 name: conapesca-catch-composition
-version: 0.2.1
+version: 0.3.0
 tier: 1
 description: >
   Shows the production composition of a landing office: percentage from capture
@@ -119,7 +119,10 @@ Columns from `get_landings(group_by="year_fleet")`:
 Accepted aliases: `peso_desembarcado_kg` → `total_kg`, `valor_pesos_estimado` → `total_valor_mxn`.
 `n_records` (name delivered by the MCP) is renamed internally to `n_registros`.
 
-- **Missing data:** sums use `na.rm = TRUE`.
+- **Missing data:** sums use `na.rm = TRUE`. If capture + aquaculture is 0 (volume
+  or value), the corresponding percentages are NA with a warning().
+- Any `tipo_aviso` other than MAYORES, MENORES or COSECHA is ignored (the curated
+  base has none).
 - **Aggregation unit:** the whole period received, by component (Capture / Aquaculture).
 - **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
   curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
@@ -184,6 +187,11 @@ Rows: `"Capture"` and `"Aquaculture"`.
 - Tolerance: ±0.05 (the skill rounds to 1 decimal).
 - Seed: not applicable.
 - Status: VERIFIED. Cases in `references/cabo_pulmo_catch_composition_reference.json`.
+- Second case (non-trivial, with aquaculture): La Paz landing office (BCS), all
+  species, 2016–2025, `pct_volume` and `pct_value` of Capture. Status: PENDING until
+  verified by an independent calculation
+  (`Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R`,
+  outside the repos).
 
 ## Success criteria
 - Table with two rows and correct percentages.

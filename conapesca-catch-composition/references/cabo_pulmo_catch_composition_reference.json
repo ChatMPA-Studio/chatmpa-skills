@@ -72,6 +72,68 @@
         "retrieved_date": "2026-08-07"
       },
       "notes": "Uses the inputs year_from / year_to (SKILL.md 0.2.0). Trivial case: the office has no COSECHA (100 %). OFFICE PROXY: CABO SAN LUCAS stands in for the Cabo Pulmo MPA because the skill resolves by landing office. The verified value tests the computation, not the representativeness of the office. Cases will be redefined when the skill estimates at MPA level (major version bump)."
+    },
+    {
+      "id": "la_paz_catch_composition_pct_volume",
+      "metric": "pct_volume",
+      "row": {
+        "component": "Capture"
+      },
+      "unit": "%",
+      "input": {
+        "description": "La Paz landing office (BCS), all species, 2016–2025; share of capture (MAYORES + MENORES) in total volume. Non-trivial case: the office has COSECHA in every year of the period.",
+        "filters": {
+          "office_filter": "LA PAZ",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": null,
+      "tolerance": 0.05,
+      "tolerance_rationale": "Deterministic; the skill rounds to 1 decimal: half a unit of the last decimal.",
+      "status": "PENDING",
+      "verified_by": null,
+      "verified_date": null,
+      "source": null,
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database; MCP base v0.0.4 (conapesca_landings_2001_2026_2026-08-07.rds)",
+        "retrieved_date": "2026-10-15"
+      },
+      "notes": "PENDING: second case requested in the engineering review (CC-5), because the Cabo San Lucas case is trivial (no COSECHA). Verify with the independent script Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R (outside the repos), then fill expected_value, verified_by, verified_date and source."
+    },
+    {
+      "id": "la_paz_catch_composition_pct_value",
+      "metric": "pct_value",
+      "row": {
+        "component": "Capture"
+      },
+      "unit": "%",
+      "input": {
+        "description": "La Paz landing office (BCS), all species, 2016–2025; share of capture (MAYORES + MENORES) in total value. Non-trivial case: the office has COSECHA in every year of the period.",
+        "filters": {
+          "office_filter": "LA PAZ",
+          "state_filter": "BAJA CALIFORNIA SUR",
+          "year_from": 2016,
+          "year_to": 2025
+        }
+      },
+      "expected_value": null,
+      "tolerance": 0.05,
+      "tolerance_rationale": "Deterministic; the skill rounds to 1 decimal: half a unit of the last decimal.",
+      "status": "PENDING",
+      "verified_by": null,
+      "verified_date": null,
+      "source": null,
+      "data_snapshot": {
+        "server": "conapesca",
+        "tool": "get_landings",
+        "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database; MCP base v0.0.4 (conapesca_landings_2001_2026_2026-08-07.rds)",
+        "retrieved_date": "2026-10-15"
+      },
+      "notes": "PENDING: second case requested in the engineering review (CC-5), because the Cabo San Lucas case is trivial (no COSECHA). Verify with the independent script Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R (outside the repos), then fill expected_value, verified_by, verified_date and source."
     }
   ]
 }

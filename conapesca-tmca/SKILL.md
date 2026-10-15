@@ -1,6 +1,6 @@
 ---
 name: conapesca-tmca
-version: 0.2.1
+version: 0.2.2
 tier: 1
 description: >
   Computes the Mean Annual Growth Rate (TMCA) of landed volume for a landing
@@ -67,8 +67,12 @@ inputs:
     type: integer
     required: false
     description: >
-      Año final de la ventana (inclusive). Si se omite, se usa el último año
-      disponible.
+      Año final de la ventana (inclusive). Debe ser un año completo: el
+      orquestador manda el menor entre el año elegido por el usuario y el
+      último año completo de la entrega vigente (valor de configuración que se
+      actualiza con cada entrega; con la entrega del 29 de junio de 2026 es
+      2025, porque 2026 sólo llega al 31 de mayo). Si se omite, se usa el
+      último año disponible.
 acquire:
   # get_landings(group_by="year_fleet") ya trae la serie anual filtrada;
   # el orquestador la manda en el body. office_filter/state_filter/
@@ -151,6 +155,9 @@ Accepted alias: `peso_desembarcado_kg` → `total_kg`.
   `fleet_filter` if given).
 - **Missing data:** sums use `na.rm = TRUE`; if the ideal start year is missing, the
   nearest later year is used (step 4).
+- **Incomplete years:** the TMCA always ends in the last complete year (`year_to`).
+  A partial year (e.g. 2026, January–May in the current delivery) biases the TMCA
+  of every office towards decline, so it is never used as `yr_end`.
 - **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
   curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
   catalogue) from the delivery of 29 June 2026.
@@ -177,6 +184,8 @@ Accepted alias: `peso_desembarcado_kg` → `total_kg`.
 5. TMCA
    TMCA = ((total_tonnes[yr_end] / total_tonnes[yr_start])^(1/n) - 1) × 100
    rounded to 2 decimals.
+   If total_tonnes[yr_start] = 0: TMCA undefined → stop().
+   If total_tonnes[yr_end] = 0: TMCA = -100 (a collapse to zero is a valid result).
 
 6. CATEGORIZE (on the TMCA already rounded to 2 decimals)
    TMCA > +3%          → "growing"
@@ -221,6 +230,7 @@ Example chatbot output:
 
 ## Do-not rules
 - Do NOT compute TMCA with n < 2 years — raise `stop()`.
+- Do NOT end the window in an incomplete year — `year_to` is the last complete year.
 - Do NOT interpolate missing years — use the nearest available with `warning()`.
 - Do NOT include plots — the value + category is sufficient.
 - Do NOT mix `resource_group` and `species`.
