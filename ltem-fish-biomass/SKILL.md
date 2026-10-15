@@ -1,6 +1,6 @@
 ---
 name: ltem-fish-biomass
-version: 0.3.0
+version: 0.3.1
 tier: 2
 description: >
   Assess fish standing stock and recovery trends at a marine protected area,

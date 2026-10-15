@@ -1,13 +1,22 @@
 ---
 name: conapesca-catch-composition
-version: 0.2.0
+version: 0.3.0
 tier: 1
 description: >
   Shows the production composition of a landing office: percentage from capture
   fisheries (MAYORES + MENORES) vs aquaculture (COSECHA), in both volume and
   estimated value, accumulated over the requested period (year_from–year_to)
   or the full available period if no years are given.
-  Two pie charts + composition table.
+  Composition table, plus two pie charts when ggplot2 is installed.
+description_es:
+  - >
+    Muestra la composición de la producción de una oficina de desembarque:
+    qué porcentaje viene de la pesca de captura (embarcaciones mayores y
+    menores) y qué porcentaje de la acuacultura (avisos de cosecha), en
+    volumen y en valor estimado, acumulado en el periodo solicitado. Se activa
+    con preguntas sobre cuánto de la producción de una oficina es captura y
+    cuánto acuacultura.
+  - qué parte del volumen o del valor de una oficina de pesca viene de la captura y qué parte de la acuacultura.
 inputs:
   office_filter:
     type: string
@@ -73,7 +82,6 @@ acquire:
       - total_valor_mxn
       - n_records
 output:
-  table: value
   columns: [component, total_tonnes, total_value_mxn, pct_volume, pct_value, year_min, year_max]
 comparable_value: [pct_volume, pct_value]
 reference: references/cabo_pulmo_catch_composition_reference.json
@@ -111,7 +119,10 @@ Columns from `get_landings(group_by="year_fleet")`:
 Accepted aliases: `peso_desembarcado_kg` → `total_kg`, `valor_pesos_estimado` → `total_valor_mxn`.
 `n_records` (name delivered by the MCP) is renamed internally to `n_registros`.
 
-- **Missing data:** sums use `na.rm = TRUE`.
+- **Missing data:** sums use `na.rm = TRUE`. If capture + aquaculture is 0 (volume
+  or value), the corresponding percentages are NA with a warning().
+- Any `tipo_aviso` other than MAYORES, MENORES or COSECHA is ignored (the curated
+  base has none).
 - **Aggregation unit:** the whole period received, by component (Capture / Aquaculture).
 - **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
   curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
@@ -176,6 +187,11 @@ Rows: `"Capture"` and `"Aquaculture"`.
 - Tolerance: ±0.05 (the skill rounds to 1 decimal).
 - Seed: not applicable.
 - Status: VERIFIED. Cases in `references/cabo_pulmo_catch_composition_reference.json`.
+- Second case (non-trivial, with aquaculture): La Paz landing office (BCS), all
+  species, 2016–2025, `pct_volume` and `pct_value` of Capture. Status: PENDING until
+  verified by an independent calculation
+  (`Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R`,
+  outside the repos).
 
 ## Success criteria
 - Table with two rows and correct percentages.

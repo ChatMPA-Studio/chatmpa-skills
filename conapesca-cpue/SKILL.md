@@ -1,12 +1,20 @@
 ---
 name: conapesca-cpue
-version: 0.2.1
+version: 0.2.3
 tier: 1
 description: >
   Compute CPUE (catch per unit effort) as a historical time series for a
   landing office, disaggregated by fleet type (MAYORES / MENORES). Fires on
   dashboard panel requests for a specific office, optionally filtered by
   resource group (nombre_principal) or species (nombre_cientifico_canonico).
+description_es:
+  - >
+    Calcula la serie histórica de CPUE (captura por unidad de esfuerzo) de
+    una oficina de desembarque, desagregada por tipo de flota
+    (mayores/menores). Se activa con preguntas sobre el panel de captura o
+    esfuerzo pesquero de una oficina específica, opcionalmente filtradas por
+    grupo de recurso o especie.
+  - esfuerzo pesquero o captura por unidad de esfuerzo de una oficina de desembarque.
 inputs:
   species:
     type: string
@@ -40,15 +48,16 @@ inputs:
       Oficina de desembarque (`nombre_oficina`), p. ej. "CABO SAN LUCAS".
       Es la unidad de análisis. Siempre debe acompañarse de `state_filter`.
   year_range:
-    type: integer_vector
+    type: array
+    items: integer
     required: false
     description: >
       Two-element vector `[start, end]`, e.g. `[2010, 2020]`. If omitted,
       the full available time series is returned.
 acquire:
-  # El MCP de CONAPESCA ya devuelve este contrato completo y sin tope de filas
-  # vía get_landings(group_by="folio"), así que el orquestador trae la tabla y
-  # la manda en el body. No hay razón para que el servicio la baje de nuevo.
+  # El MCP de CONAPESCA devuelve este contrato vía get_landings(group_by="folio"),
+  # así que el orquestador trae la tabla y la manda en el body. El MCP topa la
+  # consulta en 5 000 filas (lo avisa en meta.truncated): ver «Row cap» abajo.
   - source: payload
     as: data
     provider:
@@ -77,7 +86,6 @@ acquire:
       # get_landings(group_by="folio"): una fila por viaje. El filtro de
       # especie/recurso se aplica server-side vía params (chatmpa-skills#16).
 output:
-  table: cpue_series
   columns: [anio_corte, tipo_aviso, cpue_media, cpue_sd, n_viajes, n_viajes_excluidos, peso_desembarcado_kg_total, n_viajes_recomputado]
   scalars:
     kpi_cpue_menores: numeric  # mean(cpue_media) for MENORES over the filtered year range; NA if no rows
@@ -150,7 +158,11 @@ Input columns required from the CONAPESCA MCP (`get_landings(group_by="folio")`)
 
 **Missing-data rules:**
 - Records with `flag_fecha_generica = TRUE`, `flag_dias_efectivos_sospechoso = TRUE`,
-  or `is.na(dias_efectivos)` are **excluded** from CPUE computation.
+  `is.na(dias_efectivos)` or `dias_efectivos = 0` are **excluded** from CPUE
+  computation and counted in `n_viajes_excluidos` (a trip with 0 days cannot be a
+  denominator).
+- A quality flag that arrives as NA is treated as "not flagged": only an active flag
+  excludes a trip (treating NA as a flag would drop whole years for a missing value).
 - Records with `flag_periodo_futuro = TRUE` are **included** (effort may still be valid).
 - Records with `dias_efectivos_fuente = "recomputado"` are **included** but counted
   separately in `n_viajes_recomputado` — effort was recovered from date fields, not
@@ -165,6 +177,14 @@ Input columns required from the CONAPESCA MCP (`get_landings(group_by="folio")`)
   not comparable (different vessel size, effort scale, reporting unit).
 
 **Aggregation unit:** `folio_aviso` (one fishing trip / notice). Fixed, not optional.
+
+**Row cap:** `get_landings(group_by="folio")` returns at most 5 000 rows per call and
+reports it in `meta.truncated`. When the cap is reached the rows are the first 5 000
+by `folio_aviso`, not a random sample, so the CPUE of that call is biased (in the
+curated base, 85 year × fleet cells in 14 offices exceed 5 000 trips, all MENORES;
+error from −22 % to +31 %). The caller requests one year × fleet cell at a time; a
+cell whose call was truncated is reported as not available (`cpue_media = NA`) and
+does not enter `kpi_cpue_*`.
 
 **Data source:** Comisión Nacional de Acuacultura y Pesca [CONAPESCA] (2026). Data
 curated by the ChatMPA team (pipeline `conapesca-database`: cleaning and species
@@ -191,6 +211,7 @@ rounded to 4 decimals.
    AND flag_fecha_generica            = FALSE
    AND flag_dias_efectivos_sospechoso = FALSE
    AND NOT is.na(dias_efectivos)
+   AND dias_efectivos                 > 0
    AND peso_desembarcado_kg           > 0
    [AND nombre_principal              = <nombre_principal>]       ← if provided
    [AND nombre_cientifico_canonico    = <nombre_cientifico_canonico>] ← if provided
@@ -219,14 +240,22 @@ rounded to 4 decimals.
    down to the get_landings() call):
    kpi_cpue_menores ← mean(cpue_media[tipo_aviso == "MENORES"], na.rm = TRUE)
    kpi_cpue_mayores ← mean(cpue_media[tipo_aviso == "MAYORES"], na.rm = TRUE)
-   If a fleet has no rows in cpue_series, its KPI = NA.
+   rounded to 4 decimals. If a fleet has no rows in cpue_series, its KPI = NA.
+   When the panel computes the mean over a selected year range from cells already
+   computed by the skill, it is the same mean of annual means; truncated cells
+   (see "Row cap") are left out.
 ```
 
 ### Interpretation
-Computed per fleet (MENORES / MAYORES) on the annual `cpue_media` series:
+**Not delivered by the chat-mpa skills service (panel).** The Office panel shows only
+the KPI cards and the annual series (DASHBOARD.md §4.4), so it does not need it. When it
+is recovered for the chat, it uses the shared `mk_trend()` already available in the
+service. Computed per fleet (MENORES / MAYORES) on the annual `cpue_media` series:
 - Before/after comparison (`before_after()`): first 5 years vs. last 5 years.
 - Mann-Kendall monotonic trend test (Mann, 1945; Kendall, 1975) via `mk_trend()`
-  (`Kendall::MannKendall`, `shared/interpretation/interpret.R`); minimum number of
+  (`shared/interpretation/interpret.R`: `Kendall::MannKendall` in chatmpa-mvp;
+  `stats::cor.test(method = "kendall")` in chat-mpa — same tau, the p-value may differ
+  slightly in short series); minimum number of
   years as set in `mk_trend()`.
 - In this skill Mann-Kendall only feeds `interpretation$significance` and the
   insight sentence; it does not decide the status, which is always `"ambiguous"`
@@ -242,7 +271,8 @@ peso_desembarcado_kg_total | n_viajes_recomputado
 - `peso_desembarcado_kg_total`: total landed weight for context (not normalized)
 - `n_viajes_recomputado`: trips where `dias_efectivos_fuente = "recomputado"`
 
-**Visual (`plot`):** ggplot2 trend line chart — always generated alongside the table.
+**Visual (`plot`):** ggplot2 trend line chart, optional: generated when ggplot2 is
+available; the chat-mpa skills service envelope does not carry plots.
 - X axis: year (`anio_corte`)
 - Y axis: `cpue_media` (kg / effective fishing day). Log₁₀ scale applied automatically
   when max/min ratio across all series exceeds 10 (large fleet-size differences).
@@ -288,6 +318,8 @@ Not applicable (deterministic skill).
   flagging it explicitly — small n makes the mean unreliable.
 - Do NOT interpret CPUE by office as spatially precise — landing offices record
   where fish were landed, not where they were caught.
+- Do NOT report or average a year × fleet cell whose `get_landings` call was truncated
+  (`meta.truncated = TRUE`) — the first 5 000 trips by folio are not a random sample.
 - Do NOT compute `kpi_cpue_*` in the frontend — the skill returns them as scalars
   over the already-filtered year range.
 

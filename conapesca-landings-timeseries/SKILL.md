@@ -1,6 +1,6 @@
 ---
 name: conapesca-landings-timeseries
-version: 0.1.1
+version: 0.2.0
 tier: 1
 description: >
   Produce historical annual time series of landed volume (tonnes) and estimated
@@ -8,6 +8,15 @@ description: >
   (TOTAL, MAYORES, MENORES, COSECHA). Fires on dashboard panel requests for
   volume or value trends for a specific office, optionally filtered by resource
   or species.
+description_es:
+  - >
+    Produce la serie histórica anual del volumen desembarcado (toneladas) y
+    del valor estimado de la producción (MXN) de una oficina de desembarque,
+    desagregada por tipo de flota (total, mayores, menores y cosecha), con el
+    promedio anual de cada una. Se activa con preguntas sobre cuánto se
+    desembarcó en una oficina en un año o periodo, o cómo ha cambiado el
+    volumen o el valor, opcionalmente filtradas por recurso o especie.
+  - cuánto volumen o valor se desembarcó en una oficina de pesca en un año o periodo, y cómo ha cambiado.
 inputs:
   office_filter:
     type: string
@@ -108,6 +117,9 @@ acquire:
       - flag_dias_efectivos_sospechoso
       - flag_periodo_futuro
 output:
+  # value = list(kpi, volumen, valor, cpue); la tabla principal es kpi (una fila con
+  # los 8 kpi_*), que es donde comparable_value los busca.
+  table: kpi
   scalars:
     kpi_vol_total:   numeric
     kpi_vol_mayores: numeric
@@ -222,6 +234,12 @@ anio_corte | tipo_aviso | total_toneladas | total_valor_mxn | n_registros
 ```
 Both tables are returned in `list(value_volumen, value_valor)` — they share the
 same rows but the frontend uses different columns for each panel.
+
+**`value`** = `list(kpi, volumen, valor, cpue)`: the same results grouped for the
+skills service. `kpi` is a one-row table with the eight `kpi_*` scalars and is the
+main table (`output.table: kpi`); `volumen`, `valor` and `cpue` are `value_volumen`,
+`value_valor` and `value_cpue`. Plots are `NULL` when ggplot2/scales are not
+installed.
 
 **Scalars (`kpi_vol_*`, `kpi_val_*`):** 8 pre-computed KPI scalars, one per fleet
 per metric, over all years present in `data` (year_from/year_to already filtered
