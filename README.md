@@ -71,7 +71,16 @@ cd .claude/skills && git pull
 
 ## Runtime dependencies
 
-Some per-database skills (all `erddap-*` and `ltem-*` skills with `source: payload`) call shared R helpers that live in `chatmpa-mvp`, not in this repo. Engineers deploying the platform need:
+This repo holds the **contract** of each skill (`SKILL.md`) and its reference cases. The **implementation** of every skill that declares `acquire` — its `skill.R`, which defines the `run_skill()` the skills service calls — lives in [`chatmpa-mvp`](https://github.com/ChatMPA-Studio/chatmpa-mvp), in the folder with the same name:
+
+| Skill type | Contract (this repo) | Implementation (`chatmpa-mvp`, `main`) |
+|------------|----------------------|----------------------------------------|
+| Per-database (`conapesca-*`, `erddap-*`, `ltem-*`) | `<skill>/SKILL.md` | `per-database/<skill>/skill.R` |
+| Inter-database | `<skill>/SKILL.md` | `interdatabase/<skill>/skill.R` |
+
+To deploy a skill, take its `SKILL.md` from this repo and its `skill.R` from `chatmpa-mvp` `main`; do not re-implement the method from the `SKILL.md`. The reference cases in `<skill>/references/` are the values that `skill.R` must reproduce.
+
+Some of those `skill.R` also load shared R code from `chatmpa-mvp`: `conapesca-cpue`, `ltem-fish-biomass` and `ltem-nrsi-index` load `shared/interpretation/interpret.R`; the `erddap-*` skills load `shared/spatial_join/spatial_join.R` and its geometries; `conapesca-landings-timeseries` loads `per-database/conapesca-cpue/skill.R`. Engineers deploying the platform need:
 
 | File | Repo | Purpose |
 |------|------|---------|
