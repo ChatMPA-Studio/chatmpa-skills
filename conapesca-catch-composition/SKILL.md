@@ -188,10 +188,11 @@ Rows: `"Capture"` and `"Aquaculture"`.
 - Seed: not applicable.
 - Status: VERIFIED. Cases in `references/cabo_pulmo_catch_composition_reference.json`.
 - Second case (non-trivial, with aquaculture): La Paz landing office (BCS), all
-  species, 2016–2025, `pct_volume` and `pct_value` of Capture. Status: PENDING until
-  verified by an independent calculation
+  species, 2016–2025. Expected value: `pct_volume` = 67.9 and `pct_value` = 37.5
+  (Capture), verified by Carolina (2026-10-15) with an independent calculation
   (`Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R`,
-  outside the repos).
+  outside the repos) cross-checked with the CONAPESCA MCP. Tolerance ±0.05.
+  Status: VERIFIED.
 
 ## Success criteria
 - Table with two rows and correct percentages.

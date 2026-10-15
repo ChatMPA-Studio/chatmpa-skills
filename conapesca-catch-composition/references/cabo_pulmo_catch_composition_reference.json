@@ -89,20 +89,24 @@
           "year_to": 2025
         }
       },
-      "expected_value": null,
+      "expected_value": 67.9,
       "tolerance": 0.05,
       "tolerance_rationale": "Deterministic; the skill rounds to 1 decimal: half a unit of the last decimal.",
-      "status": "PENDING",
-      "verified_by": null,
-      "verified_date": null,
-      "source": null,
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-15",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_la_paz_composicion.R), on the curated CONAPESCA database (snapshot 2026-08-07): capture 55,981.94 t and 1,565,040,039 MXN; aquaculture 26,413.13 t and 2,606,122,035 MXN. Cross-checked with the CONAPESCA MCP (base v0.0.4), get_landings(oficina='LA PAZ', estado='BAJA CALIFORNIA SUR', tipo_aviso, group_by='year') summed over 2016-2025: same percentages (67.9433 and 37.5205).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R (outside the repos)"
+      },
       "data_snapshot": {
         "server": "conapesca",
         "tool": "get_landings",
         "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database; MCP base v0.0.4 (conapesca_landings_2001_2026_2026-08-07.rds)",
         "retrieved_date": "2026-10-15"
       },
-      "notes": "PENDING: second case requested in the engineering review (CC-5), because the Cabo San Lucas case is trivial (no COSECHA). Verify with the independent script Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R (outside the repos), then fill expected_value, verified_by, verified_date and source."
+      "notes": "Second case requested in the engineering review (CC-5): non-trivial, the office has COSECHA in every year of 2016-2025 (3,421 COSECHA, 357 MAYORES and 80,834 MENORES records). Capture weighs 67.9 % of volume but 37.5 % of value (aquaculture is worth more per kg). OFFICE PROXY: LA PAZ stands in for the Espíritu Santo MPA; the verified value tests the computation, not the representativeness of the office."
     },
     {
       "id": "la_paz_catch_composition_pct_value",
@@ -120,20 +124,24 @@
           "year_to": 2025
         }
       },
-      "expected_value": null,
+      "expected_value": 37.5,
       "tolerance": 0.05,
       "tolerance_rationale": "Deterministic; the skill rounds to 1 decimal: half a unit of the last decimal.",
-      "status": "PENDING",
-      "verified_by": null,
-      "verified_date": null,
-      "source": null,
+      "status": "VERIFIED",
+      "verified_by": "Carolina",
+      "verified_date": "2026-10-15",
+      "source": {
+        "type": "independent-run",
+        "citation": "Independent calculation in R, without running the skill (verificacion_la_paz_composicion.R), on the curated CONAPESCA database (snapshot 2026-08-07): capture 55,981.94 t and 1,565,040,039 MXN; aquaculture 26,413.13 t and 2,606,122,035 MXN. Cross-checked with the CONAPESCA MCP (base v0.0.4), get_landings(oficina='LA PAZ', estado='BAJA CALIFORNIA SUR', tipo_aviso, group_by='year') summed over 2016-2025: same percentages (67.9433 and 37.5205).",
+        "path_or_doi": "Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R (outside the repos)"
+      },
       "data_snapshot": {
         "server": "conapesca",
         "tool": "get_landings",
         "db_version": "Delivery CONAPESCA 2026-06-29 (request 340008100012626), curated with conapesca-database; MCP base v0.0.4 (conapesca_landings_2001_2026_2026-08-07.rds)",
         "retrieved_date": "2026-10-15"
       },
-      "notes": "PENDING: second case requested in the engineering review (CC-5), because the Cabo San Lucas case is trivial (no COSECHA). Verify with the independent script Validación ChatMPA/referencias_conapesca/verificacion_la_paz_composicion.R (outside the repos), then fill expected_value, verified_by, verified_date and source."
+      "notes": "Second case requested in the engineering review (CC-5): non-trivial, the office has COSECHA in every year of 2016-2025 (3,421 COSECHA, 357 MAYORES and 80,834 MENORES records). Capture weighs 67.9 % of volume but 37.5 % of value (aquaculture is worth more per kg). OFFICE PROXY: LA PAZ stands in for the Espíritu Santo MPA; the verified value tests the computation, not the representativeness of the office."
     }
   ]
 }
