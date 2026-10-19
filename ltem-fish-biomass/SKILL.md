@@ -12,24 +12,14 @@ description: >
   at a specific site.
 description_es:
   - >
-    Responde preguntas sobre la biomasa de peces (stock) y su recuperación en
-    un área marina protegida, reportando la biomasa media de peces (T/ha) y su
-    tendencia en el tiempo a partir de la base de datos LTEM. Se activa con
-    preguntas como cuál es la biomasa de peces de una AMP, si los peces están
-    aumentando o disminuyendo, cuál es la biomasa actual, cómo ha cambiado en
-    el tiempo, o si la protección ha ayudado a la recuperación de peces en un
-    sitio específico.
-  - >
-    Cuál es la biomasa de peces en un área marina protegida o región, y cómo
-    se ha comportado o cambiado en los últimos años.
-  - >
-    Hazme una tabla o gráfica de cómo se ha comportado la biomasa de peces en
-    una región a lo largo del tiempo, con la tendencia y el promedio
-    observado.
-  - >
-    Si los peces se están recuperando, si hay más o menos biomasa que antes, o
-    si la protección de un área marina ha funcionado para los peces.
-  - biomasa de peces en una AMP o región, o cuánta biomasa de peces hay en un sitio.
+    Responde preguntas sobre la biomasa total de peces y su recuperación en un
+    área marina protegida, región o arrecife, reportando la biomasa media de
+    peces (T/ha) por año y su tendencia en el tiempo a partir de la base de
+    datos LTEM.
+  - Cuánta biomasa de peces hay o hubo en un área marina protegida, región o arrecife en un año específico.
+  - Cómo ha cambiado la biomasa de peces en el tiempo y si está aumentando, estable o disminuyendo.
+  - Si los peces se están recuperando o si la protección de un área marina ha aumentado la biomasa de peces.
+  - Hazme una tabla o gráfica de la biomasa de peces por año, con la tendencia y el promedio.
 inputs:
   mpa:
     type: string
