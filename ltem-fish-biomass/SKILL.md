@@ -1,6 +1,6 @@
 ---
 name: ltem-fish-biomass
-version: 0.3.1
+version: 0.3.2
 tier: 2
 description: >
   Assess fish standing stock and recovery trends at a marine protected area,
@@ -10,6 +10,16 @@ description: >
   how biomass has changed over time, or whether protection has led to biomass
   recovery. Also fires when the user asks for the fish biomass KPI or trend
   at a specific site.
+description_es:
+  - >
+    Responde preguntas sobre la biomasa total de peces y su recuperación en un
+    área marina protegida, región o arrecife, reportando la biomasa media de
+    peces (T/ha) por año y su tendencia en el tiempo a partir de la base de
+    datos LTEM.
+  - Cuánta biomasa de peces hay o hubo en un área marina protegida, región o arrecife en un año específico.
+  - Cómo ha cambiado la biomasa de peces en el tiempo y si está aumentando, estable o disminuyendo.
+  - Si los peces se están recuperando o si la protección de un área marina ha aumentado la biomasa de peces.
+  - Hazme una tabla o gráfica de la biomasa de peces por año, con la tendencia y el promedio.
 inputs:
   mpa:
     type: string

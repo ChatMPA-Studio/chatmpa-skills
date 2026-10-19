@@ -1,6 +1,6 @@
 ---
 name: ltem-nrsi-index
-version: 0.1.2
+version: 0.1.3
 tier: 2
 description: >
   Assess the trophic health of a reef and answer whether it is healthy,
@@ -8,6 +8,16 @@ description: >
   reef trophic balance, apex-predator recovery, overfishing signatures, or
   "is this reef healthy" — by computing the Normalized Reef State Index (NRSI)
   from the relative biomass of upper, lower, and consumer trophic levels.
+description_es:
+  - >
+    Responde si un arrecife está sano, degradado o en recuperación. Se
+    activa con preguntas como si un arrecife está sano, cómo está la salud
+    del arrecife, si hay señales de sobrepesca, si los depredadores tope se
+    están recuperando, o cómo está el equilibrio trófico de un arrecife en
+    una AMP. Calcula el Índice de Estado Normalizado del Arrecife (NRSI) a
+    partir de la biomasa relativa de los niveles tróficos superior, inferior
+    y consumidor, usando la base de datos LTEM.
+  - si un arrecife está sano, degradado o en recuperación, y si hay señales de sobrepesca en una AMP.
 inputs:
   mpa:
     type: string
