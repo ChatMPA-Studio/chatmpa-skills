@@ -1,6 +1,6 @@
 ---
 name: conapesca-catch-composition
-version: 0.3.0
+version: 0.3.1
 tier: 1
 description: >
   Shows the production composition of a landing office: percentage from capture
@@ -10,13 +10,14 @@ description: >
   Composition table, plus two pie charts when ggplot2 is installed.
 description_es:
   - >
-    Muestra la composición de la producción de una oficina de desembarque:
-    qué porcentaje viene de la pesca de captura (embarcaciones mayores y
-    menores) y qué porcentaje de la acuacultura (avisos de cosecha), en
-    volumen y en valor estimado, acumulado en el periodo solicitado. Se activa
-    con preguntas sobre cuánto de la producción de una oficina es captura y
-    cuánto acuacultura.
-  - qué parte del volumen o del valor de una oficina de pesca viene de la captura y qué parte de la acuacultura.
+    Calcula qué porcentaje de la producción de una oficina de pesca de
+    CONAPESCA viene de la pesca de captura (embarcaciones mayores y menores) y
+    qué porcentaje de la acuacultura (avisos de cosecha), en volumen y en
+    valor, acumulado en un periodo de años.
+  - Cuánto de la producción de una oficina de pesca es pesca de captura y cuánto es acuacultura o cultivo.
+  - Qué porcentaje del volumen o del valor desembarcado en una oficina viene de la acuacultura entre dos años.
+  - Cuánta acuacultura hay en una oficina de pesca o localidad comparada con la pesca de captura.
+  - Composición de la producción de una oficina, captura frente a acuacultura, para un recurso o especie como camarón u ostión.
 inputs:
   office_filter:
     type: string

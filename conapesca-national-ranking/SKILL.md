@@ -1,6 +1,6 @@
 ---
 name: conapesca-national-ranking
-version: 0.2.2
+version: 0.2.3
 tier: 1
 description: >
   Computes the national position of a landing office by total landed volume
@@ -9,13 +9,14 @@ description: >
   Returns ranking scalars and a full ranked table. No plots.
 description_es:
   - >
-    Calcula el lugar nacional de una oficina de desembarque por volumen
-    desembarcado (toneladas) y por valor estimado de la producción (MXN),
-    frente a todas las oficinas del país. Sin filtro, mide la importancia
-    general del puerto; con filtro de recurso o especie, su lugar en esa
-    pesquería. Se activa con preguntas sobre el ranking, la posición o el
-    lugar nacional de una oficina.
-  - qué lugar nacional ocupa una oficina de pesca por volumen o valor de desembarque de un recurso o especie.
+    Calcula el lugar nacional (ranking) de una oficina de pesca de CONAPESCA
+    frente a todas las oficinas del país, por volumen desembarcado (toneladas)
+    y por valor de la producción (pesos), en un periodo de años. Puede
+    limitarse a un recurso, una especie o un tipo de flota.
+  - Qué lugar nacional ocupa la oficina de pesca de una localidad por volumen y por valor desembarcado entre dos años.
+  - Qué tan importante es una oficina de pesca o puerto frente al resto del país y qué porcentaje del total nacional aporta.
+  - En qué posición del ranking nacional está una oficina en la pesca de un recurso o especie, por ejemplo camarón o sardina.
+  - Cuáles son las oficinas de pesca con mayor volumen o valor desembarcado del país y en qué lugar queda una oficina específica.
 inputs:
   office_filter:
     type: string
