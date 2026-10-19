@@ -1,6 +1,6 @@
 ---
 name: reef-drivers-lm
-version: 0.1.0
+version: 0.1.1
 tier: 1
 description: >
   Identify which environmental and fishing pressure factors are associated with
@@ -10,6 +10,17 @@ description: >
   questions about what drives reef condition, whether fishing or temperature has
   a stronger association with reef health, or which factors explain year-to-year
   variation in reef trophic state.
+description_es:
+  - >
+    Identifica qué factores ambientales y de presión pesquera están
+    asociados con la salud trófica del arrecife en un área marina protegida,
+    mediante un modelo lineal del NRSI contra la presión pesquera local
+    (CPUE por especie y flota), la anomalía térmica (temperatura del mar) y
+    la anomalía de productividad primaria (clorofila-a). Se activa con
+    preguntas sobre qué explica el estado del arrecife, si la pesca o la
+    temperatura tienen mayor asociación con su salud, o qué factores
+    explican la variación del estado trófico del arrecife de un año a otro.
+  - qué factores explican la salud o el estado del arrecife en una AMP o región.
 inputs:
   species:
     type: array

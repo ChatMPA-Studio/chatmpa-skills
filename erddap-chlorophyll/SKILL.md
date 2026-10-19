@@ -1,6 +1,6 @@
 ---
 name: erddap-chlorophyll
-version: 0.1.0
+version: 0.1.1
 tier: 1
 description: >
   Assess primary productivity and phytoplankton trends at a marine protected
@@ -9,6 +9,16 @@ description: >
   about ocean productivity near an AMP, upwelling strength, food availability
   for fish communities, nutrient conditions, or how local chlorophyll compares
   to regional patterns.
+description_es:
+  - >
+    Evalúa la productividad primaria y las tendencias de fitoplancton en un
+    área marina protegida y en la región del Golfo que la rodea, reportando
+    medias geométricas y anomalías de clorofila-a a escala local y regional.
+    Se activa con preguntas sobre productividad del océano cerca de una AMP,
+    intensidad de surgencias, disponibilidad de alimento para comunidades de
+    peces, condiciones de nutrientes, o cómo se compara la clorofila local
+    con los patrones regionales.
+  - clorofila, productividad del océano, o disponibilidad de alimento para peces en una AMP o región.
 inputs:
   mpa:
     type: string

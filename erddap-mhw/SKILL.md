@@ -1,6 +1,6 @@
 ---
 name: erddap-mhw
-version: 0.1.0
+version: 0.1.1
 tier: 1
 description: >
   Detect and quantify Marine Heatwave (MHW) events at a marine protected area,
@@ -10,6 +10,17 @@ description: >
   whether heatwave frequency is increasing over time. Companion skill to
   erddap-sst-anomaly — that skill reports mean temperatures; this one reports
   extreme thermal events.
+description_es:
+  - >
+    Detecta y cuantifica olas de calor marinas (MHW) en un área marina
+    protegida, reportando el número anual de días y eventos de ola de calor
+    a partir de datos diarios de temperatura del mar (OISST). Se activa con
+    preguntas sobre días de estrés térmico, olas de calor marinas cerca de
+    una AMP, cuántos días superaron los umbrales térmicos, o si la
+    frecuencia de olas de calor está aumentando con el tiempo. Complementa a
+    erddap-sst-anomaly, que reporta temperaturas medias; esta skill reporta
+    eventos térmicos extremos.
+  - olas de calor marinas, días de estrés térmico, o eventos extremos de temperatura en una AMP o región.
 inputs:
   mpa:
     type: string

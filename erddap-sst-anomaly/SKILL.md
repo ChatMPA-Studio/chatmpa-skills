@@ -1,6 +1,6 @@
 ---
 name: erddap-sst-anomaly
-version: 0.1.0
+version: 0.1.1
 tier: 1
 description: >
   Assess thermal conditions and warming trends at a marine protected area and
@@ -9,6 +9,20 @@ description: >
   thermal stress on reef communities, El Niño/La Niña impacts on a specific
   protected area, or how local sea surface temperature compares to the regional
   trend.
+description_es:
+  - >
+    Evalúa las condiciones térmicas y las tendencias de calentamiento en un
+    área marina protegida, reportando anomalías anuales de temperatura del
+    mar. Se activa con preguntas sobre calentamiento del
+    océano cerca de una AMP, estrés térmico en las comunidades de arrecife, o
+    impactos de El Niño/La Niña en un área protegida específica.
+  - >
+    Cómo ha afectado el cambio climático o el calentamiento del mar a una
+    región o área marina protegida, y si la temperatura del agua ha subido
+    con el tiempo.
+  - >
+    Anomalías de temperatura del mar, estrés térmico, o impacto del clima en
+    un arrecife o AMP específica.
 inputs:
   mpa:
     type: string

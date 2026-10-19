@@ -1,6 +1,6 @@
 ---
 name: ltem-invertebrate-abundance
-version: 0.1.1
+version: 0.1.2
 tier: 2
 description: >
   Assess the abundance and diversity of key invertebrate groups at a marine
@@ -11,6 +11,19 @@ description: >
   invertebrates are recovering or declining, echinoderm abundance, or coral
   cover as measured by transect counts. Also fires when the user asks for
   invertebrate KPIs or trends at a specific site.
+description_es:
+  - >
+    Evalúa la abundancia y diversidad de los principales grupos de
+    invertebrados en un área marina protegida, reportando conteos medios y
+    tendencias temporales para cuatro taxones focales (erizos, estrellas de
+    mar, gorgonias y corales duros) a partir de la base de datos LTEM. Se
+    activa con preguntas sobre la salud de invertebrados en una AMP, cambios
+    en la población de erizos, tendencias de gorgonias o coral duro, si los
+    invertebrados se están recuperando o disminuyendo, abundancia de
+    equinodermos, o cobertura de coral medida por conteos de transecto.
+    También se activa cuando se pide el KPI o la tendencia de invertebrados
+    en un sitio específico.
+  - abundancia de erizos, gorgonias, coral duro o invertebrados en una AMP o región.
 inputs:
   mpa:
     type: string
