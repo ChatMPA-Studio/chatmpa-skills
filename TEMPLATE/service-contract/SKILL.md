@@ -118,8 +118,14 @@ inputs:
       controls).]
 
 # ── Adquisición de datos ────────────────────────────────────────────────────
-# Los datos de las bases del proyecto entran SIEMPRE por MCP: source: payload
-# + provider. La skill nunca lee archivos ni abre conexiones.
+# Los datos entran SIEMPRE por un servidor MCP: source: payload + provider.
+# La skill nunca lee archivos ni abre conexiones.
+# Este templete sirve igual sea cual sea la fuente del MCP: una base de datos
+# propia (CONAPESCA, LTEM) o una API externa (ERDDAP de la NOAA; a futuro, p. ej.
+# GBIF). La skill no ve de dónde saca el MCP los datos: recibe la tabla que
+# devuelve la tool. Lo que cambia entre base propia y API es cómo se construye
+# el MCP, no la skill. El servicio de skills tampoco tiene otra vía: no puede
+# llamar a una API por su cuenta.
 # Una entrada por tabla que recibe run_skill(); `as` es el nombre del argumento.
 # Arriba de cada entrada, un comentario dice qué filtros se empujan al MCP y
 # cuáles NO (p. ej. un parámetro de cómputo como `n_boot` o `window` no va en
