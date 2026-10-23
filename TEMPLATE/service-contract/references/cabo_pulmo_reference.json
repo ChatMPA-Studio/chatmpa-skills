@@ -1,0 +1,40 @@
+{
+  "skill": "skill-name",
+  "skill_version": "0.1.0",
+  "seed": null,
+  "cases": [
+    {
+      "id": "[sitio]_[filtros]_[metrica]",
+      "metric": "[columna o escalar de comparable_value]",
+      "row": {
+        "[columna_clave]": "[valor que identifica la fila comparada, p. ej. year: 2023]"
+      },
+      "unit": "[unidad]",
+      "input": {
+        "description": "[Sitio, filtros y periodo del caso. Si se usa un proxy (p. ej. oficina de desembarque por AMP), decirlo.]",
+        "filters": {
+          "fishing_office": "CABO SAN LUCAS",
+          "state": "BAJA CALIFORNIA SUR"
+        }
+      },
+      "expected_value": null,
+      "tolerance": null,
+      "tolerance_rationale": "[Determinista: la skill redondea a n decimales, media unidad del último decimal.]",
+      "status": "PENDING",
+      "verified_by": null,
+      "verified_date": null,
+      "source": {
+        "type": "independent-run",
+        "citation": "[Cálculo independiente (sin correr la skill): script o Rmd y datos usados.]",
+        "path_or_doi": "[ruta del script de verificación o DOI]"
+      },
+      "data_snapshot": {
+        "server": "[conapesca | ltem | erddap]",
+        "tool": "[tool MCP]",
+        "db_version": "[entrega o versión de la base]",
+        "retrieved_date": "[AAAA-MM-DD]"
+      },
+      "notes": "expected_value queda en null y status en PENDING hasta que una persona lo verifique con un cálculo independiente. Nunca usar la salida de la propia skill como referencia. skill_version = versión del SKILL.md vigente al verificar; seed = semilla de Random controls (null si es determinista)."
+    }
+  ]
+}

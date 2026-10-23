@@ -120,7 +120,11 @@ The controlled vocabularies for each axis are defined in **[`CONTRIBUTING.md`](.
 
 ## Creating a skill
 
-1. Copy [`TEMPLATE/SKILL.md`](./TEMPLATE/SKILL.md) to `<your-skill-name>/SKILL.md`.
+1. Copy the template that matches the skill type to `<your-skill-name>/`:
+   - **Dispatch skill** (Claude Code): [`TEMPLATE/SKILL.md`](./TEMPLATE/SKILL.md). Steps 2–5 below apply.
+   - **Service-contract skill** (ChatMPA skills service: data via MCP, `skill.R` in `chatmpa-mvp`): the whole
+     [`TEMPLATE/service-contract/`](./TEMPLATE/service-contract/SKILL.md) folder (`SKILL.md` + `references/`).
+     Its comments explain every field; the catalog taxonomy fields of step 2 do not apply.
 2. Fill in the required frontmatter (`name`, `description`, `domain`, `data-source`, `output-type`, `tags`) and the canonical body sections (Purpose → When to Use → context section → Workflow → References → Success Criteria).
 3. Add any `references/`, `scripts/`, or `assets/` your skill needs.
 4. Validate and preview the catalog locally:

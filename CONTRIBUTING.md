@@ -148,7 +148,9 @@ Choose `domain`, `data-source`, and `output-type` values **only** from these lis
 
 ## 5. Adding a skill — checklist
 
-1.  Copy `TEMPLATE/SKILL.md` to `<your-skill-name>/SKILL.md`.
+1.  Copy `TEMPLATE/SKILL.md` to `<your-skill-name>/SKILL.md`. For a
+    **service-contract** skill (ChatMPA skills service, data via MCP), copy the
+    whole `TEMPLATE/service-contract/` folder instead and follow its comments.
 
 2.  Fill the frontmatter (§2) and body sections (§3).
 

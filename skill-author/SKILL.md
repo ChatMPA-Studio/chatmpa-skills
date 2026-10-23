@@ -12,7 +12,7 @@ output-type: [tooling]
 tags: [scaffold, authoring, governance, lint, template, versioning]
 peer_reviewed: true
 status: experimental
-version: 0.1.0
+version: 0.1.1
 author: chatmpa-studio
 ---
 
@@ -80,7 +80,10 @@ plus free-form lowercase `tags`. Set `status: experimental` and `version: 0.1.0`
 
 ### 5. Scaffold from the template
 Copy [`TEMPLATE/SKILL.md`](../TEMPLATE/SKILL.md) to `<skill-name>/SKILL.md` and create
-`references/` / `scripts/` only if the skill needs them.
+`references/` / `scripts/` only if the skill needs them. If the skill runs in the ChatMPA
+skills service (data via MCP, declares `acquire`), it is a **service-contract** skill: copy
+the whole [`TEMPLATE/service-contract/`](../TEMPLATE/service-contract/SKILL.md) folder
+instead and follow its comments; steps 4 and 6 do not apply to it.
 
 ### 6. Fill the canonical body sections
 In order: `# Title` → `## Purpose` → `## When to Use This Skill` (use / do-NOT-use) → one
@@ -123,7 +126,9 @@ python3 tools/review_skill.py <skill-name>
 
 - [`CONTRIBUTING.md`](../CONTRIBUTING.md) — authoritative canonical format and vocabularies
 - [`QUALITY.md`](../QUALITY.md) — gate model, peer-review rubric, lifecycle, versioning
-- [`TEMPLATE/SKILL.md`](../TEMPLATE/SKILL.md) — copyable skeleton
+- [`TEMPLATE/SKILL.md`](../TEMPLATE/SKILL.md) — copyable skeleton (dispatch skills)
+- [`TEMPLATE/service-contract/`](../TEMPLATE/service-contract/SKILL.md) — copyable skeleton
+  (service-contract skills: `SKILL.md` + `references/` reference case)
 - `tools/build_index.py` — validator + catalog generator (`--validate`, `--check`, `--strict`)
 - `tools/review_skill.py` — emits a peer-review prompt for a skill
 
